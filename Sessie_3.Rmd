@@ -1,0 +1,11 @@
+---
+title: "Inleiding R Sessie 3"
+output: html_notebook
+---
+
+# Avond sessie 03
+
+```{r}
+plot(cars) 
+```
+
