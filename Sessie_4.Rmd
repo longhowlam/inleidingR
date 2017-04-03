@@ -1,5 +1,6 @@
 ---
 title: "Inleiding R Avond Sessie 04"
+author: "Longhow Lam"
 output: html_notebook
 ---
 
