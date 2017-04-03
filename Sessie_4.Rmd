@@ -1,9 +1,9 @@
 ---
-title: "Inleiding R Sessie 4"
+title: "Inleiding R Avond Sessie 04"
 output: html_notebook
 ---
 
-# Avond sessie 04
+# Machine learning in R Avond sessie 04
 
 ```{r}
 plot(cars)  

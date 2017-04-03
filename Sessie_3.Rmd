@@ -1,9 +1,10 @@
 ---
-title: "Inleiding R Sessie 3"
+title: "Inleiding R Avond Sessie 03"
+author: "Longhow Lam"
 output: html_notebook
 ---
 
-# Avond sessie 03
+# Plotting data in R
 
 ```{r}
 plot(cars) 

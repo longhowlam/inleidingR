@@ -33,7 +33,8 @@ Begin met powerpoint slides over
 # Data types
 
 ```{r}
-x = 9
+x = 9  
+
 ```
 
 

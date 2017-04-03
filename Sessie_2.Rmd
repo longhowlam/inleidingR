@@ -1,11 +1,12 @@
 ---
-title: "Inleiding R Sessie 2"
+title: "Inleiding R Avond Sessie 02"
+author: "Longhow Lam"
 output: html_notebook
 ---
 
-# Avond sessie 02
+# The tidyverse
 
 ```{r}
-plot(cars)
+
 ```
 
