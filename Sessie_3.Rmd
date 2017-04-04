@@ -6,7 +6,30 @@ output: html_notebook
 
 # Plotting data in R
 
+In deze sessie zullen 
+
+
+## traditional plots in R
 ```{r}
-plot(cars) 
+x = rnorm(100)
+plot(x) 
 ```
+
+
+
+## ggplot2
+
+
+## Interactive grafieken
+
+
+### ploty
+
+### leaflet
+
+### visnetwork
+
+
+
+
 
