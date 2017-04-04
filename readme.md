@@ -1,5 +1,7 @@
 # Inleiding R
 
-Begeleidende R notebooks voor mijn vier sessies inleiding R cursus.
+Begeleidende R notebooks 'inleiding R cursus' voor mijn vier avond sessies.
 
-Corresponding R notebooks for my four session evening courseIntroduction R course.
+Accompanying  R notebooks 'introduction to R' for my four evening sessions.
+
+Cheers, Longhow
