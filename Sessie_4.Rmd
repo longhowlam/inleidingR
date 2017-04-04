@@ -6,7 +6,25 @@ output: html_notebook
 
 # Machine learning in R Avond sessie 04
 
+## predictive modeling technieken
+
+lm, glm, rpart, ranger xgboost
+
+### splitsen  train test
+
 ```{r}
 plot(cars)  
 ```
 
+
+
+
+## The h2o package
+
+
+
+## The mlr package
+
+
+
+## Clustering en market baskets
