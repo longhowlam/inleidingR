@@ -6,7 +6,38 @@ output: html_notebook
 
 # The tidyverse
 
+Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / manipuleren 
+
+
+```{r}
+library(tidyverse)
+```
+
+## importeren van data
+
+Voor het importeren van text files gebruik functies uit het readr package in plaats van de base R read functies.
+
 ```{r}
 
 ```
+
+
+
+## dplyr
+
+
+
+## stringr
+
+
+## forcats
+
+## tidyr
+
+
+## Dates in R
+
+Voor datums in R zijn de packages anydate en lubridate heel handig
+
+
 
