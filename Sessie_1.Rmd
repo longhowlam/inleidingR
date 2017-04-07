@@ -1,8 +1,8 @@
 ---
 title: 'Inleiding R: Avond Sessie 01'
 author: "Longhow Lam"
+# output: html_notebook
 output:
-#  html_document: default
   prettydoc::html_pretty:
     toc: true
     number_sections: true
@@ -51,13 +51,12 @@ test = 9
 
 Namen van objecten zijn case-sensitive!
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x = 8
 X = 8
 
 getwd()
 ls()
-
 
 
 786 / (87 +87)
@@ -79,7 +78,7 @@ F1 op de functie: cut
 
 Integers in R zijn gehele getallen.
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x = 1
 y = 2
 
@@ -99,7 +98,7 @@ is.integer(y)
 
 In R kan je met het `character` data type teksten opslaan. bewerkingen en manipulaties van characters in sessie 2.
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x1 = "Longhow Lam"
 x2 = "1628 EP Hoorn"
 
@@ -116,7 +115,7 @@ x3 = paste(x1, x2, sep="")
 
 factors in R zijn bedoeld om categorische variable te representeren. Denk aan geslacht, of opleiding. Verwar factor niet met character.
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x3 = c("M", "F", "M")
 
 is.character(x3)
@@ -135,7 +134,7 @@ levels(x3)
 
 ## double
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x4 = 4
 x5 = 5.6 / 8
 x6 = pi/2
@@ -146,7 +145,7 @@ is.double(x4)
 
 ## logical
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x7 = TRUE
 x8 = FALSE
 
@@ -198,7 +197,7 @@ sprintf("%.24f", x)
 
 ## oneindig
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x1 = 9/0
 x2 = -x1
 
@@ -207,7 +206,7 @@ is.infinite(x2)
 
 ## missing value
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x3 = NA
 is.na(x3)
 
@@ -221,7 +220,7 @@ is.na(x4)
 
 ## waar zijn mijn objecten
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 ls()
 
 objects()
@@ -229,8 +228,10 @@ objects()
 
 wat is een search path...
 
-```{r}
-#Pietje  # wordt niet gevonden
+```{r, eval=FALSE, include=FALSE}
+
+
+Pietje  # wordt niet gevonden
 
 ### Objecten worden volgens een zoekpad gezocht
 search()
@@ -315,7 +316,7 @@ x5 = rep(1:10, each = 3)
 
 ### subscripting of vectors
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 x3[9]
 x3[  4:10  ]
 
@@ -348,7 +349,7 @@ sum(x3 < 0)
 
 ##  matrices
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 m1 = rnorm(100)
 
 m2 = matrix(m1, byrow = FALSE, ncol=10)
@@ -382,7 +383,7 @@ m2[ ,5]
 
 ## multidimensional arrays
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 m = array(1:1000, dim = c(10,10,10))
 
 m[1,5,7]
