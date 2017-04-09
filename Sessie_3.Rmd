@@ -13,11 +13,15 @@ library(dplyr)
 
 # Plotting data in R
 
-Er zijn veel mogelijkheden om data te plotten in R. In deze sessie zullen we een aantal type plots behandelen, de traditionele plots, ggplot2 en interactieve plots.
+Er zijn veel mogelijkheden om data te plotten in R. In deze sessie zullen we een aantal type plots behandelen:
+
+* de traditionele plots,
+* ggplot2,
+* en interactieve plots.
 
 
-## traditional plots in R
-```{r}
+## Traditional plots in R
+```{r, eval=FALSE, include=FALSE}
 x = rnorm(100)
 plot(x) 
 
@@ -45,7 +49,7 @@ hist()
 
 The grammar of graphics, een plot wordt gemaakt door layers op elkaar te leggen, elke laag kan worden beschreven met zigenaamde aesthetics (stijlen)
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 library(ggplot2)
 
 
