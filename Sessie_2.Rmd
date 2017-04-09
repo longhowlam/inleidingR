@@ -109,12 +109,19 @@ full_join(df1, df2, by = c("col1" = "col2"))
 
 ## forcats
 
+
 ## tidyr
 
 
 ## Dates in R
 
-Voor datums in R zijn de packages anydate en lubridate heel handig
+Voor datums in R zijn de packages anydate en lubridate heel handig.
+
+```{r}
+
+
+
+```
 
 
 
