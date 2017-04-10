@@ -57,15 +57,25 @@ p = ggplot(mtcars, aes(x=hp, y = mpg))
 p = p + geom_point(alpha = 0.4)
 p
 
-p=p + geom_point(aes(x=hp, y = cyl), col=2)
+p = p + geom_point(aes(x=hp, y = cyl), col=2)
 p
 
-p = p + ggtitle("AUTO PLOTS \n EEN VOORBEELDJE") + 
+p = p + 
+  ggtitle("AUTO PLOTS \n EEN VOORBEELDJE") + 
   theme(plot.title = element_text(lineheight=.8, face="bold"))
 p
+```
 
-# Er zijn diverse geom functies.....
-geom_......
+De algemene graphing template in ggplot heeft de volgende vorm
+
+```{r, eval=FALSE, include=FALSE}
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+Er zijn diverse geom_functies, we zullen er een paar laten zien
+
+```{r}
 
 ####  box plots
 p = ggplot(mpg, aes(reorder(class, hwy, median), hwy, fill = factor(year))) 
