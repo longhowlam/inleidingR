@@ -4,6 +4,14 @@ author: "Longhow Lam"
 output: html_notebook
 ---
 
+```{r, eval=FALSE, include=FALSE}
+library(rpart)
+library(glmnet)
+library(ranger)
+library(xgboost)
+```
+
+
 # Machine learning in R Avond sessie 04
 
 ## predictive modeling technieken
@@ -13,9 +21,10 @@ lm, glm, rpart, ranger xgboost
 ### splitsen  train test
 
 ```{r}
-plot(cars)  
+
 ```
 
+### predictie en validatie
 
 
 
