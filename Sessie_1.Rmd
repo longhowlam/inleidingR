@@ -451,6 +451,17 @@ VA_RANDOM_PERSONS <- read.csv("D:/Jibes/Projecten/EFR_RCOURSE/DataSets/VA_RANDOM
 
 ```
 
+
+## tibles
+
+tibles zijn een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiiken...  zie ook zijn boek en de website [tibles.](http://tibble.tidyverse.org/)
+
+```{r}
+
+
+```
+
+
 ## importeren van data uit SQL server
 
 ```{r, eval=FALSE, include=FALSE}
