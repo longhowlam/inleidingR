@@ -94,10 +94,40 @@ rattle::fancyRpartPlot()
 
 ### predictie en validatie
 
+Met een test set kan je bepalen hoe goed een model is. Gberuik het model om de test set te scoren en vergelijk de scores met de ware uitkomsten.
 
-predicties
+#### predicties
 
-roc curves, 
+```{r}
+
+```
+
+#### roc curves and hit rates
+
+````{r}
+
+testpr = predict(rfmodel_rr, test)
+test$predictionRANGER = testpr$predictions[,2]
+
+rocResultTEST = roc(Target  ~ predictionRANGER, data = test , auc=TRUE, ci =TRUE)
+plot(rocResultTEST)
+
+
+## HITRATES 
+RANGER_test = test  %>% mutate(
+  Target = ifelse(Target== "Y",1,0)
+)
+
+RANGER_test %>% 
+  ggplot(aes(predictionRANGER, Target))  +
+  geom_smooth() +
+  geom_abline(slope = 1,intercept = 0) +
+  ggtitle("Young class hit rate on test set") + scale_y_continuous(limits=c(0,1))
+
+ggplot(data = RANGER_test, aes(predictionRANGER, fill = "test")) + geom_density(color='black') +
+  ggtitle("Distribution of Young score (Probability that Age < 35)")
+
+````
 
 
 
