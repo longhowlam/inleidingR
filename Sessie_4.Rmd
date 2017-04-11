@@ -16,7 +16,75 @@ library(xgboost)
 
 ## predictive modeling technieken
 
-lm, glm, rpart, ranger xgboost
+In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie 
+Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met  `ranger` en  `xgboost`
+
+```{r}
+mtcars
+modelout = lm(  hp ~ .    , data = mtcars)
+modelout = lm( hp ~ wt + mpg, data = mtcars) 
+modelout
+
+summary(modelout)
+plot(modelout)
+
+## formula objects
+names(mtcars)
+
+f1 <- hp ~ wt + carb + vs
+m1 = modelout = lm(f1, data = mtcars)
+
+f2 <- hp ~ carb*wt*vs
+m2 = modelout = lm(f2, data = mtcars)
+
+f2a <- hp ~ I(carb*wt*vs)
+m2a = modelout = lm(f2a, data = mtcars)
+
+f3 <- hp ~ carb*wt*vs - carb:wt:vs
+m3 = modelout = lm(f3, data = mtcars)
+
+anova(m1,m3,m2)
+
+
+class(modelout)
+names(modelout)
+modelout$coefficients
+print(unclass(modelout))
+
+predict(modelout, data=mtcars)
+
+mtcarspred = predict(modelout, data=mtcars)
+ddd = data.frame(mtcars,  mtcarspred)
+ddd
+
+```
+
+
+
+
+### decision tree
+```{r}
+treem.out = rpart(form, data = HMEQ_TRAIN)
+plot(treem.out)
+text(treem.out, use.n = TRUE)
+
+treep.valid = predict(treem.out, newdata = HMEQ_VALID)
+plot.roc(HMEQ_VALID$BAD, treep.valid[,2], add=TRUE,col="green")
+
+rattle::fancyRpartPlot()
+
+
+```
+
+
+### random forest met ranger
+
+```{r}
+
+
+```
+
+### xgboost
 
 ### splitsen  train test
 
@@ -27,12 +95,86 @@ lm, glm, rpart, ranger xgboost
 ### predictie en validatie
 
 
+predicties
+
+roc curves, 
+
+
+
+
 
 ## The h2o package
+
+H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden.
+
+```{r}
+library(h2o)
+
+#start h20 via cmd java -jar h20
+
+localH2O =  h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
+localH2O =  h2o.init(nthreads=-1, port=54321, startH2O = FALSE)
+
+
+### test iris voorbeeldje
+iris.hex <- as.h2o(iris)
+iris.dl <- h2o.deeplearning(x = 1:4, y = 5, training_frame = iris.hex)
+predictions <- h2o.predict(iris.dl, iris.hex)
+
+
+
+### laad van locale files
+# HMEQT = h2o.importFile(path="D:/R/em_save_TRAIN.csv",sep=",")
+# HMEQV = h2o.importFile(path="D:/R/em_save_VALIDATE.csv",sep=",")
+
+
+## locale R set naar H20
+HMEQT = as.h2o(HMEQ_TRAIN, "HMEQT")
+HMEQV = as.h2o(HMEQ_VALID, "HMEQV")
+
+h2o.ls()
+
+colnames(HMEQT)
+
+
+### fit neural network model
+
+inp = colnames(HMEQT)[c(-1,-2)]
+NNmodel = h2o.deeplearning(
+  x = inp,
+  y = "BAD",
+  training_frame  = HMEQT,
+  validation_frame = HMEQV,
+  hidden = c(35,35),
+  epochs = 250,
+  variable_importances = TRUE
+)
+
+show(NNmodel)
+h2o.varimp(NNmodel)
+
+### Voorspel op validatie set en zet uit in roc curve
+HMEQVP = h2o.predict(NNmodel, newdata = HMEQV)
+head(HMEQVP)
+
+NEURAL.PERF = as.data.frame(HMEQVP)
+
+plot.roc(HMEQ_VALID$BAD, NEURAL.PERF$p1  , add=T, col="red")
+
+
+### fit een random forest
+
+
+
+```
 
 
 
 ## The mlr package
+
+
+Met het mlr package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier
+
 
 
 
