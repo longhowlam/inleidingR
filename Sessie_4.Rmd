@@ -9,6 +9,9 @@ library(rpart)
 library(glmnet)
 library(ranger)
 library(xgboost)
+library(ROCR)
+library(titanic)
+library(rattle)
 ```
 
 
@@ -60,19 +63,28 @@ ddd
 ```
 
 
+### splitsen  train test
+
+```{r}
+
+```
+
 
 
 ### decision tree
 ```{r}
-treem.out = rpart(form, data = HMEQ_TRAIN)
-plot(treem.out)
-text(treem.out, use.n = TRUE)
 
-treep.valid = predict(treem.out, newdata = HMEQ_VALID)
-plot.roc(HMEQ_VALID$BAD, treep.valid[,2], add=TRUE,col="green")
+titanic_train
+tree.out = rpart(Survived ~ Sex + Age, data = titanic_train)
+plot(tree.out)
+text(tree.out, use.n = TRUE)
 
-rattle::fancyRpartPlot()
 
+fancyRpartPlot(tree.out)
+
+### larger trees with complexity parameter
+tree.out = rpart(Survived ~ Sex + Age, data = titanic_train, control = list(cp=0.005))
+fancyRpartPlot(tree.out)
 
 ```
 
@@ -85,12 +97,6 @@ rattle::fancyRpartPlot()
 ```
 
 ### xgboost
-
-### splitsen  train test
-
-```{r}
-
-```
 
 ### predictie en validatie
 
@@ -106,8 +112,10 @@ Met een test set kan je bepalen hoe goed een model is. Gberuik het model om de t
 
 ````{r}
 
-testpr = predict(rfmodel_rr, test)
-test$predictionRANGER = testpr$predictions[,2]
+test 
+testpr = predict(tree.out, titanic_test)
+test$predictie = testpr
+
 
 rocResultTEST = roc(Target  ~ predictionRANGER, data = test , auc=TRUE, ci =TRUE)
 plot(rocResultTEST)
