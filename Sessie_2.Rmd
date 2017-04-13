@@ -13,19 +13,10 @@ Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / man
 library(tidyverse)
 ```
 
-## importeren van data
-
-Voor het importeren van text files gebruik functies uit het readr package in plaats van de base R read functies.
-
-```{r, eval=FALSE, include=FALSE}
-
-```
-
-
 
 ## dplyr
 
-sleutel woorden zijn select, filter, arrange, summarize, mutate, slice, rename
+Dit package is ontzettend handig om data te bewerken in R. De syntax is elegant en dplyr code kan je in sommige gevallen ook gebruiken voor data die niet in R zit. Bijvoorbeeld data in Spark, kan je met dplyr code bewerken. Er zijn veel sleutel woorden, maar de belangrijkste zijn `select`,  `filter`, `mutate`, `arrange`, `summarize`, `slice` and `rename`.
 
 
 ### kolommen selecteren met select
@@ -78,7 +69,6 @@ out = filter(mtcars, mpg > 11) %>%
         summarise( N = n(), MeanDisp = mean(disp), SD_HP = sd(hp)) %>%
         
   
-
 df1 = data.frame(x=1:100,y=rnorm(100))
 df2 = data.frame(x=51:150, z=rnorm(100))
 
@@ -101,11 +91,54 @@ full_join(df1, df2, by = c("col1" = "col2"))
 ```
 
 
-### melt / reshape
+### wide data 
+
+Soms heb je data die in de verkeerde vorm zit. melt / reshape
+
 
 
 ## stringr
 
+Character data in R kan je bewerken/manipuleren met het `stringr` package. Voordat we daar verder op in gaan is het handig om te weten wat reguliere expressies zijn.
+
+### Reguliere expressies
+
+Dit is een soort 'mini' taaltje om character patronen te formuleren
+
+```{r}
+test = c("dit is een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK")
+test
+
+# Hoe haal je de goede postcodes er uit?
+
+
+# zie ook help bij grep 
+```
+
+### functies uit het package stringr
+
+
+str_locate
+str_locate_all
+
+str_sub
+str_length
+
+str_match
+
+str_detect
+str_trim
+
+str_replace
+str_repalce_all
+str_tolower
+
+```{r}
+
+titanic::titanic_train
+## maak extra kolom aan in titanic die namen zoekt
+mutate
+```
 
 ## forcats
 
@@ -115,7 +148,7 @@ full_join(df1, df2, by = c("col1" = "col2"))
 
 ## Dates in R
 
-Voor datums in R zijn de packages anydate en lubridate heel handig.
+Voor datums in R zijn de packages `anydate` en `lubridate` heel handig.
 
 ```{r}
 

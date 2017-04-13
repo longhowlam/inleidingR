@@ -587,6 +587,13 @@ er zijn een aantal packages die handig zijn om files in te lezen.
 * `haven` package voor files van SAS, SPSS, Stata
 * `readxl` voor Excel files
 
+R heeft ook standaard functies voor het inzelzen van text files, maar ik gebruik vaak `readr`, voor grote files is het veel sneller. En je ziet dan ook een progress bar.
+
+
+```{r, eval=FALSE, include=FALSE}
+
+```
+
 ## Inlezen uit een data base
 
 Er zijn verschillende packages om data te lezen uit een data base, dit is afhankelijk van de data base. De library `RODBC` gebruik ik bijvoorbeeld om data uit onze SQL Server data base te lezen.
