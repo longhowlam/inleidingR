@@ -1,14 +1,24 @@
 ---
 title: 'Inleiding R: Avond Sessie 01'
 author: "Longhow Lam"
-output: html_notebook
+output: 
+  html_notebook:
+    theme: sandstone
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
 #output:
 #  prettydoc::html_pretty:
-#    toc: true
-#    number_sections: true
 #    highlight: github
 #    theme: cayman
+#    toc: true
+#    toc_depth: 2
+#    number_sections: true
 ---
+
+***
+***
 
 # Inleding
 
@@ -46,7 +56,6 @@ Hieronder een paar simpele expressies in R om te beginnen
 
 
 ```{r, eval=FALSE}
-
 1 + 1
 print("hello world")
 
@@ -56,7 +65,7 @@ test
 
 In R zijn namen van objecten *case-sensitive!*
 
-```{r, eval=FALSE, include=FALSE}
+```{r, eval=FALSE}
 x = 8
 X = 8
 
@@ -106,7 +115,6 @@ is.integer(y)
 In R kan je met het `character` data type teksten opslaan. bewerkingen en manipulaties van characters in sessie 2.
 
 ```{r, eval=FALSE}
-
 x1 = "Longhow Lam"
 x2 = "1628 AA Hoorn"
 
@@ -201,7 +209,6 @@ x1 == x2
 Het volgende blokje code laat logische operatoren zien.
 
 ```{r, eval=FALSE}
-
 TRUE & FALSE    # AND
 !TRUE           # NOT
 !FALSE
@@ -238,7 +245,7 @@ is.infinite(x2)
 ## missing value
 
 
-```{r, eval=FALSE, include=FALSE}
+```{r, eval=FALSE}
 x3 = NA
 
 # gebruik is.na om te checken of iets NA is
@@ -312,8 +319,6 @@ saveRDS(x, file = "ObjectX.Rds")
 
 # bewaar een heel image,  dit wordt standaard gevraagd als je Rstudio afsluit
 save.image()
-
-
 ```
 
 
@@ -543,7 +548,7 @@ In R zijn tibles een soort moderne versie van data.frames, afkomstig van Hadley 
 
 Zie ook zijn boek en de website [tibles.](http://tibble.tidyverse.org/)
 
-```{r}
+```{r, eval=FALSE}
 library(tibble)
 
 x1 = 1:100
