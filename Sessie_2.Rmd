@@ -113,10 +113,50 @@ full_join(df1, df2, by = c("col1" = "col2"))
 ```
 
 
-### wide data 
+### tidy data en wide data 
 
-Soms heb je data die in de verkeerde vorm zit. melt / reshape
+Tidy data is wanneer data in de volgende vorm zit:
 
+* Elke variabele is in een kolom.
+* Elke observatie is een rij.
+* Elke waarde is een cel.
+
+Stel we hebben de volgende data set
+
+```{r}
+library(tidyr)
+stocks <- data.frame(
+  time = as.Date('2009-01-01') + 0:9,
+  X = rnorm(10, 0, 1),
+  Y = rnorm(10, 0, 2),
+  Z = rnorm(10, 0, 4)
+)
+stocks
+```
+
+Soms is het handig om data waarden in 1 kolom te hebben en een aprte variabele die de variabele weergeeft
+
+```{r}
+stocksm <- stocks %>% gather(stock, price, -time)
+stocksm
+```
+
+en spread is het omgekeerde process
+
+```{r}
+stock2 = stocksm %>% spread(stock, price)
+stock2
+
+## als er niet even observaties zijn?
+
+test = data.frame(
+  T = c(1,2,3,1,2), 
+  V = c("A","A","A","B","B"),
+  price = c(4,5,6,7,8)
+)
+
+test2 = test %>% spread(V,price)
+```
 
 
 ## stringr
