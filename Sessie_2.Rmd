@@ -21,14 +21,32 @@ Dit package is ontzettend handig om data te bewerken in R. De syntax is elegant 
 
 ### kolommen selecteren met select
 
-```{r, eval=FALSE, include=FALSE}
-test1 = select(iris, starts_with("Petal"))
-test2 = select(iris, contains("etal"))
+```{r, eval=FALSE}
+## enkele kolommen selecteren
 
-my.cars = mtcars
+my.cars = select(mtcars, hp, mpg, drat)
 
+my.cars = mtcars %>% 
+  select(hp, mpg, drat)
 
-### kolom er bij maken
+## meerdere kolommen selecteren
+test1 = iris %>% 
+  select(
+    starts_with("Petal")
+  )
+
+test2 = mtcars %>% 
+  select(
+    contains("pg"),
+    starts_with("c")
+  )
+
+my.cars = mtcars %>% .[2:6]
+
+```
+
+#### kolom maken of wijzigen met mutate
+```{r}
 my.cars$kolom2  = rnorm(32)
 my.cars$kolom3  = my.cars$kolom2 + 9
 
@@ -46,13 +64,17 @@ myset = mtcars %>%
 ```
 
 
+### data sets filteren
+
 ```{r, eval=FALSE, include=FALSE}
 ### data filteren met filter
 filter(mtcars, cyl == 8 & gear > 3)
 
+```
 
-### aggregeren met de functie group_by en summarise  deze gaan hand in hand samen
-
+###cdata sets aggregeren
+aggregeren met de functie group_by en summarise  deze gaan hand in hand samen
+```{r}
 by_cyl = group_by(mtcars, cyl) 
 class(by_cyl)
 

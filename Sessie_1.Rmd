@@ -121,7 +121,7 @@ x3 = paste(x1, x2, sep="")
 
 ## factor
 
-factors in R zijn bedoeld om categorische variable te representeren. Denk aan geslacht, of opleiding. Verwar factor niet met character.
+In R zijn `factors` bedoeld om categorische variabelen te representeren. Denk aan geslacht, of opleiding. Verwar factor niet met character.
 
 ```{r, eval=FALSE}
 x3 = c("M", "F", "M")
@@ -149,20 +149,30 @@ levels(x3)
 
 ## double
 
-doubles ijn niet gehele getallen
+De doubles in R zijn vaak gebruikt om alledaagse data te representeren. Bijvoorbeeld lengte, 1.85 of gewicht 78.8 zijn niet gehele getallen
 
 ```{r, eval=FALSE}
 x4 = 4
 x5 = 5.6 / 8
+
 x6 = pi/2
 
 is.double(x4)
+
+x7 = 4L
+is.double(x7)
+
+# in tegenstelling tot sommige andere talen kan je in R double en integers in berekeningen 
+# zonder vertalingen gebruiken
+
+x8 = x4 + x7
+typeof(x8)
 ```
 
 
 ## logical
 
-In R gebruik je logicals om dingen te testen
+Als je in R een test uitvoert, dan is het resulaat van het type `logical`. We zagen al de functies `is.double` en `is.integer`.
 
 ```{r, eval=FALSE}
 x7 = TRUE
@@ -188,9 +198,9 @@ x1 == x2
 
 ```
 
+Het volgende blokje code laat logische operatoren zien.
 
 ```{r, eval=FALSE}
-### logische operatoren
 
 TRUE & FALSE    # AND
 !TRUE           # NOT
@@ -259,13 +269,11 @@ objects()
 wat is een search path...
 
 ```{r, eval=FALSE}
-
-
 Pietje  # wordt niet gevonden
+cars # wordt wel gevonden
 
 ### Objecten worden volgens een zoekpad gezocht
 search()
-
 
 objects(pos = 5)
 
@@ -273,12 +281,16 @@ objects(pos = 5)
 
 OrchardSprays
 iris
-
 iris = 9
 
+## wat zit er nu in iris en is mijn oude iris niet weg??
 iris
 
-########  weghalen van objecten
+```
+
+Het weghalen van objecten
+
+```{r, eval=FALSE}
 x = 5
 rm(x)
 
@@ -288,7 +300,6 @@ iris
 rm(iris)
 
 datasets::iris
-
 
 rm(iris)
 
@@ -306,33 +317,48 @@ save.image()
 ```
 
 
-# data structures
+# Data structures
 
-Dat in R kan bewaard worden in verschillende data structuren, we zullen hier de structuren behandelen
+Data in R kan in verschillende vormen verschijnen, de zogenaamde data structures. We zullen hieronder een aantal basis structuren behandelen.
 
 
 ## vectors
 
-Vectoren worden gebruikt om een 'rijtje' elementen op te slaan. Je kan een vector van doubles hebben, characters etc...
+Vectoren worden gebruikt om een 'rijtje' elementen op te slaan. Je kan een vector van doubles hebben, characters etc... Alle elementen kunnen alleen van hetzelfde type zijn!
 
 ```{r, eval=FALSE}
+## een getal is ook al een vectpr, van lengte 1
 x0 = 1
-x0 = c( 1, 2, 3, 4, 5)
-x1 = 1:1000
-x1 <- 187:278
 
-x2 = seq(1,50,length=100)
-length(x2)
-class(x2)
+x1 = c( 1, 2, 3, 4, 5)
+length(x1)
+class(x1)
+
+x2 = c(2L, 3)
+typeof(x2)
+
+x3 = c("p", 2)
+
+```
+
+Er zijn diverse functies in R die je kan gebruiken om vectoren te genereren zonder alle elementen een voor een in te typen :-)
+
+```{r, eval = FALSE}
+x1 = 1:1000
+x1 = 187:278
+
+x2 = seq(1, 50, length=100)
 
 x2a = seq(1,500, by = 20)
 
+## samenvoegen van twee of meer vectoren
 x3 = c( x0, rnorm(100))
 
 x4 = sample( letters, rep = TRUE, size = 100)
 
 class(x4)
 
+## berekeningen op vectoren gebeuren elements gewijs
 y = 3 * x3 + 8
 
 ## en wat is dit???
@@ -351,30 +377,35 @@ x5 = rep(1:10, each = 3)
 Hoe benader je elementen in een vector? Dat kan met subscripts
 
 ```{r, eval=FALSE}
-x3[9]
-x3[  4:10  ]
+## R begint te tellen bij 1
+x3 = 100:200
 
+## subscripts zijn : 1 getal, een vector van getallen, negatieve getallen
+x3[1]
+x3[  4:10  ]
 x3[  -(1:10)]
 
+## gebroken kan ook...
+x3[8.9]
+
+## je kan met subscripts ook elementen veranderen
 x3[  8:17  ] = 0
+```
 
+Een paar simpele functies die je op vectoren kan toepassen
 
-## simpele functies op vectoren 
+```{r, eval=FALSE}
 y = rnorm(1000)
+
 mean(y)
 var(y ) 
-
+min(y)
 sd(y)
+max(y)
 summary(y)
 
-class(y)
-class(x3)
 
-tmp <- y > 5
-tmp
-class(tmp)
-sum(tmp)
-sum(x3 < 0)
+sum(xy < 0)
 
 ```
 
@@ -384,26 +415,26 @@ sum(x3 < 0)
 Een matrix is een verzameling van vectoren die even lang zijn.
 
 ```{r, eval=FALSE}
+## maak een matrix van een vector
 m1 = rnorm(100)
-
 m2 = matrix(m1, byrow = FALSE, ncol=10)
 m2
 dim(m2)
 class(m2)
 
-det(m2)
+## maak een matrix van een aantal vectoren
+x = 1:10
+y = 10:1
+z = 11:20
 
-t(m2)
-solve(m2)
+m3 = cbind(x,y,z)
+m4 = rbind(x,y,z)
 
-# inverse van een matrix
-m2 %*% solve(m2)
-m2 * solve(m2)
+```
 
-round(m2 %*% solve(m2))
+Net als vectoren kan je elementen in een matrix benaderen met subscripts
 
-## matrix subscripts 
-
+```{r, eval = FALSE} 
 m2[1,5]
 
 m2[  4:10,    3:5]
@@ -414,6 +445,24 @@ m2[ ,5]
 
 ```
 
+Matrix berekeningen
+
+```{r, eval =FALSE}
+# determinant van een matrix
+det(m2)
+
+# matrix transponeren
+t(m2)
+
+# inverse van een matrix
+solve(m2)
+
+# er zijn twee soorten vermenigvuldigingen van matrices
+m2 %*% solve(m2)
+m2 * solve(m2)
+
+round(m2 %*% solve(m2))
+```
 
 ## multidimensional arrays
 
@@ -434,7 +483,7 @@ class(m)
 
 ## data frames
 
-Een data frame kan je zien als een matrix, maar in tegenstelling tot een matrix, kunnen kolommen van een data frame van een andere type zijn.
+Een data frame kan je zien als een matrix, maar in tegenstelling tot een matrix, kunnen kolommen van een data frame van een andere type zijn. Voor data analyse met 'echte' data zal een data.frame de meest handige structuur zijn.
 
 ```{r, eval=FALSE}
 x1 = 1:100
@@ -442,21 +491,28 @@ x2 = rnorm(100)
 x3 = rnorm(100)
 x4 = sample(c("M","F"), size = 100, replace = TRUE)
 
-mydf = data.frame(kolomnaampj1 = x1, income = x2, age=x3, type = x4)
+df1 = data.frame(
+  kolomnaampj1 = x1,
+  income = x2,
+  age = x3,
+  type = x4
+)
 
+# laat eerste 10 rijen zien
+head(df1,10)
 
-head(mydf,10)
-names(mydf)
+# laat de namen van de kolommen zien
+names(df1)
 
-dim(mydf)
-class(mydf)
+dim(df1)
+class(df1)
 
 levels(mydf$type)
 
-### pas op met characters die worden standaard in data frames naar factors omgezet
+### pas op met characters die worden standaard in data.frame naar factors omgezet
 x4
 class(x4)
-class(mydf$type)
+class(df1$type)
 
 
 mydf = data.frame(kolomnaampj1 = x1, income = x2, age=x3, type = x4, stringsAsFactors = FALSE)
@@ -465,34 +521,59 @@ class(mydf$type)
 
 ## Dit is ook in de Environment viewer te zien
 
-## rownames colnames
-tmp = mtcars
-row.names(tmp)
-colnames(tmp)
+```
+Je kan net als bij matrices subscripts gebruiken in data frame om bepaalde data uit een data.frame te halen
 
-tmp$NewCol = tmp$mpg / tmp$wt
+```{r, eval=FALSE}
+df1[1,3]
+df1[11:20,]
 
-########  "ECHTE" data maak je natuurlijk niet vaak aan zoals hierboven....
+df1[, 2:3]
+df1$income
 
-## Importeren van data sets naar data frames
-VA_RANDOM_PERSONS <- read.csv("D:/Jibes/Projecten/EFR_RCOURSE/DataSets/VA_RANDOM_PERSONS.csv", stringsAsFactors=FALSE)
-
+## kolom toevoegen
+df1$NEW = df1$income / 100
+df1
 ```
 
 
 ## tibles
 
-tibles zijn een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiiken...  zie ook zijn boek en de website [tibles.](http://tibble.tidyverse.org/)
+In R zijn tibles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor
+
+Zie ook zijn boek en de website [tibles.](http://tibble.tidyverse.org/)
 
 ```{r}
+library(tibble)
 
+x1 = 1:100
+x2 = rnorm(100)
+x3 = rnorm(100)
+x4 = sample(c("M","F"), size = 100, replace = TRUE)
 
+tb1 = tibble(
+  kolomnaampj1 = x1,
+  income = x2,
+  age = x3,
+  type = x4
+)
+
+## output in notebooks is niet verschillend maar in de console zie je dat wel
+df1
+tb1
+
+## extraheren van column is consistent
+df1[,1:2]
+df1[,1]
+
+tb1[,1:2]
+tb1[,1]
 ```
 
 
 ## lists
 
-lijsten zijn soms het resultaat van een functie die allerlei dingen teruggeeft in een lijst
+In R zijn lijsten de meest generieke data structuur, het kan beschouwd woorden als een verzanmeling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen teruggeeft in een lijst.
 
 ```{r, eval=FALSE}
 l1 <- list( a = 1, b = 1:100, c = m2, d = mydf)
