@@ -146,8 +146,8 @@ en spread is het omgekeerde process
 ```{r}
 stock2 = stocksm %>% spread(stock, price)
 stock2
-
-## als er niet even observaties zijn?
+ 
+## als er niet even veel observaties zijn?
 
 test = data.frame(
   T = c(1,2,3,1,2), 
