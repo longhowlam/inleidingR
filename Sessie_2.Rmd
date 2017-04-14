@@ -1,31 +1,60 @@
 ---
 title: "Inleiding R Avond Sessie 02"
 author: "Longhow Lam"
-output: html_notebook
+output: 
+  html_notebook:
+    theme: sandstone
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+#output:
+#  prettydoc::html_pretty:
+#    highlight: github
+#    theme: cayman
+#    toc: true
+#    toc_depth: 2
+#    number_sections: true
+---
+
+***
+***
+
 ---
 
 # The tidyverse
 
-Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / manipuleren 
+Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / manipuleren. installeer tidyverse en attach de library zodat je in 1 keer een aantal libraries laadt
 
+* dplyr
+* tibble
+* ggplot2
+* purr
+* forcats
+* readr
+* readxl
+* stringr
+* tidyr
 
 ```{r, eval=FALSE, include=FALSE}
 library(tidyverse)
 ```
 
 
-## dplyr
+# dplyr
 
-Dit package is ontzettend handig om data te bewerken in R. De syntax is elegant en dplyr code kan je in sommige gevallen ook gebruiken voor data die niet in R zit. Bijvoorbeeld data in Spark, kan je met dplyr code bewerken. Er zijn veel sleutel woorden, maar de belangrijkste zijn `select`,  `filter`, `mutate`, `arrange`, `summarize`, `slice` and `rename`.
+Dit package is ontzettend handig om data te bewerken in R. De syntax is elegant en dplyr code kan je in sommige gevallen ook gebruiken voor data die niet in R zit. Bijvoorbeeld, data in Spark kan je met dplyr code bewerken. Er zijn veel 'sleutel' woorden, maar de belangrijkste zijn `select`,  `filter`, `mutate`, `arrange`, `summarize`, `slice` en `rename`. 
+
+Het mooie is dat deze sleutel woorden ook achter elkaar gebruikt kunnen worden met de `%>%` chain operator.
 
 
-### kolommen selecteren met select
+## kolommen selecteren met select
 
 ```{r, eval=FALSE}
 ## enkele kolommen selecteren
-
 my.cars = select(mtcars, hp, mpg, drat)
 
+## via de chain operator, dit is niet alleen handig maar zo kan je verschillende operaties achter elkaar plakken.
 my.cars = mtcars %>% 
   select(hp, mpg, drat)
 
@@ -35,6 +64,7 @@ test1 = iris %>%
     starts_with("Petal")
   )
 
+## bepaalde kolommen selecteren
 test2 = mtcars %>% 
   select(
     contains("pg"),
@@ -45,14 +75,57 @@ my.cars = mtcars %>% .[2:6]
 
 ```
 
-#### kolom maken of wijzigen met mutate
+## kolom maken of wijzigen met mutate
+
+We zagen al dat je kolommen kon wijzigen met `$` 
+
 ```{r}
 my.cars$kolom2  = rnorm(32)
 my.cars$kolom3  = my.cars$kolom2 + 9
+```
 
-mutate(mtcars, displ_l = disp / 61.0237)
+Maar met `mutate` kan je dit veel eleganter doen
 
-### distinct rows
+```{r}
+mycars = mtcars %>%
+  select(
+    disp, 
+    mpg 
+  ) %>%
+  mutate(
+    displ_l = disp / 61.0237,
+    tmp = mpg *1000
+  )
+
+```
+
+
+Je kan nieuwe kolommen maken die afhankelijk zijn van kolommen die je net in mutate maakt
+
+```{r}
+mycars = mtcars %>%
+  mutate(
+    displ_l = disp / 61.0237,
+    tmp = mpg *1000,
+    tmp2 = tmp + 1
+  )
+
+```
+
+Twee functies die ontzettend handig kunnen zijn: `mutate_at` en `mutate_if`
+
+```{r}
+ABT = ABT %>% mutate_at(4:34, funs(. / ntotalclicks))
+mutate_if()
+```
+
+
+
+## distinct rows
+
+Soms wil je data ontdubbelen, dit kan je in R doen met de functie distinct
+
+```{r}
 distinct( select(mtcars, carb, gear))
 
 distinct(select(mtcars, 10,11))
@@ -64,7 +137,7 @@ myset = mtcars %>%
 ```
 
 
-### data sets filteren
+## data sets filteren
 
 ```{r, eval=FALSE, include=FALSE}
 ### data filteren met filter
@@ -72,8 +145,9 @@ filter(mtcars, cyl == 8 & gear > 3)
 
 ```
 
-###cdata sets aggregeren
+## data sets aggregeren
 aggregeren met de functie group_by en summarise  deze gaan hand in hand samen
+
 ```{r}
 by_cyl = group_by(mtcars, cyl) 
 class(by_cyl)
@@ -99,7 +173,7 @@ df3 = left_join(df1, df2, by = "x")
 
 
 
-### joins
+## joins
 ```{r, eval=FALSE, include=FALSE}
 df1 = data.frame(col1 = c(1,2,3,4,5), tt = rnorm(5))
 df2 = data.frame(col2 = c(3,4,5,6,7), xx = rnorm(5))
@@ -113,7 +187,7 @@ full_join(df1, df2, by = c("col1" = "col2"))
 ```
 
 
-### tidy data en wide data 
+# tidy data en wide data 
 
 Tidy data is wanneer data in de volgende vorm zit:
 
@@ -159,11 +233,11 @@ test2 = test %>% spread(V,price)
 ```
 
 
-## stringr
+# stringr
 
 Character data in R kan je bewerken/manipuleren met het `stringr` package. Voordat we daar verder op in gaan is het handig om te weten wat reguliere expressies zijn.
 
-### Reguliere expressies
+## Reguliere expressies
 
 Dit is een soort 'mini' taaltje om character patronen te formuleren
 
@@ -177,7 +251,7 @@ test
 # zie ook help bij grep 
 ```
 
-### functies uit het package stringr
+## functies uit het package stringr
 
 
 str_locate
@@ -202,13 +276,10 @@ titanic::titanic_train
 mutate
 ```
 
-## forcats
+# forcats
 
 
-## tidyr
-
-
-## Dates in R
+# Dates in R
 
 Voor datums in R zijn de packages `anydate` en `lubridate` heel handig.
 
