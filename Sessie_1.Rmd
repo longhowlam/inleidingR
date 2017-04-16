@@ -17,10 +17,14 @@ output:
 #    number_sections: true
 ---
 
-***
-***
+---
+
+<br>
+
 
 # Inleding
+
+---
 
 ## De RStudio omgeving
 
@@ -85,8 +89,11 @@ ls()
 
 Help in R is <F1> op een functie.  F1 op de functie: cut
 
+<br>
 
 # Data types
+
+---
 
 Alle data in R is van een bepaalde type, we zullen de verschillende types hieronder behandelen. met de functie `typeof` kan je het type altijd opvragen van een object in R.
 
@@ -321,8 +328,12 @@ saveRDS(x, file = "ObjectX.Rds")
 save.image()
 ```
 
+<br>
+
 
 # Data structures
+
+---
 
 Data in R kan in verschillende vormen verschijnen, de zogenaamde data structures. We zullen hieronder een aantal basis structuren behandelen.
 

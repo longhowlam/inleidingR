@@ -21,33 +21,39 @@ Er zijn veel mogelijkheden om data te plotten in R. In deze sessie zullen we een
 
 
 ## Traditional plots in R
+
+Deze plots zijn sinds het begin van R al aanwezig, ik noem ze hier alleen even, maar ik wil er eigenlijk niet veel aandacht meer aan besteden omdat ik vond dat ze achterhaald zijn. Toch gebruik ik ze stiekum soms wel heel snel.
+
+De algemene functie is `plot`, deze accepteert verschillende data structuren.
+
 ```{r, eval=FALSE, include=FALSE}
+## vectoren
 x = rnorm(100)
 plot(x) 
 
+y = runif(100)
+plot(x,y)
 
-x1 = rnorm(1000)
-plot(x1)
+plot(mtcars)
+plot(mtcars %>% select(mpg,cyl,hp))
+
+## histogram met hist
 hist(x1)
-plot(mydf)
 
-names(mtcars)
+## teksten op een plaatje 
+plot(x,y)
+text(x,y,"pp")
 
-plot(mtcars$hp,   mtcars$wt)
 
-points(mtcars$hp, 0.8*mtcars$wt)
-pairs(mtcars[,1:5])
-
-hist()
 
 ```
 
 
 
 
-## ggplot2 van Hadley Wickham,  
+## De ggplot2 library van Hadley Wickham,  
 
-The grammar of graphics, een plot wordt gemaakt door layers op elkaar te leggen, elke laag kan worden beschreven met zigenaamde aesthetics (stijlen)
+The grammar of graphics, een plot wordt gemaakt door layers op elkaar te leggen, elke laag kan worden beschreven met zogenaamde aesthetics (stijlen)
 
 ```{r, eval=FALSE, include=FALSE}
 library(ggplot2)
@@ -73,7 +79,7 @@ ggplot(data = <DATA>) +
   <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
 ```
 
-Er zijn diverse geom_functies, we zullen er een paar laten zien
+Er zijn diverse geom_functies, we zullen hieronder er een paar laten zien
 
 ```{r}
 
@@ -92,15 +98,19 @@ ggplot(data=mpg, aes(displ)) +
 
 #### lijn grafieken
 
+```
 
+
+```{r}
 #### bar plots
 
-
+####
 
 ```
 
 
 ### facets in ggplot
+Met 'facets` kan je een matrix van plots maken. Een hele simpele is bijvoorbeeld als je apart een histogram voor mannen en vrouwen wilt maken en dat naast of onder elkaar in een plot.
 
 facet_grid
 
@@ -114,6 +124,8 @@ ggplot2::ggtitle()
 
 ```
 
+
+Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht van de verschillende mogelijkheden en kan je vinden op [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
 
 ## Interactive grafieken
 
