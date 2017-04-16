@@ -1,5 +1,6 @@
 ---
-title: "Inleiding R Avond Sessie 02"
+title: "Avond Sessie 02: Data preparation"
+subtitle: "Inleiding R"
 author: "Longhow Lam"
 output: 
   html_notebook:

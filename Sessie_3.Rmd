@@ -1,8 +1,20 @@
 ---
-title: "Inleiding R Avond Sessie 03"
+title: "Avond Sessie 03: Data visualisatie"
+subtitle: "Inleiding R"
 author: "Longhow Lam"
-output: html_notebook
+output: 
+  html_notebook:
+    theme: sandstone
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
 ---
+
+---
+
+<br>
+
 
 ```{r, eval=FALSE, include=FALSE}
 library(stringr)
@@ -11,16 +23,21 @@ library(dplyr)
 
 
 
-# Plotting data in R
+# Inleiding 
+
+---
 
 Er zijn veel mogelijkheden om data te plotten in R. In deze sessie zullen we een aantal type plots behandelen:
 
-* de traditionele plots,
+* traditionele plots,
 * ggplot2,
-* en interactieve plots.
+* interactieve plots.
 
+<br>
 
-## Traditional plots in R
+# Traditional plots in R
+
+---
 
 Deze plots zijn sinds het begin van R al aanwezig, ik noem ze hier alleen even, maar ik wil er eigenlijk niet veel aandacht meer aan besteden omdat ik vond dat ze achterhaald zijn. Toch gebruik ik ze stiekum soms wel heel snel.
 
@@ -49,9 +66,11 @@ text(x,y,"pp")
 ```
 
 
+<br>
 
+# De ggplot2 library van Hadley Wickham,  
 
-## De ggplot2 library van Hadley Wickham,  
+---
 
 The grammar of graphics, een plot wordt gemaakt door layers op elkaar te leggen, elke laag kan worden beschreven met zogenaamde aesthetics (stijlen)
 
@@ -79,7 +98,9 @@ ggplot(data = <DATA>) +
   <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
 ```
 
-Er zijn diverse geom_functies, we zullen hieronder er een paar laten zien
+## geom_xxx functies
+
+Er zijn diverse geom_ functies, we zullen hieronder er een paar laten zien
 
 ```{r}
 
@@ -109,14 +130,14 @@ ggplot(data=mpg, aes(displ)) +
 ```
 
 
-### facets in ggplot
+## facets in ggplot
 Met 'facets` kan je een matrix van plots maken. Een hele simpele is bijvoorbeeld als je apart een histogram voor mannen en vrouwen wilt maken en dat naast of onder elkaar in een plot.
 
 facet_grid
 
 facet_wrap
 
-### assen en titels
+## assen en titels
 
 ```{r}
 ggplot2::scale_x_continuous()
@@ -127,10 +148,13 @@ ggplot2::ggtitle()
 
 Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht van de verschillende mogelijkheden en kan je vinden op [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
 
-## Interactive grafieken
+<br>
 
+# Interactive grafieken
 
-### ggvis, vergelijkbaar met ggplot
+---
+
+## ggvis, vergelijkbaar met ggplot
 
 ```{r}
 library(ggvis)
@@ -161,17 +185,17 @@ mtcars %>%
 ```
 
 
-### ploty
+## ploty
 
-#### scatters
+### scatters
 
-#### barcharts
+### barcharts
 
-#### 3D surface plots
+### 3D surface plots
 
 
 
-### leaflet
+## leaflet
 
 Leaflets worden gebruikt om interactieve kaartjes te maken
 
@@ -218,7 +242,7 @@ m2
 
 
 
-### visnetwork
+## visnetwork
 
 visnetwork kan worden gebruikt voor interactieve netwerk grafieken
 

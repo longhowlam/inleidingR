@@ -1,8 +1,21 @@
 ---
-title: "Inleiding R Avond Sessie 04"
+title: "Avond Sessie 04: Machine learning"
+subtitle: "Inleiding R"
 author: "Longhow Lam"
-output: html_notebook
+output:
+  html_notebook:
+    theme: sandstone
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
 ---
+
+
+---
+
+<br>
+
 
 ```{r, eval=FALSE, include=FALSE}
 library(rpart)
@@ -15,9 +28,10 @@ library(rattle)
 ```
 
 
-# Machine learning in R Avond sessie 04
 
-## predictive modeling technieken
+# predictive modeling technieken
+
+---
 
 In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie 
 Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met  `ranger` en  `xgboost`
@@ -63,7 +77,7 @@ ddd
 ```
 
 
-### splitsen  train test
+## splitsen  train test
 
 ```{r}
 
@@ -71,7 +85,7 @@ ddd
 
 
 
-### decision tree
+## decision tree
 ```{r}
 
 titanic_train
@@ -89,26 +103,26 @@ fancyRpartPlot(tree.out)
 ```
 
 
-### random forest met ranger
+## random forest met ranger
 
 ```{r}
 
 
 ```
 
-### xgboost
+## xgboost
 
-### predictie en validatie
+## predictie en validatie
 
 Met een test set kan je bepalen hoe goed een model is. Gberuik het model om de test set te scoren en vergelijk de scores met de ware uitkomsten.
 
-#### predicties
+### predicties
 
 ```{r}
 
 ```
 
-#### roc curves and hit rates
+### roc curves and hit rates
 
 ````{r}
 
@@ -140,8 +154,11 @@ ggplot(data = RANGER_test, aes(predictionRANGER, fill = "test")) + geom_density(
 
 
 
+<br>
 
-## The h2o package
+# The h2o package
+
+---
 
 H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden.
 
@@ -207,13 +224,23 @@ plot.roc(HMEQ_VALID$BAD, NEURAL.PERF$p1  , add=T, col="red")
 ```
 
 
+<br>
 
-## The mlr package
+# The mlr package
 
+---
 
 Met het mlr package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier
 
 
 
+<br>
 
 ## Clustering en market baskets
+
+---
+
+
+```{r}
+
+```
