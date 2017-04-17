@@ -25,6 +25,7 @@ library(xgboost)
 library(ROCR)
 library(titanic)
 library(rattle)
+library(mlr)
 ```
 
 
@@ -33,8 +34,9 @@ library(rattle)
 
 ---
 
-In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie 
-Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met  `ranger` en  `xgboost`
+In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie. 
+Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met  `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kaan proberen op een data set.
+
 
 ```{r}
 mtcars
@@ -160,7 +162,7 @@ ggplot(data = RANGER_test, aes(predictionRANGER, fill = "test")) + geom_density(
 
 ---
 
-H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden.
+H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe kan uploaden.
 
 ```{r}
 library(h2o)
@@ -230,17 +232,236 @@ plot.roc(HMEQ_VALID$BAD, NEURAL.PERF$p1  , add=T, col="red")
 
 ---
 
-Met het mlr package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier
+Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak ook steeds anders. Met `mlr` kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Deze zijn te beschrijven en uit te voeren in mlr.
+
+We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen. 
+
+
+
+## specificeren van technieken en hun opties
+
+configureMlr(on.par.without.desc = "warn")
+
+n.importance = 30
+ptype = "prob"
+
+N_CV_iter = 10
+
+parameters_rf = list(
+  num.trees  = 500
+)
+
+parameters_rpart = list(
+  cp=0.0001
+)
+
+parameters_glmnet = list(
+  alpha  = 1
+)
+
+parameters_NN = list(
+  hidden = c(15,15)
+)
+
+parameters_xgboost = list(
+  nrounds  = 5,
+  max.depth = 7
+)
+
+## Lijst van learners die je wilt testen
+
+RF_Learner = makeLearner(
+  "classif.ranger",
+  predict.type = ptype,
+  par.vals = parameters_rf
+)
+
+xgboost_Learner = makeLearner(
+  "classif.xgboost",
+  predict.type = ptype,
+  par.vals = parameters_xgboost
+)
+
+rpart_Learner = makeLearner(
+  "classif.rpart",
+  predict.type = ptype,
+  par.vals = parameters_rpart
+)
+
+binomial_Learner = makeLearner(
+  "classif.binomial",
+  predict.type = ptype
+)
+
+glmnet_Learner = makeLearner(
+  "classif.cvglmnet", 
+  predict.type = ptype,
+  par.vals = parameters_glmnet
+)
+
+h2ogbm_Learner = makeLearner(
+  "classif.h2o.gbm", 
+  predict.type = "prob"
+)
+
+h2oNN_Learner = makeLearner(
+  "classif.h2o.deeplearning",
+  predict.type = ptype,
+  par.vals = parameters_NN
+)
+
+
+learners = list(
+  rpart_Learner,
+  RF_Learner,
+  binomial_Learner,
+  glmnet_Learner,
+#  h2ogbm_Learner,
+#  h2oNN_Learner,
+  xgboost_Learner
+)
+
+## De data is, de inputs en de target
+
+######################################################################################################################
+##data is in ABT
+
+dim(ABT)
+ABT = ABT %>% select(-RtlId, -Age)
+
+# Churn indicator is in the factor column Targetf 
+summary(ABT$Target)
+#O     Y 
+#16276 12237 
+12237 / (16276 + 12237 )
+
+## fill in missing gender scores
+ABT$AgeScore[ is.na(ABT$AgeScore)] = mean(train$AgeScore)
+
+summary(ABT$AgeScore)
+
+
+## Definieer de classificatie of regressie task 
+
+## wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven.
+## bij een binaie target met Y en N levels wordt nml standaard "N"gebruik (alfabetisch)
+
+classify.task = makeClassifTask(id = "RTL_NIEUWSAPP_AGE", data = ABT, target = "Target", positive = "Y")
+#tmp =listLearners(classify.task)
+
+## Overzicht van de taak en kolom informatie
+
+print(classify.task)
+getTaskDescription(classify.task)
+summarizeColumns(classify.task)
+
+
+
+## Variablen hard uitsluiten 
+
+# no vars to drop
+#classify.task = dropFeatures(classify.task, vars.to.drop )
+
+## Weghalen van (bijna) constante variabelen 
+
+## Je kan ook 'bijna' constante variabelen weghalen: perc iets hoger zetten
+## not done here
+#classify.task = removeConstantFeatures(classify.task, perc = 0)
+
+
+## Zeldzame levels van factors samenvoegen 
+
+## het is gebruikelijk om zeldzame levels te verwijderen of te mergen
+## not done here
+#classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
+#summarizeColumns(classify.task)
+
+
+
+## Feature selection 
+
+#fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared", "rf.importance"))
+fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared"))
+
+
+## display en plot importance
+
+importance = fv$data %>% arrange(desc(information.gain))
+head(importance, n = n.importance)
+plotFilterValues(fv, n.show = 2*n.importance)
+
+ 
+## no filtering
+# summarizeColumns(filtered.task)
+# getTaskNFeats(filtered.task)
+
+
+
+
+## Sample schema 
+
+uitleg.....
+
+#SampleStrageyHO = makeResampleDesc("Holdout", split=0.75)
+# SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
+N = dim(ABT)[1]
+SampleStrageyHO = makeFixedHoldoutInstance(tidx, testidx, N)
+
+
+## uitvoeren machine learning becnhamrk 
+
+br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
+# br2 = mlr::benchmark(learners, filtered.task, SampleStrageyCV, measures = list(mlr::mmce, mlr::auc, mlr::f1))
+
+# saveRDS(br1, paste0("br1", REFDATE, ".RDs"))
+# saveRDS(br2, paste0("br2", REFDATE, ".RDs"))
+
+#br1 = readRDS("br1.RDs")
+#br2 = readRDS("br2.RDs")
+
+
+## Vergelijking machine learning modellen
+
+# data.frame(br1) %>% arrange(desc(auc))
+plotBMRSummary(br1, measure = mlr::auc)
+# plotBMRBoxplots(br2, measure = mlr::auc)
+
+
+#### ROC curves
+NModels = length(br1$results$RTL_NIEUWSAPP_AGE)
+for(i in 1:NModels)
+{
+  tmp2  = br1$results$RTL_NIEUWSAPP_AGE[[i]]$pred$data
+  rocResultTEST = roc(truth  ~ prob.Y, data = tmp2 )
+  if(i==1)
+  {
+    plot(rocResultTEST, col=i)
+  }else{
+    plot(rocResultTEST, col=i, add=TRUE)
+  }
+}
+
+legend( 0.6,0.6, names(br1$results$RTL_NIEUWSAPP_AGE), col=1:NModels,lwd=2)
+title("RTL_NIEUWS_APP AGE MODEL")
+
+
 
 
 
 <br>
 
-## Clustering en market baskets
+# Unsupervised learning
 
 ---
+
+De bovenstaande code was gericht op predictive modeling, ook wel supervised learning genoemd: met input variabelen een target variable proberen te voorspellen. In deze sectie zullen we een tweetal technieken laten zien waar geen target variabele is, ook wel unsupervised learning genoemd.
+
+## Clustering
 
 
 ```{r}
 
 ```
+
+
+## Market basket analyse
