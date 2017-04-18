@@ -19,6 +19,7 @@ output:
 ```{r, eval=FALSE, include=FALSE}
 library(stringr)
 library(dplyr)
+library(ggplot2)
 ```
 
 
@@ -72,22 +73,31 @@ text(x,y,"pp")
 
 ---
 
-The grammar of graphics, een plot wordt gemaakt door layers op elkaar te leggen, elke laag kan worden beschreven met zogenaamde aesthetics (stijlen)
+The grammar of graphics: ggplot2. Een plot wordt gemaakt door layers op elkaar te leggen, elke laag kan worden beschreven met zogenaamde aesthetics (stijlen). Elke laag kan in een variabele opgeslagen worden en deze kunnen bij elkaar 'opgeteld' worden tot een uiteindelijke plot. 
+
+Hieronder een eerste voorbeeldje van een ggplot op de `mtcars` data set.
 
 ```{r, eval=FALSE, include=FALSE}
-library(ggplot2)
-
-
+## een laag p
 p = ggplot(mtcars, aes(x=hp, y = mpg))
+
+## wat is p
+class(p)
+typeof(p)
+
+## voeg een laag punten toe
 p = p + geom_point(alpha = 0.4)
+
+## laat de plot zien door hem te printen
 p
 
-p = p + geom_point(aes(x=hp, y = cyl), col=2)
-p
+q = geom_point(aes(x = hp, y = cyl), col=2)
+r = p + q
+r
 
+## Een titel is ook een laag
 p = p + 
-  ggtitle("AUTO PLOTS \n EEN VOORBEELDJE") + 
-  theme(plot.title = element_text(lineheight=.8, face="bold"))
+  ggtitle("AUTO PLOTS \n EEN VOORBEELDJE") 
 p
 ```
 
@@ -98,19 +108,21 @@ ggplot(data = <DATA>) +
   <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
 ```
 
-## geom_xxx functies
+## geom_... functies
 
-Er zijn diverse geom_ functies, we zullen hieronder er een paar laten zien
+Er zijn diverse geom_... functies, we zullen hieronder er een paar laten zien
 
 ```{r}
-
 ####  box plots
 p = ggplot(mpg, aes(reorder(class, hwy, median), hwy, fill = factor(year))) 
 p
 
-p= p +  geom_boxplot()
+p = p + geom_boxplot()
 p
 
+```
+
+```{r}
 #### histogrammen
 ggplot(data=mpg, aes(displ)) + 
   geom_histogram( binwidth = 0.25, col="red", fill="green", alpha = .82) +
@@ -129,13 +141,14 @@ ggplot(data=mpg, aes(displ)) +
 
 ```
 
+```{r}
+geom_bin2d
+```
+
+
 
 ## facets in ggplot
-Met 'facets` kan je een matrix van plots maken. Een hele simpele is bijvoorbeeld als je apart een histogram voor mannen en vrouwen wilt maken en dat naast of onder elkaar in een plot.
-
-facet_grid
-
-facet_wrap
+Met 'facets` kan je een matrix van plots maken. Een hele simpele is bijvoorbeeld als je apart een histogram voor mannen en vrouwen wilt maken en dat naast of onder elkaar in een plot. Er zijn twee functies in ggplot2 die dit ondersteunen, `facet_grid` en `facet_wrap`
 
 ## assen en titels
 
@@ -144,6 +157,13 @@ ggplot2::scale_x_continuous()
 ggplot2::ggtitle()
 
 ```
+
+## themes
+
+```{r}
+theme(plot.title = element_text(lineheight=.8, face="bold"))
+```
+
 
 
 Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht van de verschillende mogelijkheden en kan je vinden op [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)

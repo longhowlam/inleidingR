@@ -539,6 +539,7 @@ class(mydf$type)
 ## Dit is ook in de Environment viewer te zien
 
 ```
+
 Je kan net als bij matrices subscripts gebruiken in data frame om bepaalde data uit een data.frame te halen
 
 ```{r, eval=FALSE}
@@ -622,6 +623,7 @@ l1[[4]]$x2[3]
 x = 1:10 
 y = 1:10
 
+# dit is geen functie....
 f1 <- x + y
 
 ###########################
@@ -656,9 +658,15 @@ f2 = function(x)
 
 f2( 1:100)
 
+```
 
-#   The %>%  pipe (or chain) operator by Hadley Wickham...
 
+
+###   The %>%  pipe (or chain) operator
+
+The chain operator gebruik je om het resultaat van een functie aan een andere functie mee te geven. De code hieronder geeft een heel simpel voorbeeldje
+
+```{r}
 tan(cos(sin(0.33)))
 
 0.33 %>% sin %>% cos %>% tan
@@ -669,7 +677,7 @@ tan(cos(sin(0.33)))
   tan
 ```
 
-
+Meestal wordt dit gebruikt om code leesbaarder te maken en we komen hier in avond sessie 2 verder op terug.
 
 
 
@@ -679,13 +687,13 @@ Als je met R werkt heb je natuurlijk data nodig, zoals we op bovenstaande manier
 
 ## Inlezen files
 
-er zijn een aantal packages die handig zijn om files in te lezen.
+Er zijn een aantal packages die handig zijn om files in te lezen.
 
 * `readr` package, voor tekst files
 * `haven` package voor files van SAS, SPSS, Stata
 * `readxl` voor Excel files
 
-R heeft ook standaard functies voor het inzelzen van text files, maar ik gebruik vaak `readr`, voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via een GUI die het inlezen van data begeleidt.
+R heeft ook standaard functies voor het inzelzen van text files, maar ik gebruik vaak `readr`, voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
 
 
 ```{r, eval=FALSE, include=FALSE}
