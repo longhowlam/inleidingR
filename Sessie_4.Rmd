@@ -35,47 +35,52 @@ library(mlr)
 ---
 
 In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie. 
-Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met  `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kaan proberen op een data set.
+Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kaan proberen op een data set.
 
 
+## lineare regressie 
 ```{r}
 mtcars
-modelout = lm(  hp ~ .    , data = mtcars)
-modelout = lm( hp ~ wt + mpg, data = mtcars) 
+modelout = lm(  hp ~ wt    , data = mtcars)
+modelout2 = lm( hp ~ wt + mpg, data = mtcars) 
+
 modelout
+```
 
-summary(modelout)
-plot(modelout)
+Modeling functies in R retourneren vaan objecten met van alles er nog wat in. De functie `lm` levert een object af van de klasse lm.
 
-## formula objects
-names(mtcars)
-
-f1 <- hp ~ wt + carb + vs
-m1 = modelout = lm(f1, data = mtcars)
-
-f2 <- hp ~ carb*wt*vs
-m2 = modelout = lm(f2, data = mtcars)
-
-f2a <- hp ~ I(carb*wt*vs)
-m2a = modelout = lm(f2a, data = mtcars)
-
-f3 <- hp ~ carb*wt*vs - carb:wt:vs
-m3 = modelout = lm(f3, data = mtcars)
-
-anova(m1,m3,m2)
-
-
+```{r}
 class(modelout)
 names(modelout)
 modelout$coefficients
-print(unclass(modelout))
 
-predict(modelout, data=mtcars)
+summary(modelout)
+plot(modelout)
+```
 
-mtcarspred = predict(modelout, data=mtcars)
-ddd = data.frame(mtcars,  mtcarspred)
-ddd
+### formula objects
 
+```{r}
+
+names(mtcars)
+
+f1 <- hp ~ wt + carb + vs
+m1 = lm(f1, data = mtcars)
+
+f2 <- hp ~ carb*wt*vs
+m2 = lm(f2, data = mtcars)
+
+f2a <- hp ~ I(carb*wt*vs)
+m2a = lm(f2a, data = mtcars)
+
+f3 <- hp ~ carb*wt*vs - carb:wt:vs
+m3 = lm(f3, data = mtcars)
+
+f4 = hp ~ .
+m4 = lm(f4, data = mtcars)
+
+## vergelijken van verschillende modellen
+anova(m1,m3,m2)
 ```
 
 
@@ -84,6 +89,9 @@ ddd
 ```{r}
 
 ```
+
+
+## logistic regression
 
 
 
@@ -113,6 +121,7 @@ fancyRpartPlot(tree.out)
 ```
 
 ## xgboost
+
 
 ## predictie en validatie
 
@@ -162,41 +171,34 @@ ggplot(data = RANGER_test, aes(predictionRANGER, fill = "test")) + geom_density(
 
 ---
 
-H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe kan uploaden.
+H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe moet uploaden.
 
 ```{r}
 library(h2o)
 
-#start h20 via cmd java -jar h20
+# initialiseer h20 via R
 
-localH2O =  h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
-localH2O =  h2o.init(nthreads=-1, port=54321, startH2O = FALSE)
+h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
 
+### upload een R data set naar h2o: iris voorbeeldje
+iris.h2o = as.h2o(iris)
+titanic.h2o = as.h2o(titanic::titanic_train) 
 
-### test iris voorbeeldje
-iris.hex <- as.h2o(iris)
-iris.dl <- h2o.deeplearning(x = 1:4, y = 5, training_frame = iris.hex)
-predictions <- h2o.predict(iris.dl, iris.hex)
+### Je kan ook direct text files inlezen in h20 met 
+h2o.importFile(path="C:\een file.txt", sep=",")
 
-
-
-### laad van locale files
-# HMEQT = h2o.importFile(path="D:/R/em_save_TRAIN.csv",sep=",")
-# HMEQV = h2o.importFile(path="D:/R/em_save_VALIDATE.csv",sep=",")
-
-
-## locale R set naar H20
-HMEQT = as.h2o(HMEQ_TRAIN, "HMEQT")
-HMEQV = as.h2o(HMEQ_VALID, "HMEQV")
-
+### welke files zijn er in h2o
 h2o.ls()
+```
 
-colnames(HMEQT)
 
+Er zijn diverse modellen die je kan trainen, we zullen hier een tweetal laten zien, neural netwerks en random forests
 
-### fit neural network model
+```{r}
+## model op titanic
 
-inp = colnames(HMEQT)[c(-1,-2)]
+## splits train en test
+
 NNmodel = h2o.deeplearning(
   x = inp,
   y = "BAD",
@@ -234,12 +236,20 @@ plot.roc(HMEQ_VALID$BAD, NEURAL.PERF$p1  , add=T, col="red")
 
 Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak ook steeds anders. Met `mlr` kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Deze zijn te beschrijven en uit te voeren in mlr.
 
-We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen. 
+We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen on een aantal modellen te benchmarken.
+
+* neuraal netwerk,
+* gradient boosting,
+* random forest
+* xgboost
+* decision tree,
+* logistic regression via glmnet
 
 
 
 ## specificeren van technieken en hun opties
 
+```{r}
 configureMlr(on.par.without.desc = "warn")
 
 n.importance = 30
@@ -268,8 +278,11 @@ parameters_xgboost = list(
   max.depth = 7
 )
 
-## Lijst van learners die je wilt testen
+```
 
+Maak nu een Lijst van learners die je wilt testen
+
+```{r}
 RF_Learner = makeLearner(
   "classif.ranger",
   predict.type = ptype,
@@ -321,33 +334,15 @@ learners = list(
   xgboost_Learner
 )
 
-## De data is, de inputs en de target
-
-######################################################################################################################
-##data is in ABT
-
-dim(ABT)
-ABT = ABT %>% select(-RtlId, -Age)
-
-# Churn indicator is in the factor column Targetf 
-summary(ABT$Target)
-#O     Y 
-#16276 12237 
-12237 / (16276 + 12237 )
-
-## fill in missing gender scores
-ABT$AgeScore[ is.na(ABT$AgeScore)] = mean(train$AgeScore)
-
-summary(ABT$AgeScore)
+```
 
 
-## Definieer de classificatie of regressie task 
+Specificeer de data, de inputs en de target,  de classificatie of regressie task 
 
-## wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven.
-## bij een binaie target met Y en N levels wordt nml standaard "N"gebruik (alfabetisch)
+Wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven. Bij een binaie target met Y en N levels wordt namelijk standaard "N"gebruik (alfabetisch)
 
+```{r}
 classify.task = makeClassifTask(id = "RTL_NIEUWSAPP_AGE", data = ABT, target = "Target", positive = "Y")
-#tmp =listLearners(classify.task)
 
 ## Overzicht van de taak en kolom informatie
 
@@ -355,11 +350,12 @@ print(classify.task)
 getTaskDescription(classify.task)
 summarizeColumns(classify.task)
 
+```
 
+variablen hard uitsluiten 
 
-## Variablen hard uitsluiten 
+```{r}
 
-# no vars to drop
 #classify.task = dropFeatures(classify.task, vars.to.drop )
 
 ## Weghalen van (bijna) constante variabelen 
@@ -368,16 +364,18 @@ summarizeColumns(classify.task)
 ## not done here
 #classify.task = removeConstantFeatures(classify.task, perc = 0)
 
+```
 
-## Zeldzame levels van factors samenvoegen 
+Zeldzame levels van factors samenvoegen. Het is gebruikelijk om zeldzame levels te verwijderen of te mergen
 
-## het is gebruikelijk om zeldzame levels te verwijderen of te mergen
-## not done here
+```{r}
 #classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
 #summarizeColumns(classify.task)
 
+```
 
 
+```{r}
 ## Feature selection 
 
 #fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared", "rf.importance"))
@@ -395,36 +393,33 @@ plotFilterValues(fv, n.show = 2*n.importance)
 # summarizeColumns(filtered.task)
 # getTaskNFeats(filtered.task)
 
-
+```
 
 
 ## Sample schema 
 
+
 uitleg.....
 
+```{r}
 #SampleStrageyHO = makeResampleDesc("Holdout", split=0.75)
 # SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
 N = dim(ABT)[1]
 SampleStrageyHO = makeFixedHoldoutInstance(tidx, testidx, N)
-
+```
 
 ## uitvoeren machine learning becnhamrk 
 
+```{r}
 br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
-# br2 = mlr::benchmark(learners, filtered.task, SampleStrageyCV, measures = list(mlr::mmce, mlr::auc, mlr::f1))
-
-# saveRDS(br1, paste0("br1", REFDATE, ".RDs"))
-# saveRDS(br2, paste0("br2", REFDATE, ".RDs"))
-
-#br1 = readRDS("br1.RDs")
-#br2 = readRDS("br2.RDs")
+br2 = mlr::benchmark(learners, filtered.task, SampleStrageyCV, measures = list(mlr::mmce, mlr::auc, mlr::f1))
 
 
 ## Vergelijking machine learning modellen
 
-# data.frame(br1) %>% arrange(desc(auc))
+data.frame(br1) %>% arrange(desc(auc))
 plotBMRSummary(br1, measure = mlr::auc)
-# plotBMRBoxplots(br2, measure = mlr::auc)
+plotBMRBoxplots(br2, measure = mlr::auc)
 
 
 #### ROC curves
@@ -443,10 +438,7 @@ for(i in 1:NModels)
 
 legend( 0.6,0.6, names(br1$results$RTL_NIEUWSAPP_AGE), col=1:NModels,lwd=2)
 title("RTL_NIEUWS_APP AGE MODEL")
-
-
-
-
+```
 
 <br>
 
