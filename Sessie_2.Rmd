@@ -1,5 +1,5 @@
 ---
-title: "Avond Sessie 02: Data preparation"
+title: "Avond Sessie 02: Data preparatie"
 subtitle: "Inleiding R"
 author: "Longhow Lam"
 output: 
