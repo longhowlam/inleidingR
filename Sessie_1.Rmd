@@ -64,8 +64,11 @@ Hieronder een paar simpele expressies in R om te beginnen
 1 + 1
 print("hello world")
 
+## assignment kan je = of <- gebruiken
 test = 9
 test
+
+test <- 3
 ```
 
 In R zijn namen van objecten *case-sensitive!*
@@ -591,72 +594,114 @@ tb1[,1]
 
 ## lists
 
-In R zijn lijsten de meest generieke data structuur, het kan beschouwd woorden als een verzanmeling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen teruggeeft in een lijst.
+In R zijn lijsten de meest generieke data structuur, het kan beschouwd woorden als een verzanmeling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen terug geeft in een lijst.
 
 ```{r, eval=FALSE}
+m2 = matrix(rnorm(100), ncol=10)
+mydf = mtcars
+
+## stop een paar objecten in een lijst
 l1 <- list( a = 1, b = 1:100, c = m2, d = mydf)
 
+## een lijst kan weer een lijst bevatten
 l2 <- list (zz = rnorm(100), pp = l1)
 
-l2[[2]]
+```
 
+Hoe krijg je dingen weer uit een lijst?
+
+```{r}
+## subscripts
+l2[[1]]
+l2[1]
 
 l2[[2]][[4]][[3]][5:9]
 
+## of bij naam
 l1$age[5:9]
 
-
 l1[[3]]
-
 
 l1$c[1,4]
 l1[[4]]$x2[3]
 
 ```
+Toevoegen extra componenten
+
+```{r}
+l1$PP = 1
+
+names(l1)
+l1[[6]] = 8
+
+## dit vult de lijst aan met componenten 7, 8 die NULL zijn
+l1[[9]] = 100
+l1
+```
+
 
 
 
 ##  functions in R
 
+We zullen hier heel kort functies in R behandelen. Een functie is ook een object zoals we diverse objecten al in R hebben. We kunnen zelf ook een functie schrijven.
+
 ```{r, eval=FALSE}
-# We kunnen zelf ook functiues schrijven 
 x = 1:10 
 y = 1:10
 
 # dit is geen functie....
 f1 <- x + y
 
-###########################
+```
 
-f1 <- function(x, y){
-  tmp = 2*y
-  tmp2 = 3*x
+Gebruik `function` om zelf een functie te schrijven
+
+```{r}
+f1 = function(x, y){
+  t1 = 2*y
+  t2 = 3*x
+  t1 + t2
+}
+
+## De laatste regel wordt geretourneerd
+f1(8,6)
+
+
+## ofl als je de functie eerder wilt verlaten met een waarde, gebruik return
+f2 = function(x){
   if (x < 0){
     return(1)
   }
   else
   {
-    return(tmp + tmp2)
+    return(0)
   }
 }
 
-f1
+f2
 
-f1(9,2)
+f2(-9)
 
 
-############################
-f2 = function(x)
+## a simple loop to calculate a sum
+
+f3 = function(x)
 {
-  out = numeric(length(x))
-  
-  for(i in 2:length(x)){
-    out[i] = (x[i-1] + x[i])/2
+  n = length(x)
+
+  out = 0  
+  for(i in 1:n)
+  {
+    out = out + x[i] 
   }
   return(out)
 }
 
-f2( 1:100)
+f3( 1:1000)
+
+# natuurlijk doen we gewoon
+sum(1:1000)
 
 ```
 
