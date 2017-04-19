@@ -726,7 +726,7 @@ Meestal wordt dit gebruikt om code leesbaarder te maken en we komen hier in avon
 
 
 
-# Importeren van data 
+# Importeren / exporteren van data 
 
 Als je met R werkt heb je natuurlijk data nodig, zoals we op bovenstaande manier data hebben gemaakt zal het in de praktijk niet gebeuren met echte data sets. Die leven in data bases of in files
 
@@ -766,6 +766,21 @@ sqlFetch(cn,"cars")
 # schrijf weg
 sqlSave(cn, RandomPersons)
 
+```
+
+
+## R Datasets
+
+Je kan R objecten (niet alleen data frames) weg schrijven met saveRDS, en deze kunnen weer ingelezen worden met readRDS
+
+```{r}
+x = rnorm(100)
+saveRDS(x, "data/x.RDs")
+
+rm(x)
+x = readRDS("data/x.RDs")
+
+GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 ```
 
 
