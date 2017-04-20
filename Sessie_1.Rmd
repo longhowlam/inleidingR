@@ -742,7 +742,14 @@ R heeft ook standaard functies voor het inzelzen van text files, maar ik gebruik
 
 
 ```{r, eval=FALSE, include=FALSE}
+### data met restaurants in Nederland
+Restaurants <- read_csv("data/Restaurants.csv")
 
+library(readxl)
+test = read_excel(
+  "data/test.xlsx",
+  range = "D8:F14"
+)
 ```
 
 ## Inlezen uit een data base

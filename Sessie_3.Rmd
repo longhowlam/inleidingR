@@ -110,7 +110,27 @@ ggplot(data = <DATA>) +
 
 ## geom_... functies
 
-Er zijn diverse geom_... functies, we zullen hieronder er een paar laten zien
+Er zijn diverse geom_... functies, we zullen hieronder er een paar laten zien. 
+
+Histogrammen zijn een handige manier om snel een indruk te krijgen van de verdeling van de data
+```{r}
+#### histogrammen
+p = ggplot(data = mpg, aes(displ)) 
+  
+p + geom_histogram()
+
+## er zijn diverse opties die je mee kunt geven
+p+ geom_histogram(
+  bins = 10,
+  col="red",
+  fill="green", 
+  alpha = .82
+) 
+  
+
+```
+
+Box plots kan je ook gebruiken om een indruk te krijgen van de verdeling van de data. Ze bevatten visueel wat minder detail dan histogrammen, maar je kan er makkelijk een aantal naast elkaar zijn.
 
 ```{r}
 ####  box plots
@@ -122,16 +142,7 @@ p
 
 ```
 
-```{r}
-#### histogrammen
-ggplot(data=mpg, aes(displ)) + 
-  geom_histogram( binwidth = 0.25, col="red", fill="green", alpha = .82) +
-  ggtitle("Mijn eerste ggplot2 histogram") + 
-  theme(plot.title = element_text(lineheight=.8, face="bold"))
-
 #### lijn grafieken
-
-```
 
 
 ```{r}
