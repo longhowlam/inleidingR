@@ -130,16 +130,27 @@ p+ geom_histogram(
 
 ```
 
-Box plots kan je ook gebruiken om een indruk te krijgen van de verdeling van de data. Ze bevatten visueel wat minder detail dan histogrammen, maar je kan er makkelijk een aantal naast elkaar zijn.
+Box plots kan je ook gebruiken om een indruk te krijgen van de verdeling van de data. Ze bevatten visueel wat minder detail dan histogrammen, maar je kan er makkelijk een aantal naast elkaar zijn. We gebruiken de `mpg` data set en kijken naar de verdeling van highwat miles per gallon (hwy) voor verschillende type autos.
 
 ```{r}
-####  box plots
-p = ggplot(mpg, aes(reorder(class, hwy, median), hwy, fill = factor(year))) 
+p = ggplot(mpg, aes(class, hwy)) + geom_boxplot()
 p
+```
 
-p = p + geom_boxplot()
-p
+Je kan ook groupeerde boxplots maken en de volgorde van de boxplots wijzijgen, bijvoorbeeld op aflopende mediaan.
 
+```{r}
+p = ggplot(
+  mpg,
+  aes(
+    reorder(
+      class,
+      hwy,
+      median
+    ),
+  hwy, 
+  fill = factor(year))) 
+p + geom_boxplot()
 ```
 
 #### lijn grafieken
