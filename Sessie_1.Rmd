@@ -80,14 +80,11 @@ X = 8
 getwd()
 ls()
 
-
 786 / (87 +87)
 
 pi / asin(1)
 
 exp(1) 
-
-ls()
 ```
 
 
@@ -163,7 +160,6 @@ levels(y3)
 levels(x3)
 
 # Dus let op het verschil tussen factors en characters!!!!
-
 ```
 
 ## double
@@ -191,7 +187,7 @@ typeof(x8)
 
 ## logical
 
-Als je in R een test uitvoert, dan is het resulaat van het type `logical`. We zagen al de functies `is.double` en `is.integer`.
+Als je in R een test uitvoert, dan is het resultaat van het type `logical`. We zagen al de functies `is.double` en `is.integer`.
 
 ```{r, eval=FALSE}
 x7 = TRUE
@@ -339,7 +335,7 @@ save.image()
 
 ---
 
-Data in R kan in verschillende vormen verschijnen, de zogenaamde data structures. We zullen hieronder een aantal basis structuren behandelen.
+Data in R kan in verschillende vormen verschijnen, de zogenaamde data structuren. We zullen hieronder een aantal basis structuren behandelen.
 
 
 ## vectors
@@ -425,8 +421,7 @@ max(y)
 summary(y)
 
 
-sum(xy < 0)
-
+sum(y < 0)
 ```
 
 
@@ -520,13 +515,23 @@ df1 = data.frame(
 
 # laat eerste 10 rijen zien
 head(df1,10)
+```
 
+De volgende functies kan je gebruiken om wat extra info van een data frame te laten zien.
+
+```{r}
 # laat de namen van de kolommen zien
 names(df1)
 
+# names kan je ook gebruiken om bestaande kolomnamen te wijzigen
+df2 = df1
+names(df2) = c("A", "B", "C", "D")
+
+# dimensie en classe
 dim(df1)
 class(df1)
 
+# De levels van kolom 'type' uit mydf
 levels(mydf$type)
 
 ### pas op met characters die worden standaard in data.frame naar factors omgezet
@@ -540,7 +545,6 @@ mydf
 class(mydf$type)
 
 ## Dit is ook in de Environment viewer te zien
-
 ```
 
 Je kan net als bij matrices subscripts gebruiken in data frame om bepaalde data uit een data.frame te halen
@@ -560,7 +564,7 @@ df1
 
 ## tibles
 
-In R zijn tibles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor
+In R zijn tibles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor
 
 Zie ook zijn boek en de website [tibles.](http://tibble.tidyverse.org/)
 
@@ -594,7 +598,7 @@ tb1[,1]
 
 ## lists
 
-In R zijn lijsten de meest generieke data structuur, het kan beschouwd woorden als een verzanmeling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen terug geeft in een lijst.
+In R zijn lijsten de meest generieke data structuur, het kan beschouwd woorden als een verzameling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen terug geeft in een lijst.
 
 ```{r, eval=FALSE}
 m2 = matrix(rnorm(100), ncol=10)
@@ -738,7 +742,7 @@ Er zijn een aantal packages die handig zijn om files in te lezen.
 * `haven` package voor files van SAS, SPSS, Stata
 * `readxl` voor Excel files
 
-R heeft ook standaard functies voor het inzelzen van text files, maar ik gebruik vaak `readr`, voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
+R heeft ook standaard functies voor het inzegen van text files, maar ik gebruik vaak `readr`, voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
 
 
 ```{r, eval=FALSE, include=FALSE}

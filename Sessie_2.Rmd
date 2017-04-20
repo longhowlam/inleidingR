@@ -42,6 +42,7 @@ Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / man
 
 ```{r, eval=FALSE, include=FALSE}
 library(tidyverse)
+
 ```
 
 
@@ -129,7 +130,7 @@ mutate_if()
 
 ## distinct rows
 
-Soms wil je data ontdubbelen, dit kan je in R doen met de functie distinct
+Soms wil je data ontdubbelen, dit kan je in R doen met de functie `distinct`
 
 ```{r}
 distinct( select(mtcars, carb, gear))
@@ -218,14 +219,14 @@ stocks <- data.frame(
 stocks
 ```
 
-Soms is het handig om data waarden in 1 kolom te hebben en een aprte variabele die de variabele weergeeft
+Soms is het handig om data waarden in 1 kolom te hebben en een aparte variabele die de variabele weergeeft
 
 ```{r}
 stocksm <- stocks %>% gather(stock, price, -time)
 stocksm
 ```
 
-en spread is het omgekeerde process
+en spread is het omgekeerde proces
 
 ```{r}
 stock2 = stocksm %>% spread(stock, price)
@@ -304,7 +305,77 @@ mutate
 
 ---
 
+In R kun je factor variabelen bewerken met functies uit het `forcats` package. We geven een aantal voorbeelden op random gegenereerde data
 
+```{r}
+library(forcats)
+
+x = rnorm(1000)
+y = sample(LETTERS[1:10], replace = TRUE, size = 1000, prob = (1:10)^2)
+
+test = tibble(gewicht = x, type = y)
+table(test$type)
+```
+
+Samenvoegen van levels: Op aantallen (Weinig voorkomende levels) of handmatig
+
+```{r}
+test = test %>% 
+  mutate(
+    z = fct_lump(type, n=5)
+  )
+
+table(test$z)
+
+test = test %>% 
+  mutate(
+    z2 = fct_other(type, keep = c("C","B")),
+    z3 = fct_other(type, drop = c("A","B"))
+  )
+
+table(test$z2)
+table(test$z3)
+
+
+```
+
+Hernoemen van factor levels
+
+```{r}
+test = test %>% 
+  mutate(
+    z2 = fct_recode(
+      type,
+      ZZ = "A",
+      ZZ = "B",
+      YY = "C", 
+      YY = "D"
+    ),
+    z3 = fct_collapse(
+      type,
+      missing = c("B", "C"),
+      other = "D",
+      rep = c("E", "F"),
+      ind = c("G","H"),
+      dem = c("I","J")
+    )
+  )
+table(test$z2)
+table(test$z3)
+```
+
+Herordenen van factor levels, factor levels kunnen een order bevatten, deze kan je maken of veranderen, kan soms nodig zijn bij plotten.
+
+```{r}
+test = test %>% 
+  mutate(
+    z2 = fct_reorder(type, gewicht, mean)
+  )
+table(test$type)
+table(test$z2)
+levels(test$type)
+levels(test$z2)
+```
 <br>
 
 # Dates in R
