@@ -42,7 +42,7 @@ Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / man
 
 ```{r, eval=FALSE, include=FALSE}
 library(tidyverse)
-
+library(lubridate)
 ```
 
 
@@ -153,7 +153,6 @@ ABT2 = ABT %>%
     LARGE, funs(. / sum)
   )
 
-
 ABT2
 ```
 
@@ -177,11 +176,15 @@ myset = mtcars %>%
 
 ## data sets filteren
 
+XXXXXXX
+
 ```{r, eval=FALSE, include=FALSE}
 ### data filteren met filter
 filter(mtcars, cyl == 8 & gear > 3)
 
 ```
+
+
 
 ## data sets aggregeren
 aggregeren met de functie group_by en summarise  deze gaan hand in hand samen
@@ -212,6 +215,10 @@ df3 = left_join(df1, df2, by = "x")
 
 
 ## joins
+
+XXXXXXX
+
+
 ```{r, eval=FALSE, include=FALSE}
 df1 = data.frame(col1 = c(1,2,3,4,5), tt = rnorm(5))
 df2 = data.frame(col2 = c(3,4,5,6,7), xx = rnorm(5))
@@ -430,18 +437,52 @@ levels(test$z2)
 ```
 <br>
 
+
 # Dates in R
 
 ---
 
-
-Voor datums in R zijn de packages `anydate` en `lubridate` heel handig.
+Voor datums (en tijden) in R zijn de packages `anydate` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken.
 
 ```{r}
+y = c("1973-09-12", "1980-05-23", "1981-12-09")
 
+testdata = tibble(DoB = y)
+
+testdata = testdata %>%
+  mutate(
+    GeboorteDatum = anytime::anydate(DoB)
+  )
+```
+
+De functie `anydate` parsed diverse character notatie naar een date kolom, de gaat meestal goed :-)
+
+```{r}
+y = c("1973/09/12", "05/23/1980", "23/05/1980","1981-12-09")
+
+testdata = tibble(DoB = y)
+
+testdata = testdata %>%
+  mutate(
+    GeboorteDatum = anytime::anydate(DoB)
+  )
+```
+
+Nu we een datum echt als date column in een data frame of tibble hebben kunnen we er mee rekenen.
+
+```{r}
+testdata = testdata %>%
+  mutate(
+    leeftijd = today() - GeboorteDatum,
+    leeftijd2 = as.numeric(today() - GeboorteDatum)/365,
+    dag = wday(GeboorteDatum, label=TRUE)
+  )
 
 
 ```
+
+
+
 
 
 
