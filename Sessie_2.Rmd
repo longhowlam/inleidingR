@@ -84,7 +84,7 @@ my.cars = mtcars %>% .[2:6]
 
 ## kolom maken of wijzigen met mutate
 
-We zagen al dat je kolommen kon wijzigen met `$` 
+We zagen al dat je kolommen in een data frame kon maken of wijzigen met `$` 
 
 ```{r}
 my.cars$kolom2  = rnorm(32)
@@ -106,7 +106,6 @@ mycars = mtcars %>%
 
 ```
 
-
 Je kan nieuwe kolommen maken die afhankelijk zijn van kolommen die je net in mutate maakt
 
 ```{r}
@@ -119,11 +118,43 @@ mycars = mtcars %>%
 
 ```
 
+Je kan ook zelf gemaakte functie gebruiken 
+
+```{r}
+normalize <- function(x){
+    return((x- mean(x))/(max(x)-min(x)))
+}
+
+mycars = mtcars %>%
+  mutate(
+    cyln = normalize(cyl)
+  )
+```
+
 Twee functies die ontzettend handig kunnen zijn: `mutate_at` en `mutate_if`
 
 ```{r}
-ABT = ABT %>% mutate_at(4:34, funs(. / ntotalclicks))
-mutate_if()
+ABT = data.frame(
+  matrix(round(100*runif(100)), ncol=10)
+)
+
+ABT = ABT %>% mutate(sum = rowSums(.[1:10]))
+
+## verander kolom 4 t/m 8, ze worden door sum gedeeld
+ABT2 = ABT %>% 
+  mutate_at(
+    4:8, funs(. / sum)
+  )
+
+## deel alleen door de sum als de kolom som groter is dan 500
+LARGE = function(x) {sum(x) > 500}
+ABT2 = ABT %>% 
+  mutate_if(
+    LARGE, funs(. / sum)
+  )
+
+
+ABT2
 ```
 
 
@@ -246,7 +277,7 @@ test2 = test %>% spread(V,price)
 <br>
 
 
-# stringr
+# Character data bewerken met stringr
 
 ---
 
@@ -254,49 +285,70 @@ Character data in R kan je bewerken/manipuleren met het `stringr` package. Voord
 
 ## Reguliere expressies
 
-Dit is een soort 'mini' taaltje om character patronen te formuleren
+Dit is een soort 'mini' taaltje om character patronen te specificeren om er vervolgens bijvoorbeeld op te zoeken. Eerst wat dummy character data.
 
 ```{r}
-test = c("dit is een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK")
+test = c("Mijn nummer is 06-12345678", "dit is .. een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK", "12345 Aabcde", "&yfy.")
 test
+```
 
-# Hoe haal je de goede postcodes er uit?
+Een paar voorbeelden van reguliere expressies.
 
+```{r}
+library(stringr)
 
-# zie ook help bij grep 
+## een digit, en precies 1 digit
+patroon = "\\d"
+str_extract(test, patroon)
+
+## 1 of meerdere digits
+patroon = "\\d+"
+str_extract(test, patroon)
+
+## precies twee letters
+patroon ="[[:alpha:]]{2}"
+str_extract(test, patroon)
+
+## Een postcode
+patroon = "\\d{4}\\s?[[:alpha:]]{2}"
+str_extract(test, patroon)
+
+## Maar een postcode begint niet met een 0
+patroon = "[1-9]\\d{3}\\s?[[:alpha:]]{2}"
+str_extract(test, patroon)
+
+## special punctuation characters !"#$%&’()*+,-./:;<=>?@[]^_`{|}~
+patroon = "[[:punct:]]"
+str_extract(test, patroon)
+
 ```
 
 Sommige mensen zijn de wildcard notatie gewend om te zoeken in strings, deze wildcard notatie kan je vertalen naar reguliere expressies met `glob2rx`. Een paar voorbeelden zullen hieronder geven. 
 
 ```{r}
-glob2rx()
+patroon = glob2rx("*23*")
+str_extract(test, patroon)
 ```
 
 Voor een cheatsheet over reguliere expressies zie [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf)
 
 ## functies uit het package stringr
 
-
-str_locate
-str_locate_all
-
-str_sub
-str_length
-
-str_match
-
-str_detect
-str_trim
-
-str_replace
-str_repalce_all
-str_tolower
+In het package stringr zijn diverse functies om met characters te werken, een aantal zullen we laten zien
 
 ```{r}
-
-titanic::titanic_train
+testset = titanic::titanic_train %>% select(Name)
 ## maak extra kolom aan in titanic die namen zoekt
-mutate
+testset = testset %>%
+  mutate(
+    naamlengte = str_length(Name),
+    Ownes = str_detect(Name, 'Owen'),
+    Plek = str_locate(testset$Name, "Mr") %>% .[,1],
+    Name2 = str_replace(Name, "Mr", "")
+  )
+
+str_locate(testset$Name, "Mr")
+
 ```
 
 <br>
