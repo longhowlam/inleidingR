@@ -19,6 +19,9 @@
 
 library(readr)
 
+
+X = c("abd 07-456", "blab la (06)-123.45678", "hoi 06 12 1234 78", "mijn nr 0689452312")
+
 Restaurants = read_csv("data/Restaurants.csv")
 
 

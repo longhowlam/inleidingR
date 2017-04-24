@@ -659,7 +659,7 @@ f1 <- x + y
 
 ```
 
-Gebruik `function` om zelf een functie te schrijven
+Gebruik `function` om zelf een functie te schrijven. Twee simpele voorbeelden:
 
 ```{r}
 f1 = function(x, y){
@@ -671,8 +671,12 @@ f1 = function(x, y){
 ## De laatste regel wordt geretourneerd
 f1(8,6)
 
+```
 
-## ofl als je de functie eerder wilt verlaten met een waarde, gebruik return
+
+Als je de functie eerder wilt verlaten met een waarde, gebruik dan `return` in de functie.
+
+```{r}
 f2 = function(x){
   if (x < 0){
     return(1)
