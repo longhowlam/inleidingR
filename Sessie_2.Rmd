@@ -234,6 +234,18 @@ full_join(df1, df2, by = c("col1" = "col2"))
 
 <br>
 
+## data frames stapelen of plakken
+
+Soms wil je ....pppppppp
+
+```{r}
+bind_rows
+
+bind_columns
+
+```
+
+
 # tidy data en wide data
 
 ---
