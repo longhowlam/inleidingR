@@ -293,6 +293,12 @@ test = data.frame(
 test2 = test %>% spread(V,price)
 ```
 
+Een handige functie in tidyr is `separate`, dit kan je gebruiken om een kolom uit elkaar te trekken.
+
+```{r}
+
+
+```
 <br>
 
 
