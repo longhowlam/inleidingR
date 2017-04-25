@@ -176,15 +176,39 @@ myset = mtcars %>%
 
 ## data sets filteren
 
-XXXXXXX
+Met `filter` en `slice` kan je rijen uit een data frame halen. 
 
 ```{r, eval=FALSE, include=FALSE}
-### data filteren met filter
-filter(mtcars, cyl == 8 & gear > 3)
+filter(
+  mtcars, 
+  cyl == 8 & gear > 3
+)
+
+## meerdere filter expressie bekenen EN
+
+filter(
+  mtcars, 
+  cyl == 8,
+  gear > 3
+)
+
+## als je of wilt moet je | gebruiken
+
+filter(
+  mtcars, 
+  cyl == 8 | gear > 3
+)
+
 
 ```
 
+Met `slice` kan je op basis van row numbers data selecteren
 
+```{r}
+
+slice(mtcars, 1:8)
+slice(mtcars, 8:n())
+```
 
 ## data sets aggregeren
 aggregeren met de functie group_by en summarise  deze gaan hand in hand samen
