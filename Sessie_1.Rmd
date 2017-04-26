@@ -225,11 +225,9 @@ TRUE | FALSE    # OR
 TRUE + TRUE
 FALSE + FALSE + TRUE
 
-
 ### What the F...
 
 0.1 + 0.2 == 0.3
-
 
 1 + 2 == 3
 x = 0.3
@@ -267,7 +265,6 @@ sum(!is.na(x4))
 x4 < 4
 
 is.na(x4)
-
 ```
 
 
@@ -299,7 +296,6 @@ iris = 9
 
 ## wat zit er nu in iris en is mijn oude iris niet weg??
 iris
-
 ```
 
 Het weghalen van objecten
@@ -316,7 +312,6 @@ rm(iris)
 datasets::iris
 
 rm(iris)
-
 
 ########   bewaren van objecten en work directory
 x = 45
@@ -354,7 +349,6 @@ x2 = c(2L, 3)
 typeof(x2)
 
 x3 = c("p", 2)
-
 ```
 
 Er zijn diverse functies in R die je kan gebruiken om vectoren te genereren zonder alle elementen een voor een in te typen :-)
@@ -379,7 +373,6 @@ y = 3 * x3 + 8
 
 ## en wat is dit???
 y = x4 + 8
-
 
 x4 = rep(1:6, 7)
 x4 = rep(x4,8)
@@ -420,7 +413,6 @@ sd(y)
 max(y)
 summary(y)
 
-
 sum(y < 0)
 ```
 
@@ -444,10 +436,9 @@ z = 11:20
 
 m3 = cbind(x,y,z)
 m4 = rbind(x,y,z)
-
 ```
 
-Net als vectoren kan je elementen in een matrix benaderen met subscripts
+Net als vectoren kan je elementen in een matrix benaderen met subscripts, hieronder volgen een aantal voorbeelden.
 
 ```{r, eval = FALSE} 
 m2[1,5]
@@ -457,7 +448,6 @@ m2[  4:10,    3:5]
 m2[5,]
 
 m2[ ,5]
-
 ```
 
 Matrix berekeningen
@@ -492,7 +482,6 @@ m[1,4,  ]
 
 m[,4,]
 class(m)
-
 ```
 
 
@@ -538,7 +527,6 @@ levels(mydf$type)
 x4
 class(x4)
 class(df1$type)
-
 
 mydf = data.frame(kolomnaampj1 = x1, income = x2, age=x3, type = x4, stringsAsFactors = FALSE)
 mydf
@@ -609,7 +597,6 @@ l1 <- list( a = 1, b = 1:100, c = m2, d = mydf)
 
 ## een lijst kan weer een lijst bevatten
 l2 <- list (zz = rnorm(100), pp = l1)
-
 ```
 
 Hoe krijg je dingen weer uit een lijst?
@@ -628,7 +615,6 @@ l1[[3]]
 
 l1$c[1,4]
 l1[[4]]$x2[3]
-
 ```
 Toevoegen extra componenten
 
@@ -656,7 +642,6 @@ y = 1:10
 
 # dit is geen functie....
 f1 <- x + y
-
 ```
 
 Gebruik `function` om zelf een functie te schrijven. Twee simpele voorbeelden:
@@ -670,7 +655,6 @@ f1 = function(x, y){
 
 ## De laatste regel wordt geretourneerd
 f1(8,6)
-
 ```
 
 
@@ -688,9 +672,7 @@ f2 = function(x){
 }
 
 f2
-
 f2(-9)
-
 
 ## a simple loop to calculate a sum
 
@@ -710,7 +692,6 @@ f3( 1:1000)
 
 # natuurlijk doen we gewoon
 sum(1:1000)
-
 ```
 
 
@@ -732,9 +713,12 @@ tan(cos(sin(0.33)))
 
 Meestal wordt dit gebruikt om code leesbaarder te maken en we komen hier in avond sessie 2 verder op terug.
 
+<br>
 
 
 # Importeren / exporteren van data 
+
+---
 
 Als je met R werkt heb je natuurlijk data nodig, zoals we op bovenstaande manier data hebben gemaakt zal het in de praktijk niet gebeuren met echte data sets. Die leven in data bases of in files
 
@@ -780,7 +764,6 @@ sqlFetch(cn,"cars")
 
 # schrijf weg
 sqlSave(cn, RandomPersons)
-
 ```
 
 
