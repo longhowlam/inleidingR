@@ -9,8 +9,9 @@
 
 
 #### Avond sessie 2 ###########################################################
+library(readr)
 
-
+Restaurants = read_csv("data/Restaurants.csv")
 
 
 

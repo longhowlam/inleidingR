@@ -35,10 +35,13 @@ library(mlr)
 ---
 
 In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie. 
-Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kaan proberen op een data set.
+Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kan proberen op een data set.
 
 
 ## lineare regressie 
+
+We beginnen met lineare regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars.
+
 ```{r}
 mtcars
 modelout = lm(  hp ~ wt    , data = mtcars)
@@ -61,7 +64,6 @@ plot(modelout)
 ### formula objects
 
 ```{r}
-
 names(mtcars)
 
 f1 <- hp ~ wt + carb + vs
@@ -86,16 +88,33 @@ anova(m1,m3,m2)
 
 ## splitsen  train test
 
+Het is gebruikelijk om een data set random te splitsen in een train en test set. Op de train set wordt een predictive model getraind. En het model dat we getraind hebben testen we op de test set.
+
 ```{r}
+perc = 0.80
+N = dim(titanic::titanic_train)[1]
+
+train = sample(1:N, size = floor(perc*N))
+
+TTrain = titanic_train[train,]
+TTest = titanic_train[-train,]
 
 ```
 
 
 ## logistic regression
 
+Een logistic regression is een van de simpele predictive modellen om mee te beginnen als je classificatie wilt doen. we gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set om een model te fitten.
 
+```{r}
+
+
+```
 
 ## decision tree
+
+Een decision tree genereert op basis van een algoritme regels die je kan gebruiken om te classificeren. 
+
 ```{r}
 
 titanic_train
@@ -114,6 +133,8 @@ fancyRpartPlot(tree.out)
 
 
 ## random forest met ranger
+
+Ee random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende bomen.
 
 ```{r}
 

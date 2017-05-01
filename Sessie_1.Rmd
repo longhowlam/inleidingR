@@ -730,13 +730,14 @@ Er zijn een aantal packages die handig zijn om files in te lezen.
 * `haven` package voor files van SAS, SPSS, Stata
 * `readxl` voor Excel files
 
-R heeft ook standaard functies voor het inzegen van text files, maar ik gebruik vaak `readr`, voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
+R heeft ook standaard functies voor het inzegen van text files, maar ik gebruik vaak de functies uit het package `readr`. Voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
 
 
 ```{r, eval=FALSE, include=FALSE}
 ### data met restaurants in Nederland
 Restaurants <- read_csv("data/Restaurants.csv")
 
+### Excel files inlezen
 library(readxl)
 test = read_excel(
   "data/test.xlsx",
@@ -782,4 +783,30 @@ GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 ```
 
 
+# Nog iets over geheugen gebruik
+
+R verwerkt alles in het geheugen. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
+
+```{r}
+library(pryr)
+
+### hoeveelgeheugen kost een object met 1 miljoen getallen
+x = rnorm(1e6)
+object_size(x)
+
+### hoeveel geheugen hebben we in totaal verbruikt
+mem_used()
+
+### verandering van geheugen
+mem_change(
+  y <- rnorm(1e7)
+)
+mem_used()
+
+
+### verwijder een object
+rm(y)
+mem_used()
+
+```
 

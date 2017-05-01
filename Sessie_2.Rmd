@@ -244,8 +244,13 @@ Met dplyr kun je makkelijk tabellen joinen. Er zijn verschillende joins die onde
 
 
 ```{r, eval=FALSE, include=FALSE}
-df1 = data.frame(col1 = c(1,2,3,4,5), tt = rnorm(5))
-df2 = data.frame(col1 = c(3,4,5,6,7), xx = rnorm(5), zz = runif(5))
+### maak twee data frames aan
+df1 = data.frame(
+  col1 = c(1,2,3,4,5), tt = rnorm(5)
+)
+df2 = data.frame(
+  col1 = c(3,4,5,6,7), xx = rnorm(5), zz = runif(5)
+)
 
 ## selecteer rijen die zowel in df1 en df2 zitten 
 df3 = inner_join(df1, df2, by = c("col1" = "col1"))
@@ -271,9 +276,26 @@ full_join(df1, df2, by = c("col1" = "col1"))
 Soms wil je twee tabellen op elkaar stappelen tot een nieuwe tabel, dat kan je doen met `bind_rows`. Als je twee tabellen naast elkaar wilt zetten tot een nieuwe tabel, gebruik dan `bind_rows`.
 
 ```{r}
-bind_rows
+## bind_rows
+A = data.frame(x=1:5, y = rnorm(5))
+B = data.frame(x=11:15, y = rnorm(5))
+C = bind_rows(A,B)
 
-bind_columns
+## kolommen die niet in een van de data frames zitten worden aangevuld
+E = data.frame(x=21:25, y = rnorm(5), z = rnorm(5))
+
+bind_rows(A,E)
+```
+
+```{r}
+A = data.frame(x=1:5, y = rnorm(5))
+B = data.frame(q=11:15, q = rnorm(5))
+bind_cols(A,B)
+
+## als een van de data frames meer rijen heeft, dan wordt er NIET aangevuld
+A = data.frame(x=1:5, y = rnorm(5))
+B = data.frame(q=11:17, q = rnorm(7))
+bind_cols(A,B)
 
 ```
 
@@ -325,10 +347,19 @@ test = data.frame(
 test2 = test %>% spread(V,price)
 ```
 
-Een handige functie in tidyr is `separate`, dit kan je gebruiken om een kolom uit elkaar te trekken.
+Een handige functie in tidyr is `separate`, dit kan je gebruiken om een kolom uit elkaar te trekken. Standaard worden niet alpha numerieke tekens als separator gebruikt.
 
 ```{r}
+df = tibble(x = c("A.B", "C.P", "P.Q"))
+df %>% separate(x, c("Kol1", "Kol2"))
 
+## Er kunnen tw weinig of teveel kolommen zijn.
+df = tibble(x = c("A.B", "C.P", "P.Q", "pp", "P.2.4"))
+df %>% separate(x, c("Kol1", "Kol2"))
+
+
+df = tibble(x = c("A.B", "C.P", "P.Q", "pp", "P.2.4"))
+df %>% separate(x, c("Kol1", "Kol2", "Kol3"))
 
 ```
 <br>
@@ -527,8 +558,6 @@ testdata = testdata %>%
     leeftijd2 = as.numeric(today() - GeboorteDatum)/365,
     dag = wday(GeboorteDatum, label=TRUE)
   )
-
-
 ```
 
 

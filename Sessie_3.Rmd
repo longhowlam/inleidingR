@@ -61,9 +61,6 @@ hist(x1)
 ## teksten op een plaatje 
 plot(x,y)
 text(x,y,"pp")
-
-
-
 ```
 
 
@@ -126,8 +123,6 @@ p+ geom_histogram(
   fill="green", 
   alpha = .82
 ) 
-  
-
 ```
 
 Box plots kan je ook gebruiken om een indruk te krijgen van de verdeling van de data. Ze bevatten visueel wat minder detail dan histogrammen, maar je kan er makkelijk een aantal naast elkaar zijn. We gebruiken de `mpg` data set en kijken naar de verdeling van highwat miles per gallon (hwy) voor verschillende type autos.
@@ -231,7 +226,6 @@ multiplot(plotlist = plots, layout = layout)
 
 
 
-
 ## assen en titels
 
 ```{r}
@@ -325,7 +319,10 @@ m2 = m2 %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addMarkers(lng = ~LONGs, lat = ~LATs, popup = ptekst)
 m2  
+```
 
+
+```{r}
 
 ######## kleurtjes op een kaart
 reds = colorNumeric("Reds", domain = NULL)
@@ -344,9 +341,9 @@ m2
 
 
 
-## visnetwork
+## Netwerk grafieken, visnetwork
 
-visnetwork kan worden gebruikt voor interactieve netwerk grafieken
+Het package `visnetwork` kan worden gebruikt voor interactieve netwerk grafieken
 
 ```{r}
 library(visNetwork)
