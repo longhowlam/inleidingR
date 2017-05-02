@@ -20,6 +20,7 @@ output:
 library(stringr)
 library(dplyr)
 library(ggplot2)
+library(readr)
 ```
 
 
@@ -148,26 +149,106 @@ p = ggplot(
 p + geom_boxplot()
 ```
 
-#### lijn grafieken
+## lijn grafieken
 
+Lijn grafieken zijn handig om tijdreeksen te visualiseren
 
 ```{r}
-#### bar plots
+df = data.frame(x=1:100, y=rnorm(100))
 
-####
+p = ggplot(
+  df, 
+  aes(x=x,y=y)
+  )
+
+p + geom_line()
+p + geom_line(color="blue", size = 2)
+```
+
+When the x values are dates ggplot will take care of it!
+
+```{r}
+df = data.frame(
+  x = anytime::anydate("2017-01-01") + 1:100,
+  y = rnorm(100)
+)
+
+p = ggplot(
+  df, 
+  aes(x=x,y=y)
+  )
+
+p + geom_line()
 
 ```
 
+## bar plots
+
+bar plots zijn handig om aantallen te visualiseren.
+
+```{r, fig.width=10, fig.height=8}
+restaurants = read_csv("data/Restaurants.csv")
+
+restaurants %>%
+  group_by(keuken) %>%
+  summarise(n=n()) %>%
+  arrange(desc(n)) %>% 
+  filter(!is.na(keuken)) %>%
+  slice(1:10) %>%
+  ggplot(aes(x=keuken)) + 
+  geom_bar(aes(weight=n))
+
+```
+
+## geom_bin2d
+
+Heatmaps of 2d bin plots kunnen handig zijn dense scatterplots wat inzichtelijker te maken
+
 ```{r}
-geom_bin2d
+df = data.frame(x=rnorm(100000), y=rnorm(100000))
+
+ggplot(df, aes(x=x,y=y)) + geom_point()
+
+ggplot(df, aes(x=x,y=y)) + geom_bin2d()
 ```
 
 
 
 ## facets in ggplot
-Met 'facets` kan je een matrix van plots maken. Een hele simpele is bijvoorbeeld als je apart een histogram voor mannen en vrouwen wilt maken en dat naast of onder elkaar in een plot. Er zijn twee functies in ggplot2 die dit ondersteunen, `facet_grid` en `facet_wrap`
+Met `facets` kan je een matrix van plots maken. Een simpel voorbeeld is als je apart een histogram voor mannen en vrouwen wilt maken en dat naast elkaar of onder elkaar in een plot wilt zetten. Er zijn twee functies in ggplot2 die dit ondersteunen, `facet_grid` en `facet_wrap`
 
+```{r}
+## ik zie niks....
+restaurants %>%
+  ggplot(
+    aes(x=aantalreviews)
+  ) +
+  geom_histogram() + 
+facet_wrap(~keuken)
 
+top10 = restaurants %>%
+  group_by(keuken) %>%
+  summarise(n=n()) %>%
+  arrange(desc(n)) %>% 
+  filter(!is.na(keuken)) %>%
+  slice(1:10)
+
+restaurants %>%
+  inner_join(top10) %>%
+  ggplot(
+    aes(x=aantalreviews)
+  ) + 
+  geom_histogram() + facet_wrap(~keuken, ncol = 5)
+```
+```{r}
+
+restaurants %>% filter(prijs < 100) %>%
+  inner_join(top10) %>%
+  ggplot(
+    aes(x=aantalreviews, y = prijs)
+  ) + 
+  geom_point() + facet_wrap(~keuken, ncol = 5)
+```
 
 ## grids
 Met grids kun je verschillende ggplots in een plaatje krijgen. We hebben een helper functie (`multiplot`) nodig:
@@ -226,7 +307,9 @@ multiplot(plotlist = plots, layout = layout)
 
 
 
-## assen en titels
+## Assen en titels
+
+Het is vaak nodig om assen en titels aan te passen. We geven hieronder een paar voorbeelden.
 
 ```{r}
 ggplot2::scale_x_continuous()
@@ -234,11 +317,25 @@ ggplot2::ggtitle()
 
 ```
 
-## themes
+We zagen net al dat je met ggplot tijdreeksen kon plotten op baseis van date data. Gebruik `scale_x_date` om de as aan te passen.
 
 ```{r}
-theme(plot.title = element_text(lineheight=.8, face="bold"))
+df = data.frame(
+  x = anytime::anydate("2017-01-01") + 1:100,
+  y = rnorm(100)
+)
+
+p = ggplot(
+  df, 
+  aes(x=x,y=y)
+  )
+
+p + geom_line() + scale_x_date(date_breaks = "1 week")
+p + geom_line() + scale_x_date(date_breaks = "1 week", date_labels = "%d-%m")
+
 ```
+
+
 
 
 
@@ -249,6 +346,7 @@ Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht va
 # Interactive grafieken
 
 ---
+Naast de statistsiche grafieken die we hierboven hebben gemaakt kan ke in R ook interactieve grafieken maken. We geven in deze sectie een aantal voorbeelden.
 
 ## ggvis, vergelijkbaar met ggplot
 
@@ -282,6 +380,8 @@ mtcars %>%
 
 
 ## ploty
+
+Plotly is een mooie library voor het maken van interactive visualisaties. Zie voor meer info [plotly](https://plot.ly/r/)
 
 ### scatters
 
