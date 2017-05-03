@@ -24,7 +24,6 @@ library(readr)
 ```
 
 
-
 # Inleiding 
 
 ---
@@ -312,9 +311,20 @@ multiplot(plotlist = plots, layout = layout)
 Het is vaak nodig om assen en titels aan te passen. We geven hieronder een paar voorbeelden.
 
 ```{r}
-ggplot2::scale_x_continuous()
-ggplot2::ggtitle()
+## maak eerst een plot
+p = ggplot(mtcars, aes(x=hp, y=cyl)) + geom_point()
+p
 
+
+p + scale_x_continuous("Dit is de HP")
+p + ggtitle(" HP versus Cylinder")
+p + scale_x_continuous("Dit is de HP", breaks = 50 + 20*1:10)
+
+# log schale as
+df = data.frame(x = exp(3*rnorm(100)), y = rnorm(100))
+ggplot(df, aes(x,y)) + geom_point()
+
+ggplot(df, aes(x,y)) + geom_point()+ scale_x_log10()
 ```
 
 We zagen net al dat je met ggplot tijdreeksen kon plotten op baseis van date data. Gebruik `scale_x_date` om de as aan te passen.
@@ -334,10 +344,6 @@ p + geom_line() + scale_x_date(date_breaks = "1 week")
 p + geom_line() + scale_x_date(date_breaks = "1 week", date_labels = "%d-%m")
 
 ```
-
-
-
-
 
 Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht van de verschillende mogelijkheden en kan je vinden op [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
 
@@ -393,7 +399,7 @@ Plotly is een mooie library voor het maken van interactive visualisaties. Zie vo
 
 ## leaflet
 
-Leaflets worden gebruikt om interactieve kaartjes te maken
+Leaflets worden gebruikt om interactieve kaartjes te maken. Ze gebruiken open street maps.
 
 ```{r}
 library(leaflet)
@@ -403,16 +409,17 @@ m <- leaflet() %>%
   addMarkers(lng=174.768, lat=-36.852, popup = "The birthplace of R")
 m  
 
-# kan geblokt worden door fire walls. ik ga even naar mijn R studio op mijn VPS
+# kan geblokt worden door fire walls.
 ```
 
-restaurant data van Iens gescraped
+Plot de restaurants in Zwolle op een kaartje. Data van Iens gescraped.
 
 ```{r}
 Restaurants <- readr::read_csv("data/Restaurants.csv")
 Zwolle = Restaurants %>% filter(plaats == "Zwolle")
-ptekst = paste(Zwolle$restNamen, '<BR>', Zwolle$aantalreviews)
-ptekst = iconv(ptekst, "ISO_8859-2", "UTF-8")
+
+## tooltip teksten kunnen geplaatst worden
+ptekst = paste(Zwolle$restNamen, '<BR> aantal reviews: ', Zwolle$aantalreviews)
 
 m2 = leaflet(data = Zwolle)
 m2 = m2 %>%
@@ -421,20 +428,18 @@ m2 = m2 %>%
 m2  
 ```
 
+Je kan kleurtje gebruiken, gebruik dan `addCirclemarkers`
 
 ```{r}
-
-######## kleurtjes op een kaart
 reds = colorNumeric("Reds", domain = NULL)
 
 Zwolle = Zwolle %>% filter(!is.na(aantalreviews), aantalreviews < 80)
-ptekst = paste(Zwolle$restNamen, '<BR>', Zwolle$aantalreviews)
-ptekst = iconv(ptekst, "ISO_8859-2", "UTF-8")
+ptekst = paste(Zwolle$restNamen, '<BR> aantal reviews: ', Zwolle$aantalreviews)
 
 m2 = leaflet(data = Zwolle)
 m2 = m2 %>%
   addTiles() %>%
-  addCircleMarkers(lng = ~LONGs, lat = ~LATs, color = ~reds(aantalreviews), fillOpacity = 1, popup = ptekst)
+  addCircleMarkers(lng = ~LONGs, lat = ~LATs, fillColor = ~reds(aantalreviews), fillOpacity = 1, popup = ptekst)
 m2
 
 ```
@@ -443,25 +448,26 @@ m2
 
 ## Netwerk grafieken, visnetwork
 
-Het package `visnetwork` kan worden gebruikt voor interactieve netwerk grafieken
+Het package `visnetwork` kan worden gebruikt om interactieve netwerk grafieken te maken. Je hebt twee data frames nodig, een met de nodes en een met de edges. Laten we beginnen met een simpel voorbeeldje.
 
 ```{r}
 library(visNetwork)
 
-### twee data sets nodig voor visNetwork
-# nodes met id kolom
-
-nodes = data.frame(id = c(1,2,3,4))
-
-# edges met from to kolommen
-
-edges = data.frame(from = c(1,3,4), to  = c(2,2,2))
+nodes = data.frame(
+  id = c(1,2,3,4)
+)
+edges = data.frame(
+  from = c(1,3,4), 
+  to  = c(2,2,2)
+)
 
 visNetwork(nodes, edges)
+```
 
 
-### veel opties nog in de data sets mee tegeven
+Er zijn diverse opties die je kan meegeven. Een deel van de opties kan je via de data frames meegeven.
 
+```{r}
 nodes <- data.frame(
   id = 1:10,
   label = paste("Node", 1:10),                                   # labels
@@ -485,7 +491,7 @@ visNetwork(nodes, edges)
 ```
 
 
-Er zijn diverse opties binnen visnetwork. Bijvoorbeeld highlight nearest
+Andere opties kan je via de functie `visnetwork` meegeven. Bijvoorbeeld highlight nearest
 
 ```{r}
 nodes <- data.frame(id = 1:15, label = paste("Label", 1:15),
@@ -499,26 +505,29 @@ visNetwork(nodes, edges) %>% visOptions(highlightNearest = TRUE, nodesIdSelectio
 
 ```
 
-Nog een netwerk voorbeeldje van restaurant bezoekers in Hoorn. Restaurant reviews netwerk in het stadje Hoorn.  Vereist wat data gewroet.... maar dat is vaak zo :-)
+Nog een netwerk voorbeeldje van restaurant bezoekers in het mooie stadje Hoorn. Vereist wat data gewroet.... maar dat is vaak zo :-)
 
 Lees eerst link data in.
 ```{r}
 RestaurantLinks <- readRDS("data/RestaurantLinks.RDs")
 
 ## bevat vanuit iens.nl per regel een restaurant link.
-## als 5 reviewers van A bezocht heeft en ook B dan staat er A  B  5
-head(RestaurantLinks)
-head(Restaurants)
+## als 5 reviewers van restaurant A ook restaurant B gerievewd hebben: dan staat er A  B  5
+
+head(RestaurantLinks[,c(1,4,7)], n=10)
+
 ```
 
 Focus nu alleen op het mooie stadje Hoorn
 
 ```{r}
-strf = "hoorn"
+stadje = "hoorn"
 
 ### Filter hoorn er uit in de links en in de restaurant set
-fil1 = RestaurantLinks$IensLink %>% str_detect(strf)
-fil2 = RestaurantLinks$IensLink1 %>% str_detect(strf)
+fil1 = RestaurantLinks$IensLink %>% 
+  str_detect(stadje)
+fil2 = RestaurantLinks$IensLink1 %>% 
+  str_detect(stadje)
 
 Hoorn  = filter(RestaurantLinks, fil1 & fil2  )
 
@@ -537,28 +546,34 @@ head(HoornRes)
 destileer de unieke nodes en edges uit de data en plot de netwerkgrafiek
 
 ```{r}
-tmp = data.frame(restNamen = unique( c(unique(Hoorn$RestaurantNaam), unique(Hoorn$RestaurantNaam1))))
+tmp  = data.frame(restNamen = unique( c(unique(Hoorn$RestaurantNaam), unique(Hoorn$RestaurantNaam1))))
 tmp2 = left_join (tmp, HoornRes, by="restNamen") %>% filter( !is.na(restNamen))
 
 Hoornnodes = data.frame(
   id    = tmp2$restNamen,
   label = tmp2$restNamen,
   title = tmp2$restNamen,
-  group = tmp2$keuken)
-
+  group = tmp2$keuken
+)
 
 HoornEdges = data.frame(
   from  = Hoorn$RestaurantNaam,
   to    = Hoorn$RestaurantNaam1, 
-  value = Hoorn$COUNT_of_IensLink1)  
+  value = Hoorn$COUNT_of_IensLink1
+)  
 
 #### zet bezoekers van restaurant A naar restaurant A op 1
 HoornEdges$value [Hoorn$RestaurantNaam == Hoorn$RestaurantNaam1] = 1
 
 visNetwork(Hoornnodes, HoornEdges) %>% 
   visLegend() %>%
-  visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
-  visInteraction(navigationButtons = TRUE) %>%
+  visOptions(
+    highlightNearest = TRUE, 
+    nodesIdSelection = TRUE
+  ) %>%
+  visInteraction(
+    navigationButtons = TRUE
+  ) %>%
   visPhysics( maxVelocity = 25)
 
 ```
