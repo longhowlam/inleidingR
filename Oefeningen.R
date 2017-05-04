@@ -3,6 +3,10 @@
 ###   Oefeningen Inleiding R cursus
 
 
+### libraries die je nodig hebt
+library(readr)
+library(tidyve)
+
 #### Avond sessie 1 ###########################################################
 
 
@@ -13,6 +17,8 @@ library(readr)
 
 Restaurants = read_csv("data/Restaurants.csv")
 postcode = readRDS("data/postocdes_NL.RDs")
+
+
 
 #### Avond sessie 3 ###########################################################
 
