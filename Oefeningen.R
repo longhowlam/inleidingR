@@ -12,9 +12,7 @@
 library(readr)
 
 Restaurants = read_csv("data/Restaurants.csv")
-
-
-
+postcode = readRDS("data/postocdes_NL.RDs")
 
 #### Avond sessie 3 ###########################################################
 
