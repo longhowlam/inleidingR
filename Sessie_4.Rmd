@@ -177,7 +177,7 @@ param = list(
   eval_metric = 'auc'
 )
 
-xgboost.out = xgboost(params=param, sparse_matrix, label = TTrain$Survived, nrounds = 10)
+xgboost.out = xgboost(params=param, Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
 ```
 
 
@@ -208,8 +208,9 @@ hist(pred_ranger$predictions)
 En voor xgboost moet je ook de test set als matrix veranderen
 
 ```{r}
-
-
+Titan_Testmatrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTest)
+pred_xgboost = predict(xgboost.out, newdata = Titan_Testmatrix)
+hist(pred_xgboost)
 ```
 
 
