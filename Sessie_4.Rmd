@@ -26,6 +26,7 @@ library(ROCR)
 library(titanic)
 library(rattle)
 library(mlr)
+library(dplyr)
 ```
 
 
@@ -138,7 +139,7 @@ text(tree.out, use.n = TRUE)
 fancyRpartPlot(tree.out)
 
 ### larger trees with complexity parameter
-tree.out = rpart(Survived ~ Sex + Age, data = titanic_train, control = list(cp=0.005))
+tree.out = rpart(Survived ~ Sex + Age +Pclass, data = titanic_train, control = list(cp=0.005))
 fancyRpartPlot(tree.out)
 
 ```
@@ -149,7 +150,7 @@ fancyRpartPlot(tree.out)
 Ee random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende bomen.
 
 ```{r}
-ranger.out = ranger( Survived ~ Sex + Age +Pclass, data = TTrain)
+ranger.out = ranger( Survived ~ Sex + Age + Pclass, data = TTrain)
 
 ### er zijn missende waarden. We zouden ze kunnen verwijdern
 TTrain = TTrain %>% filter(!is.na(Age))
@@ -163,10 +164,12 @@ ranger.out
 
 Extreme gradient boosting wordt de laatste tijd ook veel gebruikt in Kaggle competities. Zoals bij random forests is een xgboost model ook een ensemble van decision trees, maar de trees zijn nu niet onafhankelijk van elkaar.
 
-```{r}
-sparse_matrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTrain)
+Met de library `xgboost` kan je in R extreme gradient boosting modellen fitten. De aanroep is anders dan wat we tot nu toe gezien hebben. De `xgboost` functie moet een matrix met input variabelen worden meegegeven.
 
-xgboost.out = xgboost(sparse_matrix, label = TTrain$Survived, nrounds = 10)
+```{r}
+Titan_Inputmatrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTrain)
+
+xgboost.out = xgboost(Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
 
 ## er zijn diverse opties mee te geven aan xgboost
 param = list(
@@ -180,13 +183,36 @@ xgboost.out = xgboost(params=param, sparse_matrix, label = TTrain$Survived, nrou
 
 ## predictie en validatie
 
-Met een test set kan je bepalen hoe goed een model is. Gberuik het model om de test set te scoren en vergelijk de scores met de ware uitkomsten.
+Met een test set kan je bepalen hoe goed een model is. Gebruik het model object van een modelfit om een test set te scoren en de scores met de ware uitkomsten te vergelijken.
 
 ### predicties
 
+Voor binaire classificaties is het handig om response kansen uit te rekenen. Voor logistische regressie met `glm` gebeurt dit niet automatisch
+
+```{r}
+pred_GLM = predict(out.glm, data = TTest, type='response')
+hist(pred_GLM)
+```
+
+Voorspelling van de decision tree, en random forest ranger.
+
+```{r}
+pred_tree = predict(tree.out, data = TTest)
+hist(pred_tree)
+
+TTest = TTest %>% filter(!is.na(Age))
+pred_ranger = predict(ranger.out, data = TTest)
+hist(pred_ranger$predictions)
+```
+
+En voor xgboost moet je ook de test set als matrix veranderen
+
 ```{r}
 
+
 ```
+
+
 
 
 ### Variable importance in trees
