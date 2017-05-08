@@ -86,18 +86,30 @@ anova(m1,m3,m2)
 ```
 
 
-## splitsen  train test
+## Splitsen in train en test
 
 Het is gebruikelijk om een data set random te splitsen in een train en test set. Op de train set wordt een predictive model getraind. En het model dat we getraind hebben testen we op de test set.
 
+We gebruiken hier een copy van de titanic set omdat we de data iets wijzigen.
+
 ```{r}
 perc = 0.80
-N = dim(titanic::titanic_train)[1]
+
+## maak een categorische kolom van survived
+myTitan = titanic::titanic_train
+myTitan %>% mutate(
+  Survived = ifelse(Survived < 1, "N", "Y") %>% as.factor
+)
+
+table(myTitan$Survived)
+
+N = dim(myTitan)[1]
 
 train = sample(1:N, size = floor(perc*N))
 
-TTrain = titanic_train[train,]
-TTest = titanic_train[-train,]
+TTrain = myTitan[train,]
+TTest = myTitan[-train,]
+
 
 ```
 
@@ -107,7 +119,8 @@ TTest = titanic_train[-train,]
 Een logistic regression is een van de simpele predictive modellen om mee te beginnen als je classificatie wilt doen. we gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set om een model te fitten.
 
 ```{r}
-
+out.glm = glm(Survived ~ Sex + Age +Pclass,  data = TTrain , family = binomial)
+summary(out.glm)
 
 ```
 
@@ -116,9 +129,8 @@ Een logistic regression is een van de simpele predictive modellen om mee te begi
 Een decision tree genereert op basis van een algoritme regels die je kan gebruiken om te classificeren. 
 
 ```{r}
+tree.out = rpart(Survived ~ Sex + Age +Pclass, data = TTrain)
 
-titanic_train
-tree.out = rpart(Survived ~ Sex + Age, data = titanic_train)
 plot(tree.out)
 text(tree.out, use.n = TRUE)
 
@@ -137,11 +149,33 @@ fancyRpartPlot(tree.out)
 Ee random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende bomen.
 
 ```{r}
+ranger.out = ranger( Survived ~ Sex + Age +Pclass, data = TTrain)
 
+### er zijn missende waarden. We zouden ze kunnen verwijdern
+TTrain = TTrain %>% filter(!is.na(Age))
+ranger.out = ranger( Survived ~ Sex + Age +Pclass, data = TTrain, importance = "impurity")
+
+ranger.out
 
 ```
 
 ## xgboost
+
+Extreme gradient boosting wordt de laatste tijd ook veel gebruikt in Kaggle competities. Zoals bij random forests is een xgboost model ook een ensemble van decision trees, maar de trees zijn nu niet onafhankelijk van elkaar.
+
+```{r}
+sparse_matrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTrain)
+
+xgboost.out = xgboost(sparse_matrix, label = TTrain$Survived, nrounds = 10)
+
+## er zijn diverse opties mee te geven aan xgboost
+param = list(
+  objective = 'binary:logistic',
+  eval_metric = 'auc'
+)
+
+xgboost.out = xgboost(params=param, sparse_matrix, label = TTrain$Survived, nrounds = 10)
+```
 
 
 ## predictie en validatie
@@ -154,10 +188,12 @@ Met een test set kan je bepalen hoe goed een model is. Gberuik het model om de t
 
 ```
 
+
+### Variable importance in trees
+
 ### roc curves and hit rates
 
 ````{r}
-
 test 
 testpr = predict(tree.out, titanic_test)
 test$predictie = testpr

@@ -240,7 +240,6 @@ restaurants %>%
   geom_histogram() + facet_wrap(~keuken, ncol = 5)
 ```
 ```{r}
-
 restaurants %>% filter(prijs < 100) %>%
   inner_join(top10) %>%
   ggplot(
