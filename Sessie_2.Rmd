@@ -79,7 +79,6 @@ test2 = mtcars %>%
   )
 
 my.cars = mtcars %>% .[2:6]
-
 ```
 
 ## kolom maken of wijzigen met mutate
@@ -103,7 +102,6 @@ mycars = mtcars %>%
     displ_l = disp / 61.0237,
     tmp = mpg *1000
   )
-
 ```
 
 Je kan nieuwe kolommen maken die afhankelijk zijn van kolommen die je net in mutate maakt
@@ -115,7 +113,6 @@ mycars = mtcars %>%
     tmp = mpg *1000,
     tmp2 = tmp + 1
   )
-
 ```
 
 Je kan ook zelf gemaakte functie gebruiken 
@@ -198,14 +195,11 @@ filter(
   mtcars, 
   cyl == 8 | gear > 3
 )
-
-
 ```
 
 Met `slice` kan je op basis van row numbers data selecteren
 
 ```{r}
-
 slice(mtcars, 1:8)
 slice(mtcars, 8:n())
 ```
@@ -296,9 +290,9 @@ bind_cols(A,B)
 A = data.frame(x=1:5, y = rnorm(5))
 B = data.frame(q=11:17, q = rnorm(7))
 bind_cols(A,B)
-
 ```
 
+<br>
 
 # tidy data en wide data
 
@@ -360,8 +354,8 @@ df %>% separate(x, c("Kol1", "Kol2"))
 
 df = tibble(x = c("A.B", "C.P", "P.Q", "pp", "P.2.4"))
 df %>% separate(x, c("Kol1", "Kol2", "Kol3"))
-
 ```
+
 <br>
 
 
@@ -408,7 +402,6 @@ str_extract(test, patroon)
 ## special punctuation characters !"#$%&’()*+,-./:;<=>?@[]^_`{|}~
 patroon = "[[:punct:]]"
 str_extract(test, patroon)
-
 ```
 
 Sommige mensen zijn de wildcard notatie gewend om te zoeken in strings, deze wildcard notatie kan je vertalen naar reguliere expressies met `glob2rx`. Een paar voorbeelden zullen hieronder geven. 
@@ -436,7 +429,6 @@ testset = testset %>%
   )
 
 str_locate(testset$Name, "Mr")
-
 ```
 
 <br>
@@ -475,8 +467,6 @@ test = test %>%
 
 table(test$z2)
 table(test$z3)
-
-
 ```
 
 Hernoemen van factor levels
@@ -516,6 +506,7 @@ table(test$z2)
 levels(test$type)
 levels(test$z2)
 ```
+
 <br>
 
 

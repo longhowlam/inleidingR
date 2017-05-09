@@ -772,7 +772,7 @@ sqlSave(cn, RandomPersons)
 
 ## R Datasets
 
-Je kan R objecten (niet alleen data frames) weg schrijven met saveRDS, en deze kunnen weer ingelezen worden met readRDS
+Je kan R objecten (niet alleen data frames) weg schrijven met de `saveRDS` functie, en deze kunnen weer ingelezen worden met de `readRDS` functie.
 
 ```{r}
 x = rnorm(100)
@@ -787,7 +787,7 @@ GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 
 # Nog iets over geheugen gebruik
 
-R verwerkt alles in het geheugen. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
+R verwerkt alles in het RAM geheugen. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
 
 ```{r}
 library(pryr)
