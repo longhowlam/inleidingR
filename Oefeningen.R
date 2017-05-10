@@ -20,6 +20,20 @@ postcode = readRDS("data/postocdes_NL.RDs")
 
 
 
+# split and stack data
+tmp = as(Groceries,"data.frame")
+tmp2 = tidyr::separate(tmp, items, into=paste0("V",1:60), sep=",")
+tmp2$id = 1:9835
+tmp3 = tidyr::gather(tmp2,temp,item, -id)
+tmp3 =  tmp3 %>% dplyr::filter(!is.na(item), item !="") %>% dplyr::arrange(id) %>% dplyr::mutate(
+  item = stringr::str_replace_all(item,"\\{",""),
+  item = stringr::str_replace_all(item,"\\}","")
+) %>%
+  dplyr::select(-temp)
+
+
+
+
 #### Avond sessie 3 ###########################################################
 
 library(readr)
