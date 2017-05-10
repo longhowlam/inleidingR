@@ -532,7 +532,35 @@ title("RTL_NIEUWS_APP AGE MODEL")
 
 De bovenstaande code was gericht op predictive modeling, ook wel supervised learning genoemd: met input variabelen een target variable proberen te voorspellen. In deze sectie zullen we een tweetal technieken laten zien waar geen target variabele is, ook wel unsupervised learning genoemd.
 
-## Clustering
+## k-means Clustering
+
+
+```{r}
+kmeans
+```
+
+
+## hierarchische clustering
+```{r}
+hclust
+```
+
+
+# Market basket analyse
+
+Met market basket analyse (ook wel association rules mining) genoemd kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje.
+
+```{r}
+library(arules)
+library(datasets)
+
+data(Groceries)
+
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
+inspect(head(rules))
+```
+
+De data `Groeceries` is al in een zogenaamde transactions object, vaak zul je deze data vanuit een transactionele data frame moeten converteren naar een transaction object.
 
 
 ```{r}
@@ -540,4 +568,41 @@ De bovenstaande code was gericht op predictive modeling, ook wel supervised lear
 ```
 
 
-## Market basket analyse
+
+Nu je de regels hebt kan je filteren op regels. Welke regels bevatten bepaalde producten.
+
+```{r}
+rules.subset2 <- subset(rules, lhs %in% c("cereals", "curd"))
+rules.subset2
+inspect(head(rules.subset2))
+```
+
+Of als iemand een bepaalde reeks transacties heeft welke regel hoort daar bij en welk product kan je dan aanraden
+
+```{r}
+PersoonA = data.frame(
+  id = rep(1,3),
+  item = c("whole milk","butter","jam")
+)
+
+trxs_trans = as(
+  split(
+    PersoonA$item,
+    PersoonA$id
+    ),
+  "transactions"
+)
+inspect(trxs_trans)
+trxs_trans = Groceries[1]
+
+
+rulesMatch <- is.subset(rules,trxs_trans)
+
+inspect(rules[rulesMatch[,1]])
+inspect(rules[rulesMatch[,1]]@rhs)
+```
+
+
+
+
+
