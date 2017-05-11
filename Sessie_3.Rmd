@@ -201,12 +201,14 @@ restaurants %>%
 
 ## geom_bin2d
 
-Heatmaps of 2d bin plots kunnen handig zijn dense scatterplots wat inzichtelijker te maken
+Heatmaps of 2d bin plots kunnen handig zijn om data met veel punten inzichtelijker te maken. Bij veel punten kan je een waarde voor alpha instellen of gebruik maken van 2d bin plots.
 
 ```{r}
 df = data.frame(x=rnorm(100000), y=rnorm(100000))
 
 ggplot(df, aes(x=x,y=y)) + geom_point()
+
+ggplot(df, aes(x=x,y=y)) + geom_point(alpha=0.01 )
 
 ggplot(df, aes(x=x,y=y)) + geom_bin2d()
 ```
@@ -386,15 +388,93 @@ mtcars %>%
 
 ## ploty
 
-Plotly is een mooie library voor het maken van interactive visualisaties. Zie voor meer info [plotly](https://plot.ly/r/)
+Plotly is een zeer mooie library voor het maken van interactive visualisaties. Zie voor meer info [plotly](https://plot.ly/r/). We zullen een aantal voorbeelden hieronder laten zien.
 
 ### scatters
 
+```{r}
+library(plotly)
+mtcars = mtcars
+mtcars$naampjes = row.names(mtcars)
+
+plot_ly(data = mtcars, x=~mpg, y = ~wt)
+plot_ly(data = mtcars, x=~mpg, y = ~wt, color = ~cyl)
+plot_ly(data = mtcars, x=~mpg, y = ~wt, text = ~naampjes)
+
+
+```
+
+
 ### barcharts
 
-### 3D surface plots
+We gebruiken de restaurants data set weer
+
+```{r}
+Restaurants <- readr::read_csv("data/Restaurants.csv")
+keuken = Restaurants %>% dplyr::group_by(keuken) %>% dplyr::summarise(n=n())
+
+p = plot_ly(data = keuken,
+  x = ~keuken,
+  y = ~n,
+  type = "bar"
+)
+
+p
+```
+
+Sorteren op volgorde van aantallen kan je doen door reorder factor
+
+```{r}
+keuken = keuken %>%
+  mutate(
+  keuken = forcats::fct_reorder(keuken,n, .desc=TRUE)
+)
+p = plot_ly(data = keuken,
+  x = ~keuken,
+  y = ~n,
+  type = "bar"
+)
+
+p
+```
+
+### boxplots
+
+```{r}
+p = plot_ly(data = Restaurants, y = ~aantalreviews, color = ~keuken,type = "box")
+p
+```
+
+### 3D plots
+
+If you have 3D data you can plot it in a 3D scatter plot 
+
+```{r}
+p = plot_ly(data = mtcars, x=~mpg, y=~cyl, z = ~disp) 
+p
+
+```
+A matrix with values can be plotted as a 3D surface plot
+
+```{r}
+volcano
+plot_ly(z = ~volcano) %>% add_surface()
+```
 
 
+### ggplot integratie
+
+```{r}
+
+p = ggplot(data = diamonds, aes(x = carat, y = price)) +
+  geom_point(alpha = 0.05, aes(text = paste("Clarity:", clarity))) +
+  geom_smooth(aes(colour = cut, fill = cut)) + facet_wrap(~ cut)
+p
+
+ggplotly(p)
+
+
+```
 
 ## leaflet
 
