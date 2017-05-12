@@ -270,14 +270,20 @@ library(h2o)
 
 # initialiseer h20 via R
 
-h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
+#h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
+h2o.init()
 
-### upload een R data set naar h2o: iris voorbeeldje
-iris.h2o = as.h2o(iris)
-titanic.h2o = as.h2o(titanic::titanic_train) 
+### upload een R data set naar h2o: titanic train en test voorbeeldje
 
+TTrain = TTrain %>% mutate_if(is.character, as.factor)
+TTest = TTest %>% mutate_if(is.character, as.factor)
+TTrain$Survived = as.factor(TTrain$Survived)
+TTest$Survived = as.factor(TTest$Survived)
+
+ttrain.h2o = as.h2o(TTrain) 
+ttest.h20 = as.h2o(TTest)
 ### Je kan ook direct text files inlezen in h20 met 
-h2o.importFile(path="C:\een file.txt", sep=",")
+#h2o.importFile(path="C:\een file.txt", sep=",")
 
 ### welke files zijn er in h2o
 h2o.ls()
@@ -288,35 +294,18 @@ Er zijn diverse modellen die je kan trainen, we zullen hier een tweetal laten zi
 
 ```{r}
 ## model op titanic
-
-## splits train en test
-
 NNmodel = h2o.deeplearning(
-  x = inp,
-  y = "BAD",
-  training_frame  = HMEQT,
-  validation_frame = HMEQV,
-  hidden = c(35,35),
+  x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h20,
+  hidden = 5,
   epochs = 250,
   variable_importances = TRUE
 )
 
 show(NNmodel)
 h2o.varimp(NNmodel)
-
-### Voorspel op validatie set en zet uit in roc curve
-HMEQVP = h2o.predict(NNmodel, newdata = HMEQV)
-head(HMEQVP)
-
-NEURAL.PERF = as.data.frame(HMEQVP)
-
-plot.roc(HMEQ_VALID$BAD, NEURAL.PERF$p1  , add=T, col="red")
-
-
-### fit een random forest
-
-
-
 ```
 
 
@@ -326,7 +315,9 @@ plot.roc(HMEQ_VALID$BAD, NEURAL.PERF$p1  , add=T, col="red")
 
 ---
 
-Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak ook steeds anders. Met `mlr` kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Deze zijn te beschrijven en uit te voeren in mlr.
+Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak ook steeds net anders. Dit zagen we in de bonstaande code voor ranger, en xgboost al.
+
+Met het `mlr` package kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Deze zijn te beschrijven en uit te voeren in mlr.
 
 We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen on een aantal modellen te benchmarken.
 
@@ -340,6 +331,8 @@ We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal sta
 
 
 ## specificeren van technieken en hun opties
+
+Elk model heeft bepaalde parameters die je kan zetten, dit hoeft niet, dan worden defualt waarden gekozen.
 
 ```{r}
 configureMlr(on.par.without.desc = "warn")
@@ -372,7 +365,7 @@ parameters_xgboost = list(
 
 ```
 
-Maak nu een Lijst van learners die je wilt testen
+Maak nu een Lijst van modelen (ook wel learners genomed) die je wilt trainen op je data.
 
 ```{r}
 RF_Learner = makeLearner(
@@ -421,20 +414,41 @@ learners = list(
   RF_Learner,
   binomial_Learner,
   glmnet_Learner,
-#  h2ogbm_Learner,
-#  h2oNN_Learner,
-  xgboost_Learner
+  h2ogbm_Learner,
+  h2oNN_Learner
 )
 
 ```
 
 
-Specificeer de data, de inputs en de target,  de classificatie of regressie task 
+
+```{r}
+# classificatie voorbeeld, dan moet je factor target hebben en factor inputs (geen character)
+
+ABT = titanic_train
+ABT$Target = as.factor(ifelse(ABT$Survived < 1, "N", "Y"))
+ABT = ABT %>% mutate_if(is.character, as.factor)
+                  
+impObject = impute(
+  ABT, 
+  classes = list(
+    integer = imputeMean(),
+    numeric = imputeMean(),
+    factor = imputeMode()
+    ),
+  dummy.classes = "integer"
+)
+
+ABT = impObject$data
+```
+
+
+Maak nu een 'task' aan waarin je de data, de inputs en de target specificeert. Een classificatie taak voor categorische target of een regressie task voor een numerieke target.
 
 Wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven. Bij een binaie target met Y en N levels wordt namelijk standaard "N"gebruik (alfabetisch)
 
 ```{r}
-classify.task = makeClassifTask(id = "RTL_NIEUWSAPP_AGE", data = ABT, target = "Target", positive = "Y")
+classify.task = makeClassifTask(id = "Titanic", data = ABT, target = "Target", positive = "Y")
 
 ## Overzicht van de taak en kolom informatie
 
@@ -447,30 +461,29 @@ summarizeColumns(classify.task)
 variablen hard uitsluiten 
 
 ```{r}
+vars.to.drop = c("Name", "Survived", "Ticket")
 
-#classify.task = dropFeatures(classify.task, vars.to.drop )
+classify.task = dropFeatures(classify.task, vars.to.drop )
 
 ## Weghalen van (bijna) constante variabelen 
 
 ## Je kan ook 'bijna' constante variabelen weghalen: perc iets hoger zetten
-## not done here
-#classify.task = removeConstantFeatures(classify.task, perc = 0)
-
+classify.task = removeConstantFeatures(classify.task, perc = 0.01)
+classify.task
 ```
 
 Zeldzame levels van factors samenvoegen. Het is gebruikelijk om zeldzame levels te verwijderen of te mergen
 
 ```{r}
-#classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
-#summarizeColumns(classify.task)
+classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
+summarizeColumns(classify.task)
 
 ```
 
+Welke features hebben een effect op de target?
 
 ```{r}
 ## Feature selection 
-
-#fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared", "rf.importance"))
 fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared"))
 
 
@@ -479,33 +492,25 @@ fv = generateFilterValuesData(classify.task,  method = c("information.gain", "ch
 importance = fv$data %>% arrange(desc(information.gain))
 head(importance, n = n.importance)
 plotFilterValues(fv, n.show = 2*n.importance)
-
- 
-## no filtering
-# summarizeColumns(filtered.task)
-# getTaskNFeats(filtered.task)
-
 ```
 
 
 ## Sample schema 
 
 
-uitleg.....
+Met mlr kan je data splitsen, niet alleen in train / test maar ook cross validation. Dit heet een sample schema.
 
 ```{r}
-#SampleStrageyHO = makeResampleDesc("Holdout", split=0.75)
-# SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
-N = dim(ABT)[1]
-SampleStrageyHO = makeFixedHoldoutInstance(tidx, testidx, N)
+SampleStrageyHO = makeResampleDesc("Holdout", split=0.75)
+SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
 ```
 
 ## uitvoeren machine learning becnhamrk 
 
+Nu heb je de diverse stappen gespecificeerd en kan je een benchmark uitvoeren voor de verschillende learners,
+
 ```{r}
 br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
-br2 = mlr::benchmark(learners, filtered.task, SampleStrageyCV, measures = list(mlr::mmce, mlr::auc, mlr::f1))
-
 
 ## Vergelijking machine learning modellen
 
@@ -513,12 +518,15 @@ data.frame(br1) %>% arrange(desc(auc))
 plotBMRSummary(br1, measure = mlr::auc)
 plotBMRBoxplots(br2, measure = mlr::auc)
 
+```
 
 #### ROC curves
-NModels = length(br1$results$RTL_NIEUWSAPP_AGE)
+
+```{r}
+NModels = length(br1$results$Titanic)
 for(i in 1:NModels)
 {
-  tmp2  = br1$results$RTL_NIEUWSAPP_AGE[[i]]$pred$data
+  tmp2  = br1$results$Titanic[[i]]$pred$data
   rocResultTEST = roc(truth  ~ prob.Y, data = tmp2 )
   if(i==1)
   {
@@ -528,8 +536,8 @@ for(i in 1:NModels)
   }
 }
 
-legend( 0.6,0.6, names(br1$results$RTL_NIEUWSAPP_AGE), col=1:NModels,lwd=2)
-title("RTL_NIEUWS_APP AGE MODEL")
+legend( 0.6,0.6, names(br1$results$Titanic), col=1:NModels,lwd=2)
+title("Titanic model")
 ```
 
 <br>
