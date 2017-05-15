@@ -417,7 +417,6 @@ learners = list(
   h2ogbm_Learner,
   h2oNN_Learner
 )
-
 ```
 
 
@@ -550,9 +549,15 @@ De bovenstaande code was gericht op predictive modeling, ook wel supervised lear
 
 ## k-means Clustering
 
+Dit is een van de bekendste clustering methode. Je dient een aantal clusters van te voren op te geven, de *k*, het algoritme gaat dan elke observatie aan een van de k clusters toekennen.
 
 ```{r}
-kmeans
+tmp = mtcars %>% select (mpg, wt)
+cars.cluster = kmeans(tmp, 5)
+cars.cluster
+plot(tmp, col = cars.cluster$cluster )
+points(cars.cluster$centers, col = 1:5, pch = 8, cex = 2)
+
 ```
 
 

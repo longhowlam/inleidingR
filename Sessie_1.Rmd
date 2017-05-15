@@ -51,7 +51,7 @@ Scripts, zijn gewone tekst files (*.R) met R code. In RStudio kan je meerdere sc
 
 ## R Notebooks
 
-R notebooks bevatten meer dan alleen R code, het is een 'compleet' document code, output en een beschrijvende verhaallijn tot een document te weven. Dit gebeurt met markdown, een soort light weight markup language. Deze R cursus werkt met notebooks. Een notebook bevat (R) code chunks die je kan runnen.
+R notebooks bevatten meer dan alleen R code, het is een 'compleet' document met R code, output en een beschrijvende verhaallijn. In een R project kun je ook meerdere van deze notebooks en scripts beheren. Notebooks maak je met Rmarkdown, een soort light weight markup language. Deze R cursus werkt met notebooks. Een notebook bevat R code chunks die je kan runnen.
 
 Een R notebook kan je "knit" ('breien') tot een html/pdf/word document.
 
