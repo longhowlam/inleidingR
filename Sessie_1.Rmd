@@ -620,7 +620,7 @@ l1$c[1,4]
 l1[[4]]$x2[3]
 ```
 
-Je kan aan een lijsty extra componenten toevoegen.
+Je kan aan een lijst extra componenten toevoegen.
 
 ```{r}
 l1$PP = 1
