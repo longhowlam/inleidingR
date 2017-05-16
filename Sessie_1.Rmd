@@ -136,7 +136,7 @@ x3 = paste(x1, x2, sep="")
 
 ## factor
 
-In R zijn `factors` bedoeld om categorische variabelen te representeren. Denk aan geslacht, of opleiding. Verwar factor niet met character.
+In R zijn `factors` bedoeld om categorische variabelen te representeren. Denk aan geslacht, of opleiding. Verwar een factor niet met character, je kan factor variabelen wel van character variabelen maken.
 
 ```{r, eval=FALSE}
 x3 = c("M", "F", "M")
@@ -147,8 +147,11 @@ typeof(x3)
 y3 = as.factor(x3)
 x3
 y3
+```
 
-# dit is wel apart
+Dit is wel apart
+
+```{r}
 typeof(y3)
 is.character(y3)
 is.factor(y3)
@@ -158,6 +161,19 @@ levels(y3)
 levels(x3)
 
 # Dus let op het verschil tussen factors en characters!!!!
+```
+
+Soms is een order in de levels aan wezig, in R kan je dat ook expliciey aangeven met ordered factors. Stel dat je een inkomen object hebt met vier observaties: Laag, hoog, medium en medium.
+
+```{r}
+inkomen = as.factor(
+  c("laag", "hoog", "medium", "medium")
+)
+
+as.integer(inkomen)
+# medium is naar 3 vertaald, want medium is alfabetisch het hoogst.
+
+inkomen = ordered(inkomen, levels = c("laag", "medium", "hoog"))
 ```
 
 ## double
