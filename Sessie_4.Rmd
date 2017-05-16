@@ -255,15 +255,13 @@ TTest %>%
 ````
 
 
-
-
 <br>
 
 # The h2o package
 
 ---
 
-H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen, het bevat veel technieken en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe moet uploaden.
+H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen. Het bevat veel machine learning algoritmes, en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe moet uploaden. om daar de algoritmes op los te laten.
 
 ```{r}
 library(h2o)
@@ -308,6 +306,15 @@ show(NNmodel)
 h2o.varimp(NNmodel)
 ```
 
+```{r}
+RFmodel = h2o.randomForest(
+  x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h20
+  )
+RFmodel
+```
 
 <br>
 
@@ -476,7 +483,6 @@ Zeldzame levels van factors samenvoegen. Het is gebruikelijk om zeldzame levels 
 ```{r}
 classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
 summarizeColumns(classify.task)
-
 ```
 
 Welke features hebben een effect op de target?
@@ -485,7 +491,6 @@ Welke features hebben een effect op de target?
 ## Feature selection 
 fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared"))
 
-
 ## display en plot importance
 
 importance = fv$data %>% arrange(desc(information.gain))
@@ -493,7 +498,12 @@ head(importance, n = n.importance)
 plotFilterValues(fv, n.show = 2*n.importance)
 ```
 
+laat nog eens variabelen weg die helemaal niks doen.
 
+```{r}
+vars.to.drop = c("PassengerId", "Parch", "SibSp")
+classify.task = dropFeatures(classify.task, vars.to.drop )
+```
 ## Sample schema 
 
 
@@ -512,11 +522,8 @@ Nu heb je de diverse stappen gespecificeerd en kan je een benchmark uitvoeren vo
 br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
 
 ## Vergelijking machine learning modellen
-
 data.frame(br1) %>% arrange(desc(auc))
 plotBMRSummary(br1, measure = mlr::auc)
-plotBMRBoxplots(br2, measure = mlr::auc)
-
 ```
 
 #### ROC curves
@@ -539,6 +546,27 @@ legend( 0.6,0.6, names(br1$results$Titanic), col=1:NModels,lwd=2)
 title("Titanic model")
 ```
 
+### model gebruiken om te scoren
+
+Als je een benchmark hebt gedaan heb je al de getrainede modellen in het benchmark object zitten. Die kan je al gebruiken om een data set te scoren. je dient dit model er wel 'eerst uit te halen'. 
+
+```{r}
+## haal model er uit
+titanmodel = br1$results$Titanic$classif.ranger$models[[1]]
+
+## dit zijn de feauteures in het model
+FT = titanmodel$features
+
+## Maak even een score set van de ABT met alleen de features
+ScoreSet = ABT[, FT]
+
+
+outpredict = predict(titanmodel, newdata = ScoreSet)
+outpredict
+
+```
+
+
 <br>
 
 # Unsupervised learning
@@ -552,20 +580,58 @@ De bovenstaande code was gericht op predictive modeling, ook wel supervised lear
 Dit is een van de bekendste clustering methode. Je dient een aantal clusters van te voren op te geven, de *k*, het algoritme gaat dan elke observatie aan een van de k clusters toekennen.
 
 ```{r}
-tmp = mtcars %>% select (mpg, wt)
-cars.cluster = kmeans(tmp, 5)
+mycars = mtcars %>% select (mpg, wt)
+cars.cluster = kmeans(mycars, 5)
 cars.cluster
+
+# in het ouput object zit informatie over het gefitte kmeans algoritme
+mycars$cluster = cars.cluster$cluster
+mycars
+
 plot(tmp, col = cars.cluster$cluster )
 points(cars.cluster$centers, col = 1:5, pch = 8, cex = 2)
 
+
+
 ```
 
+Met het `h2o` package kan je ook k-means clustering doen, dit is niet alleen sneller maar kan ook meteen factor variabelen aan. Start indien nodig h20.
 
-## hierarchische clustering
 ```{r}
-hclust
+library(h2o)
+#h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
+h2o.init()
 ```
 
+Breng data naar h2o, we gebruiken nu de sample data set mtcars maar we maken 1 factor column aan
+
+```{r}
+# am is de transimssie: 0 is automat en 1 is handgeschakeld, is eig
+mycars = mtcars %>% mutate(am = as.factor(am))
+cars.h2o = as.h2o(mycars)
+```
+
+Laat het algoritme zelf bepalen hoeveel clusters er in de data zijn.
+
+```{r}
+cars_clustering = h2o.kmeans(cars.h2o,  k = 10, estimate_k = TRUE)
+cars_clustering
+```
+
+na het trainen heb je een h2o cluster object met diverse informatie
+
+```{r}
+cars_clustering@model
+h2o.cluster_sizes(cars_clustering)
+h2o.centers(cars_clustering)
+
+## met h2o.predict kan je data scoren: bepalen tot welk cluster een observatie hoort en weer terug naar R halen
+cluster_membership = h2o.predict(
+  cars_clustering,
+  newdata = cars.h2o
+  ) %>% 
+  as.data.frame()
+```
 
 # Market basket analyse
 
