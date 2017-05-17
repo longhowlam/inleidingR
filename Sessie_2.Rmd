@@ -43,6 +43,7 @@ Een verzameling R packages met 'dezelfde' gedachtegoed om data te bewerken / man
 ```{r, eval=FALSE, include=FALSE}
 library(tidyverse)
 library(lubridate)
+library(anytime)
 ```
 
 
@@ -550,6 +551,17 @@ testdata = testdata %>%
     dag = wday(GeboorteDatum, label=TRUE)
   )
 ```
+
+UNIX time stamps....  Wat zeg je?
+
+Unix time stamps zijn het aantal seconden sinds 1-1-1970. Mocht je dit ooit tegen komen dan kan anytime er ook mee uit de voeten.
+
+```{r}
+tmp = read_csv("data/unixtimestamps.csv")
+tmp$datum = anydate(tmp$timestamp)
+tmp
+```
+
 
 
 
