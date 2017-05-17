@@ -34,7 +34,9 @@ B.	Create a logical vector y2 from y1. An element of y2 should be TRUE if the co
 C.	How many elements are smaller than 5?
 
 ```{r}
-
+y1 = 1:10
+y2 = y1 > 5
+sum(y2)
 ```
 
 
@@ -71,18 +73,26 @@ z3 = rep(1:10, rep(1:2,5))
 ## Creating factors from double data.
 A.	Generate a vector x with 100 random normal numbers.
 B.	Use x to generate a factor vector y with three levels: “low”, “average” and “high”. If an element in x is:
-•	between -Inf and -1.5 then the level in y should be “low”,
-•	between -1.5 and 1.5 then the level in y should be “average”,
-•	between 1.5 and Inf the level in y should be “high”.
-Use the function cut.
+
+*	between -Inf and -1.5 then the level in y should be “low”,
+*	between -1.5 and 1.5 then the level in y should be “average”,
+*	between 1.5 and Inf the level in y should be “high”.
+
+Use the function `cut`.
 
 ```{r}
+x = rnorm(100)
+y = cut(x, breaks = c(-Inf,-1.5,1.5,Inf))
+levels(y) = c("low", "average", "high")
+x
+y
 
 ```
 
 ## Creating a data.frame
 A.	Create a data frame from the two vectors x and y from the previous exercise
 B.	Rename the columns x and y into index and income
+C.	Create an additional factor column Gender, randomly filled with “M” or “F”
 
 ```{r}
 
