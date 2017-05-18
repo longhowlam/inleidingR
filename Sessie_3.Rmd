@@ -41,7 +41,7 @@ Er zijn veel mogelijkheden om data te plotten in R. In deze sessie zullen we een
 
 ---
 
-Deze plots zijn sinds het begin van R al aanwezig, ik noem ze hier alleen even, maar ik wil er eigenlijk niet veel aandacht meer aan besteden omdat ik vond dat ze achterhaald zijn. Toch gebruik ik ze stiekum soms wel heel snel.
+Deze plots zijn sinds het begin van R al aanwezig, ik noem ze hier alleen heel even, maar ik wil er eigenlijk niet veel aandacht meer aan besteden omdat ik vond dat ze achterhaald zijn. Toch gebruik ik ze stiekum soms wel heel snel.
 
 De algemene functie is `plot`, deze accepteert verschillende data structuren.
 
@@ -184,7 +184,7 @@ p + geom_line()
 
 ## bar plots
 
-bar plots zijn handig om aantallen te visualiseren.
+Bar plots zijn handig om bijvoorbeeld aantallen per categorie te visualiseren. Laten we naar top 10 keukens kijken in de iens data set.
 
 ```{r, fig.width=10, fig.height=8}
 restaurants = read_csv("data/Restaurants.csv")
@@ -197,8 +197,46 @@ restaurants %>%
   slice(1:10) %>%
   ggplot(aes(x=keuken)) + 
   geom_bar(aes(weight=n))
+```
+
+Je kan sorteren 
+
+```{r}
+restaurants %>%
+  group_by(keuken) %>%
+  summarise(n=n()) %>%
+  arrange(desc(n)) %>% 
+  filter(!is.na(keuken)) %>%
+  slice(1:10) %>%
+  mutate(
+    keuken = forcats::fct_reorder(keuken, n)
+  ) %>%
+  ggplot(aes(x=keuken)) + 
+  geom_bar(aes(weight=n))
 
 ```
+
+Je kan stacked en of grouped bar charts maken om meer dimensies te visualiseren
+
+```{r}
+test = restaurants %>% 
+  filter(plaats %in% c("Rotterdam", "Utrecht", "Amsterdam")) %>%
+  group_by(keuken, plaats) %>%
+  summarise(n=n()) %>%
+  filter(
+    !is.na(keuken)
+    ) 
+   
+##  in de aes kun je fill opgeven en met position kan je stacked of grouped opgeven 
+test %>%
+  ggplot(aes(x=keuken, y = n, fill=plaats)) + 
+  geom_bar(stat="identity")
+
+test %>%
+  ggplot(aes(x=keuken, y = n, fill=plaats)) + 
+  geom_bar(stat="identity", position = "dodge")
+```
+
 
 ## geom_bin2d
 
