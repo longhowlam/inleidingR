@@ -91,7 +91,9 @@ y
 
 ## Creating a data.frame
 A.	Create a data frame from the two vectors x and y from the previous exercise
+
 B.	Rename the columns x and y into index and income
+
 C.	Create an additional factor column Gender, randomly filled with “M” or “F”
 
 ```{r}
@@ -107,7 +109,9 @@ A.	Create a list L1 with 4 elements:
 *	X3 = the numbers one to 20
 *	x4 = the numbers 50 to 1
 
-B. Calculate the mean of the four vectors in list L1
+B.  Give an overview of the components of L1
+
+C. Calculate the mean of the four vectors in list L1
 
 ```{r}
 L1 = list(
@@ -117,6 +121,17 @@ L1 = list(
   x5 = 50:1
 )
 ```
+
+## Importing some data
+
+In the data directory there are some dummy text files: f1.csv, f2.txt and f3.txt
+Import these sets in the ‘correct’ way. The resulting datasets in R should all have 3 columns.
+
+```{r}
+
+
+```
+
 
 
 # Avond sessie 02

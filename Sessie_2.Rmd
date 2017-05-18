@@ -47,11 +47,11 @@ library(anytime)
 ```
 
 
-# dplyr
+# De dplyr library
 
 ---
 
-Dit package is ontzettend handig om data te bewerken in R. De syntax is elegant en dplyr code kan je in sommige gevallen ook gebruiken voor data die niet in R zit. Bijvoorbeeld, data in Spark kan je met dplyr code bewerken. Er zijn veel 'sleutel' woorden, maar de belangrijkste zijn `select`,  `filter`, `mutate`, `arrange`, `summarize`, `slice` en `rename`. 
+Dit package / library is ontzettend handig om data te bewerken in R. De syntax is elegant en dplyr code kan je in sommige gevallen ook gebruiken voor data die niet in R zit. Bijvoorbeeld, data in Spark kan je met dplyr code bewerken. Er zijn veel 'sleutel' woorden, maar de belangrijkste zijn `select`,  `filter`, `mutate`, `arrange`, `summarize`, `slice` en `rename`. 
 
 Het mooie is dat deze sleutel woorden ook achter elkaar gebruikt kunnen worden met de `%>%` chain operator.
 
@@ -64,7 +64,11 @@ my.cars = select(mtcars, hp, mpg, drat)
 
 ## via de chain operator, dit is niet alleen handig maar zo kan je verschillende operaties achter elkaar plakken.
 my.cars = mtcars %>% 
-  select(hp, mpg, drat)
+  select(
+    hp, 
+    mpg,
+    drat
+  )
 
 ## meerdere kolommen selecteren
 test1 = iris %>% 
@@ -116,7 +120,7 @@ mycars = mtcars %>%
   )
 ```
 
-Je kan ook zelf gemaakte functie gebruiken 
+Je kan ook zelf gemaakte functies gebruiken. 
 
 ```{r}
 normalize <- function(x){
@@ -136,9 +140,10 @@ ABT = data.frame(
   matrix(round(100*runif(100)), ncol=10)
 )
 
+## maak eerst een kolom die de som is van de de 10 kolommen
 ABT = ABT %>% mutate(sum = rowSums(.[1:10]))
 
-## verander kolom 4 t/m 8, ze worden door sum gedeeld
+## verander alleen kolom 4 t/m 8, ze worden door sum gedeeld
 ABT2 = ABT %>% 
   mutate_at(
     4:8, funs(. / sum)
@@ -146,12 +151,14 @@ ABT2 = ABT %>%
 
 ## deel alleen door de sum als de kolom som groter is dan 500
 LARGE = function(x) {sum(x) > 500}
-ABT2 = ABT %>% 
+ABT3 = ABT %>% 
   mutate_if(
     LARGE, funs(. / sum)
   )
 
+ABT
 ABT2
+ABT3
 ```
 
 
@@ -205,30 +212,42 @@ slice(mtcars, 1:8)
 slice(mtcars, 8:n())
 ```
 
+
 ## data sets aggregeren
-aggregeren met de functie group_by en summarise  deze gaan hand in hand samen
+
+Aggregeren met de functie `group_by` en `summarise` deze gaan vaak hand in hand samen.
 
 ```{r}
+## apart aanroep van group_by en summarise... zo kan je zien wat group_by oplevert
 by_cyl = group_by(mtcars, cyl) 
 class(by_cyl)
-
 
 summarise(by_cyl, Naampje1 = mean(disp), Naampje2 = mean(hp))
 
 
-out = group_by(mtcars, cyl) %>% 
-  summarise( mean(disp), mean(hp))
+## maar vaak doe je de twee in 1 run samen
+out = mtcars %>%
+  group_by(
+    cyl
+  ) %>% 
+  summarise(
+    mdisp = mean(disp),
+    mhp = mean(hp)
+  )
 
 
-out = filter(mtcars, mpg > 11) %>%
-        group_by(cyl, carb) %>% 
-        summarise( N = n(), MeanDisp = mean(disp), SD_HP = sd(hp)) %>%
-        
-  
-df1 = data.frame(x=1:100,y=rnorm(100))
-df2 = data.frame(x=51:150, z=rnorm(100))
-
-df3 = left_join(df1, df2, by = "x")
+out = filter(
+  mtcars, mpg > 11
+  ) %>%
+  group_by(
+    cyl, 
+    carb
+  ) %>% 
+  summarise(
+    N = n(), 
+    MeanDisp = mean(disp),
+    SD_HP = sd(hp)
+  )
 ```
 
 
@@ -238,26 +257,41 @@ df3 = left_join(df1, df2, by = "x")
 Met dplyr kun je makkelijk tabellen joinen. Er zijn verschillende joins die ondersteunt worden. We geven hier een aantal voorbeelden.
 
 
-```{r, eval=FALSE, include=FALSE}
+```{r}
 ### maak twee data frames aan
 df1 = data.frame(
   col1 = c(1,2,3,4,5), tt = rnorm(5)
 )
+
 df2 = data.frame(
   col1 = c(3,4,5,6,7), xx = rnorm(5), zz = runif(5)
 )
 
 ## selecteer rijen die zowel in df1 en df2 zitten 
-df3 = inner_join(df1, df2, by = c("col1" = "col1"))
+df3 = inner_join(
+  df1, 
+  df2,
+  by = c("col1" = "col1")
+)
 
 ## alle rijen die in df1 zitten, geen match levert NA op
-df4 = left_join(df1, df2, by = c("col1" = "col1"))
+df4 = left_join(
+  df1,
+  df2,
+  by = c("col1" = "col1")
+)
 
 ## alle rijen die in df2 zitten
-right_join(df1, df2, by = c("col1" = "col1"))
+df5 = df1 %>% right_join(
+  df2,
+  by = c("col1" = "col1")
+)
 
 ## alleen de rijen van df1 die niet in df 2 zitten
-anti_join(df1, df2, by = c("col1" = "col1"))
+df6 = df1 %>% anti_join(
+  df2,
+  by = c("col1" = "col1")
+)
 
 ## alle rijen van df1 en df2
 full_join(df1, df2, by = c("col1" = "col1"))
@@ -552,9 +586,9 @@ testdata = testdata %>%
   )
 ```
 
-UNIX time stamps....  Wat zeg je?
+*UNIX time stamps*....  Wat zeg je?
 
-Unix time stamps zijn het aantal seconden sinds 1-1-1970. Mocht je dit ooit tegen komen dan kan anytime er ook mee uit de voeten.
+Een Unix time stamps is het aantal seconden sinds 1-1-1970. Mocht je dit ooit tegen komen dan kan anytime er ook mee uit de voeten.
 
 ```{r}
 tmp = read_csv("data/unixtimestamps.csv")

@@ -119,7 +119,7 @@ is.integer(y)
 
 ## character
 
-In R kan je met het `character` data type teksten opslaan. bewerkingen en manipulaties van characters in sessie 2.
+In R kan je met het `character` data type teksten (of ook soms strings genoemd) opslaan. Bewerkingen en manipulaties van characters in sessie 2.
 
 ```{r, eval=FALSE}
 x1 = "Longhow Lam"
@@ -136,7 +136,10 @@ x3 = paste(x1, x2, sep="")
 
 ## factor
 
-In R zijn `factors` bedoeld om categorische variabelen te representeren. Denk aan geslacht, of opleiding. Verwar een factor niet met character, je kan factor variabelen wel van character variabelen maken.
+In R zijn `factors` bedoeld om categorische variabelen te representeren. Denk aan geslacht, of opleiding. Verwar een factor niet met het type character, je kan factor variabelen wel van character variabelen maken. In sommige predictive modeling functies heb je expliciet factor variabelen nodig en niet character.
+
+
+In data sets zijn vaak namen of achternamen van personen van het type character, maar bijvoorbeeld geslacht of opleiding van het type factor.
 
 ```{r, eval=FALSE}
 x3 = c("M", "F", "M")
@@ -175,10 +178,11 @@ as.integer(inkomen)
 
 inkomen = ordered(inkomen, levels = c("laag", "medium", "hoog"))
 ```
+ 
 
 ## double
 
-De doubles in R zijn vaak gebruikt om alledaagse data te representeren. Bijvoorbeeld lengte, 1.85 of gewicht 78.8 zijn niet gehele getallen
+De doubles in R zijn vaak gebruikt om alledaagse (niet noodzakelijk gehele) getallen te representeren. Bijvoorbeeld lengte, 1.85 of gewicht 78.8 zijn niet gehele getallen
 
 ```{r, eval=FALSE}
 x4 = 4
@@ -569,11 +573,11 @@ df1
 ```
 
 
-## tibles
+## tibbles
 
-In R zijn tibles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor
+In R zijn tibbles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor
 
-Zie ook zijn boek en de website [tibles.](http://tibble.tidyverse.org/)
+Zie ook zijn boek en de website [tibbles.](http://tibble.tidyverse.org/)
 
 ```{r, eval=FALSE}
 library(tibble)
@@ -605,7 +609,7 @@ tb1[,1]
 
 ## lists
 
-In R zijn lijsten de meest generieke data structuur, het kan beschouwd woorden als een verzameling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen terug geeft in een lijst.
+In R zijn lijsten de meest generieke data structuur, het kan beschouwd worden als een verzameling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen terug geeft in een lijst.
 
 ```{r, eval=FALSE}
 m2 = matrix(rnorm(100), ncol=10)
@@ -618,7 +622,7 @@ l1 <- list( a = 1, b = 1:100, c = m2, d = mydf)
 l2 <- list (zz = rnorm(100), pp = l1)
 ```
 
-Hoe krijg je dingen weer uit een lijst?
+Lijsten bestaan uit verschillende componenten, hoe benader je die componenten of hoe krijg je dingen uit een lijst? Dit kan met subscripts of met de naam.
 
 ```{r}
 ## subscripts
@@ -636,12 +640,15 @@ l1$c[1,4]
 l1[[4]]$x2[3]
 ```
 
-Je kan aan een lijst extra componenten toevoegen.
+Je kan aan een lijst altijd nog extra componenten toevoegen.
 
 ```{r}
 l1$PP = 1
 
+# overzicht van componenten in een lijst
 names(l1)
+
+# component 6 kan ook gewijzigd worden.
 l1[[6]] = 8
 
 ## dit vult de lijst aan met componenten 7, 8 die NULL zijn

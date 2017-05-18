@@ -21,6 +21,7 @@ library(stringr)
 library(dplyr)
 library(ggplot2)
 library(readr)
+library(plotly)
 ```
 
 
@@ -464,16 +465,22 @@ plot_ly(z = ~volcano) %>% add_surface()
 
 ### ggplot integratie
 
-```{r}
+Je kan een grafiek maken met ggplot en dan de functie ``ggplotly` gebruiken om de grafiek interactief te maken. Als de grafiek veel punten bevat kan het sloom over komen.  Vandaar dat onderstaande voorbeeldje alleen 3000 punten sampled.
 
-p = ggplot(data = diamonds, aes(x = carat, y = price)) +
-  geom_point(alpha = 0.05, aes(text = paste("Clarity:", clarity))) +
-  geom_smooth(aes(colour = cut, fill = cut)) + facet_wrap(~ cut)
+```{r}
+p = ggplot(
+  data = diamonds %>% dplyr::sample_n(3000),
+  aes(x = carat, y = price)
+) +
+  geom_point(
+    alpha = 0.05, 
+    aes(text = paste("Clarity:", clarity))
+  ) +
+  geom_smooth(aes(colour = cut, fill = cut)) + 
+  facet_wrap(~ cut)
 p
 
 ggplotly(p)
-
-
 ```
 
 ## leaflet
