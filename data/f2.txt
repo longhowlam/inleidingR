@@ -1,4 +1,4 @@
 A B C
-1 po  2
-3 ko  9
-4 hh  8
+1 po 2
+3 ko 9
+4 hh 8

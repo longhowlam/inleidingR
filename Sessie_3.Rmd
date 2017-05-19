@@ -201,7 +201,7 @@ restaurants %>%
 
 Je kan sorteren 
 
-```{r}
+```{r, fig.width=12}
 restaurants %>%
   group_by(keuken) %>%
   summarise(n=n()) %>%
@@ -382,8 +382,29 @@ p = ggplot(
 
 p + geom_line() + scale_x_date(date_breaks = "1 week")
 p + geom_line() + scale_x_date(date_breaks = "1 week", date_labels = "%d-%m")
-
 ```
+
+Je kan soms in de knel komen met as labels, die worden standaard horizontaal geprint. Als we de bar chart van restaurants terugkijken, zag je dat ik bewust het plaatje wijder had gemaakt. Als ik dat niet deed zag ik de labels moeilijker.
+
+```{r}
+p = restaurants %>%
+  group_by(keuken) %>%
+  summarise(n=n()) %>%
+  arrange(desc(n)) %>% 
+  filter(!is.na(keuken)) %>%
+  slice(1:10) %>%
+  mutate(
+    keuken = forcats::fct_reorder(keuken, n)
+  ) %>%
+  ggplot(aes(x=keuken)) + 
+  geom_bar(aes(weight=n)) 
+
+p
+
+p +  theme(axis.text.x=element_text( angle = 40, hjust=1)) 
+```
+
+
 
 Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht van de verschillende mogelijkheden en kan je vinden op [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
 
@@ -425,7 +446,7 @@ mtcars %>%
 ```
 
 
-## ploty
+## Het plotly package
 
 Plotly is een zeer mooie library voor het maken van interactive visualisaties. Zie voor meer info [plotly](https://plot.ly/r/). We zullen een aantal voorbeelden hieronder laten zien.
 
