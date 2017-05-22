@@ -381,6 +381,10 @@ x2 = seq(1, 50, length=100)
 
 x2a = seq(1,500, by = 20)
 
+## random getallen
+rnorm(100)
+runif(100)
+
 ## samenvoegen van twee of meer vectoren
 x3 = c( x0, rnorm(100))
 
@@ -424,6 +428,14 @@ x3[8.9]
 x3[  8:17  ] = 0
 ```
 
+Je kan ook een vector van TRUE/FALSE opgeven als subscript.
+
+```{r}
+x = rnorm(100)
+x[x > 2]
+
+```
+
 Een paar simpele functies die je op vectoren kan toepassen
 
 ```{r, eval=FALSE}
@@ -440,9 +452,9 @@ sum(y < 0)
 ```
 
 
-##  matrices
+##  Matrices
 
-Een matrix is een verzameling van vectoren die even lang zijn.
+Een matrix is een verzameling van vectoren die even lang zijn. Je kan rechthoekige (aantal rijen anders dan aantal kolommen) of vierkande matrices (aantal rijen = aantal kolommen) hebben.
 
 ```{r, eval=FALSE}
 ## maak een matrix van een vector
@@ -473,7 +485,7 @@ m2[5,]
 m2[ ,5]
 ```
 
-Matrix berekeningen
+Met matrices kun je rekenen. Een paar typische matrix bewerkingen.
 
 ```{r, eval =FALSE}
 # determinant van een matrix
@@ -494,7 +506,7 @@ round(m2 %*% solve(m2))
 
 ## multidimensional arrays
 
-arrays zijn 3 dimensionale (of hoger) matrices
+In R zijn arrays eigenlijk multi-dimensionale matrices. In 3 dimensies zijn het eigenlijk 'blokken' van getallen.
 
 ```{r, eval=FALSE}
 m = array(1:1000, dim = c(10,10,10))
@@ -510,7 +522,8 @@ class(m)
 
 ## data frames
 
-Een data frame kan je zien als een matrix, maar in tegenstelling tot een matrix, kunnen kolommen van een data frame van een andere type zijn. Voor data analyse met 'echte' data zal een data.frame de meest handige structuur zijn.
+Een data frame kan je zien als een matrix, maar in tegenstelling tot een matrix, kunnen kolommen van een data frame van een andere type zijn. Voor data analyse met 'echte' data zal een data.frame de meest handige structuur zijn. je hebt bijvoorbeeld een factor kolom 'Geslacht', een double kolom met bijvoorbeeld 'geweicht' en je kan een character kolom hebben met 'achternaam'.
+
 
 ```{r, eval=FALSE}
 x1 = 1:100
@@ -575,7 +588,7 @@ df1
 
 ## tibbles
 
-In R zijn tibbles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor
+In R zijn tibbles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor.
 
 Zie ook zijn boek en de website [tibbles.](http://tibble.tidyverse.org/)
 
@@ -795,7 +808,7 @@ sqlSave(cn, RandomPersons)
 
 ## R Datasets
 
-Je kan R objecten (niet alleen data frames) weg schrijven met de `saveRDS` functie, en deze kunnen weer ingelezen worden met de `readRDS` functie.
+Je kan R objecten (niet alleen data frames) weg schrijven met de `saveRDS` functie, en deze kunnen weer ingelezen worden met de `readRDS` functie. files die je krijgt zijn binaire bestanden, ze kleiner dan tekst files en zijn sneller om weer in R in te lezen.
 
 ```{r}
 x = rnorm(100)
@@ -810,7 +823,7 @@ GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 
 # Nog iets over geheugen gebruik
 
-R verwerkt alles in het RAM geheugen. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
+R verwerkt alles in het RAM geheugen van de computer. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
 
 ```{r}
 library(pryr)
