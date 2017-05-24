@@ -158,9 +158,19 @@ f3 <- read.csv("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/d
 
 ## String bewerkingen
 Copy the following vector to R.
-X = c("abd 07-456", "blab la (06)-123.45678", "hoi 06 12 1234 78", "mijn nr 0689452312")
-A.	A valid mobile phone number starts with 06 followed by 8 digits, but there could be hyphens, round brackets or spaces. What are the valid numbers in x, use a regular expression.
+X = c("abd 06-456", "blab la (06)-123.45678", "hoi 06-12123478", "mijn nr 0689452312")
+A.	For this exercise a valid mobile phone number starts with 06 followed by hyphen or space or not and then 8 consecutive digits. What are the valid numbers in x, use a regular expression.
 B.	Extract the phone numbers from x into a new vector y
+
+```{r}
+library(stringr)
+x = c("abd 06-456", "blab la (06)-123.45678", "hoi 06-12123478", "mijn nr 0689452312")
+
+mob_pattern = "[0][6][[:punct:]]*[\\d]{8}"
+str_detect(x,mob_pattern)
+
+str_extract(x, mob_pattern)
+```
 
 ## Dates and times.
 A.	Create a date object from the characters "31-jan-05"   "22-Sep-07".
@@ -168,6 +178,9 @@ B.	Create a date object from the characters "31-jan-05 3:03:20"  "22-Sep-07 22:2
 C.	Add 3 months and 2 days to the dates from exercise (B)
 D.	Create a date sequence vector x with the dates: 31-1-2016, 28-2-2016, 31-03-2016,……,31-12-2016 
 
+```{r}
+
+```
 
 For the following two exercises we are going to use restaurant data in the file Restaurants.csv in the data folder. Use the read_csv function to import this data set.
 
@@ -178,6 +191,10 @@ C.	Create an extra column that has the values zero or one.   1 if Kitchen type i
 D.	Create a sub set of the data, filter only the restaurants that have price smaller than 25.
 E.	Give the number per kitchen types of that sub set.
 
+```{r}
+
+```
+
 ## Basic data manipulation 2
 A.	In the data folder there is a Postcide_NL.RDs file, import that set. 
 B.	Use it to enrich the restaurant data set whith an extra column provincie.
@@ -185,13 +202,18 @@ C.	Count the number of restaurants per province of the whole set.
 D.	Give the max and min prices per province.
 E.	In the column “keuken” there are some mistakes. A price where there should have been a kitchen type. Remove all kitchen types that have a digit in.
 
+```{r}
+
+```
+
 ## Auto data van gaspedaal
 In the data folder there is a file R data set AllCarsGasPedaal.Rds  import this data set using readRDS
 
 A.	List the names of the columns of the data set.
 B.	In this data set there is a column Kilometerstand which is character, convert it to numeric so that we can calculate with it.
 C.	Select only the brands Audi, Renault and BMW put those records in a new data frame.
-6. Split data and stack data
+
+## Split data and stack data
 Consider the following simple data set with 3 rows:
 
 Df = data.frame(
@@ -211,44 +233,6 @@ Id Item
 3 z
 How to this? use tidyr functions separate and gather.
 
-## sampling van data 
-Kijk naar sample_n of sample_frac uit dplyr.
-A. Create a df1 data frame with 100 columns and 1000 rows. Filled with random numbers between 0 and 1.
-B. Create df2 which samples 500 rows from df1
-C. Create df3 which samples 50% of the rows from df1
-
-
-
-
-<br>
-
-# Avond sessie 03
-
----
-
-
-## Split data and stack data
-
-Consider the following simple data set with 3 rows
-
-Df = data.frame(
-  V1 = c(“a,b,r”, “p,q”, “p,q,w,z”)
-)
-
-I need the following set
-Id Item
-1 a
-1 b
-1 r
-2 p
-2 q
-3 p
-3 q
-3 w
-3 z
-
-How to this? use tidyr functions separate and gather
-
 ```{r}
 library(tidyverse)
 Df = data.frame(
@@ -260,3 +244,37 @@ tmp = tidyr::separate(Df, V1, into = paste0("V",1:10)) %>%
   gather(id, item, -tmp) %>%
   filter(!is.na(item))
 ```
+
+## sampling van data 
+Kijk naar sample_n of sample_frac uit dplyr.
+A. Create a df1 data frame with 100 columns and 1000 rows. Filled with random numbers between 0 and 1.
+B. Create df2 which samples 500 rows from df1
+C. Create df3 which samples 50% of the rows from df1
+
+```{r}
+
+```
+
+
+
+<br>
+
+# Avond sessie 03
+
+---
+
+Use the set AllCarsGasPedaal.Rds  from the previous exercise
+
+## plotting using ggplot2
+
+A.	Create a scatterplot of the VraagPrijs and KMStand.
+B.	Remove outlying points and create plot again using alpha = 0.4
+C.	Filter the set so that we only have the top eight brands (based on # observations)
+D.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise 
+E.	Create a facets by brand, each facet should have a histogram of the price 
+F.	Create facets by brand and type, each facet should contain a scatter plot between price and KM stand
+
+## plotting using plotly
+
+
+## plotting using leaflet
