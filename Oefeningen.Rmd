@@ -12,6 +12,8 @@ output:
 
 # Avond sessie 01
 
+---
+
 ## Data types
 A.	Create the object x1 with the numbers 1, 3.51, 0.7 and 5.
 B.	Show the data class of x1.
@@ -90,14 +92,23 @@ y
 ```
 
 ## Creating a data.frame
-A.	Create a data frame from the two vectors x and y from the previous exercise
+A.	Create a data frame `df1` from the two vectors x and y from the previous exercise
 
 B.	Rename the columns x and y into index and income
 
 C.	Create an additional factor column Gender, randomly filled with “M” or “F”
 
 ```{r}
-
+df1 = data.frame(x,y)
+names(df1) = c("index", "income")
+df1$Gender = as.factor(
+  sample(
+    c("M","F"), 
+    replace = TRUE,
+    size = dim(df1)[1]
+    )
+)
+  
 ```
 
 ## Creating a list 
@@ -120,6 +131,10 @@ L1 = list(
   X3 = 1:20,
   x5 = 50:1
 )
+
+names(L1)
+
+lapply(L1, mean)
 ```
 
 ## Importing some data
@@ -135,12 +150,82 @@ f2 <- read_delim("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR
 f3 <- read.csv("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/data/f3.txt")
 ```
 
+<br>
 
 # Avond sessie 02
 
+---
 
+## String bewerkingen
+Copy the following vector to R.
+X = c("abd 07-456", "blab la (06)-123.45678", "hoi 06 12 1234 78", "mijn nr 0689452312")
+A.	A valid mobile phone number starts with 06 followed by 8 digits, but there could be hyphens, round brackets or spaces. What are the valid numbers in x, use a regular expression.
+B.	Extract the phone numbers from x into a new vector y
+
+## Dates and times.
+A.	Create a date object from the characters "31-jan-05"   "22-Sep-07".
+B.	Create a date object from the characters "31-jan-05 3:03:20"  "22-Sep-07 22:29:56".
+C.	Add 3 months and 2 days to the dates from exercise (B)
+D.	Create a date sequence vector x with the dates: 31-1-2016, 28-2-2016, 31-03-2016,……,31-12-2016 
+
+
+For the following two exercises we are going to use restaurant data in the file Restaurants.csv in the data folder. Use the read_csv function to import this data set.
+
+## Basic data manipulation 1
+A.	Create a subset of the restaurants whose name is “kota radja”, how many are there?
+B.	Give a top ten restaurants in Amsterdam based on price.
+C.	Create an extra column that has the values zero or one.   1 if Kitchen type is Chinees and 0 otherwise.
+D.	Create a sub set of the data, filter only the restaurants that have price smaller than 25.
+E.	Give the number per kitchen types of that sub set.
+
+## Basic data manipulation 2
+A.	In the data folder there is a Postcide_NL.RDs file, import that set. 
+B.	Use it to enrich the restaurant data set whith an extra column provincie.
+C.	Count the number of restaurants per province of the whole set.
+D.	Give the max and min prices per province.
+E.	In the column “keuken” there are some mistakes. A price where there should have been a kitchen type. Remove all kitchen types that have a digit in.
+
+## Auto data van gaspedaal
+In the data folder there is a file R data set AllCarsGasPedaal.Rds  import this data set using readRDS
+
+A.	List the names of the columns of the data set.
+B.	In this data set there is a column Kilometerstand which is character, convert it to numeric so that we can calculate with it.
+C.	Select only the brands Audi, Renault and BMW put those records in a new data frame.
+6. Split data and stack data
+Consider the following simple data set with 3 rows:
+
+Df = data.frame(
+  V1 = c(“a,b,r”, “p,q”, “p,q,w,z”)
+)
+
+I need the following set:
+Id Item
+1 a
+1 b
+1 r
+2 p
+2 q
+3 p
+3 q
+3 w
+3 z
+How to this? use tidyr functions separate and gather.
+
+## sampling van data 
+Kijk naar sample_n of sample_frac uit dplyr.
+A. Create a df1 data frame with 100 columns and 1000 rows. Filled with random numbers between 0 and 1.
+B. Create df2 which samples 500 rows from df1
+C. Create df3 which samples 50% of the rows from df1
+
+
+
+
+<br>
 
 # Avond sessie 03
+
+---
+
 
 ## Split data and stack data
 

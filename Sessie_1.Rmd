@@ -378,20 +378,30 @@ x1 = 1:1000
 x1 = 187:278
 
 x2 = seq(1, 50, length=100)
-
 x2a = seq(1,500, by = 20)
-
-## random getallen
-rnorm(100)
-runif(100)
 
 ## samenvoegen van twee of meer vectoren
 x3 = c( x0, rnorm(100))
 
-x4 = sample( letters, rep = TRUE, size = 100)
-
 class(x4)
 ```
+
+
+Het genreren van wat random getallen is handig om snel wat data te hebben om te testen, in R zijn er diverse functies.
+
+```{r}
+# normaal verdeelde getallen
+rnorm(100)
+rnorm(100, 9, 2)
+
+#uniform verdeelde getallen
+runif(100)
+runif(100,8,10)
+
+# trekken uit een vector
+x4 = sample( letters, rep = TRUE, size = 100)
+```
+
 
 Berekeningen op vectoren gebeuren elements-gewijs
 
