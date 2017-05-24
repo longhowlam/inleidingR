@@ -278,9 +278,9 @@ B.	Remove outlying points and create plot again using alpha = 0.05
 C.  Add a smoothed line trough the points to get an idea of the relation between KM and Price.
 D.	Filter the set so that we only have the top eight brands (based on # observations)
 E.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise 
-F.  Create also a smoothe line per brand
-G.	Create a facets by brand, each facet should have a histogram of the price 
-H.	Create facets by brand and type, each facet should contain a scatter plot between price and KM stand
+F.  Create also a smoothing line per brand
+G.	Create facets by brand, each facet should have a histogram of the price, create also a grid of 2 rows and 4 columns. 
+H.	Create facets by brand, each facet should contain a scatter plot between price and KM stand
 
 
 ```{r}
@@ -313,6 +313,26 @@ AllCars %>%
   ggplot(aes(x=KM, y = Prijs)) +
   geom_point(aes(colour=Merk),alpha = 0.05) + 
   geom_smooth(aes(colour=Merk))
+
+AllCars %>% 
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  inner_join(top8) %>%
+  ggplot(aes(Prijs)) +
+  geom_histogram() + facet_grid(~Merk)
+
+AllCars %>% 
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  inner_join(top8) %>%
+  ggplot(aes(Prijs)) +
+  geom_histogram() + facet_wrap(~Merk, nrow=2)
+
+AllCars %>% 
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  inner_join(top8) %>%
+  ggplot(aes(x= KM, y = Prijs)) +
+  geom_point() + facet_grid(~Merk)
+
+
 ```
 
 
