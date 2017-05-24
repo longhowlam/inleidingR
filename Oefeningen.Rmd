@@ -263,16 +263,58 @@ C. Create df3 which samples 50% of the rows from df1
 
 ---
 
-Use the set AllCarsGasPedaal.Rds  from the previous exercise
+Use the set AllCarsGasPedaal.Rds  from the previous exercise.
+```{r}
+library(ggplot2)
+library(dplyr)
+
+AllCars = readRDS("data/AllCarsGasPedaal.Rds")
+```
 
 ## plotting using ggplot2
 
 A.	Create a scatterplot of the VraagPrijs and KMStand.
-B.	Remove outlying points and create plot again using alpha = 0.4
-C.	Filter the set so that we only have the top eight brands (based on # observations)
-D.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise 
-E.	Create a facets by brand, each facet should have a histogram of the price 
-F.	Create facets by brand and type, each facet should contain a scatter plot between price and KM stand
+B.	Remove outlying points and create plot again using alpha = 0.05
+C.  Add a smoothed line trough the points to get an idea of the relation between KM and Price.
+D.	Filter the set so that we only have the top eight brands (based on # observations)
+E.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise 
+F.  Create also a smoothe line per brand
+G.	Create a facets by brand, each facet should have a histogram of the price 
+H.	Create facets by brand and type, each facet should contain a scatter plot between price and KM stand
+
+
+```{r}
+AllCars %>% 
+  ggplot(aes(x=KM, y = Prijs)) +
+  geom_point()
+
+AllCars %>% 
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  ggplot(aes(x=KM, y = Prijs)) +
+  geom_point(alpha = 0.05)
+
+AllCars %>%
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  ggplot(aes(x=KM, y = Prijs)) +
+  geom_point(alpha = 0.05) + 
+  geom_smooth()
+
+top8 = AllCars %>% group_by(Merk) %>% summarise(n=n()) %>% arrange(desc(n)) %>% slice(1:8) %>% select(Merk)
+
+AllCars %>% 
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  inner_join(top8) %>%
+  ggplot(aes(x=KM, y = Prijs)) +
+  geom_point(aes(colour=Merk),alpha = 0.05) 
+
+AllCars %>% 
+  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  inner_join(top8) %>%
+  ggplot(aes(x=KM, y = Prijs)) +
+  geom_point(aes(colour=Merk),alpha = 0.05) + 
+  geom_smooth(aes(colour=Merk))
+```
+
 
 ## plotting using plotly
 
