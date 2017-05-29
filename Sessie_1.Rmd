@@ -2,14 +2,14 @@
 title: 'Avond Sessie 01: Data types/structures'
 subtitle: "Inleiding R"
 author: "Longhow Lam"
-output: 
+output:
   html_notebook:
     theme: sandstone
     toc: true
     toc_depth: 2
     toc_float: true
     number_sections: true
-#output:
+# output:
 #  prettydoc::html_pretty:
 #    highlight: github
 #    theme: cayman
@@ -64,7 +64,9 @@ Hieronder een paar simpele expressies in R om te beginnen
 1 + 1
 print("hello world")
 
-## assignment kan je = of <- gebruiken
+## assignment kan je = of <- gebruiken,
+## pijltje stamt nog uit een tijd waar het een toets op het toetsenbord was
+
 test = 9
 test
 
@@ -154,7 +156,7 @@ y3
 
 Dit is wel apart
 
-```{r}
+```{r, eval=FALSE}
 typeof(y3)
 is.character(y3)
 is.factor(y3)
@@ -389,7 +391,7 @@ class(x4)
 
 Het genreren van wat random getallen is handig om snel wat data te hebben om te testen, in R zijn er diverse functies.
 
-```{r}
+```{r, eval=FALSE}
 # normaal verdeelde getallen
 rnorm(100)
 rnorm(100, 9, 2)
@@ -405,7 +407,7 @@ x4 = sample( letters, rep = TRUE, size = 100)
 
 Berekeningen op vectoren gebeuren elements-gewijs
 
-```{r}
+```{r, eval=FALSE}
 y = 3 * x3 + 8
 
 ## en wat is dit???
@@ -440,7 +442,7 @@ x3[  8:17  ] = 0
 
 Je kan ook een vector van TRUE/FALSE opgeven als subscript.
 
-```{r}
+```{r, eval=FALSE}
 x = rnorm(100)
 x[x > 2]
 
@@ -554,7 +556,7 @@ head(df1,10)
 
 De volgende functies kan je gebruiken om wat extra info van een data frame te laten zien.
 
-```{r}
+```{r, eval=FALSE}
 # laat de namen van de kolommen zien
 names(df1)
 
@@ -647,7 +649,7 @@ l2 <- list (zz = rnorm(100), pp = l1)
 
 Lijsten bestaan uit verschillende componenten, hoe benader je die componenten of hoe krijg je dingen uit een lijst? Dit kan met subscripts of met de naam.
 
-```{r}
+```{r, eval=FALSE}
 ## subscripts
 l2[[1]]
 l2[1]
@@ -665,7 +667,7 @@ l1[[4]]$x2[3]
 
 Je kan aan een lijst altijd nog extra componenten toevoegen.
 
-```{r}
+```{r, eval=FALSE}
 l1$PP = 1
 
 # overzicht van componenten in een lijst
@@ -694,7 +696,7 @@ f1 <- x + y
 
 Gebruik `function` om zelf een functie te schrijven. Twee simpele voorbeelden:
 
-```{r}
+```{r, eval=FALSE}
 f1 = function(x, y){
   t1 = 2*y
   t2 = 3*x
@@ -708,7 +710,7 @@ f1(8,6)
 
 Als je de functie eerder wilt verlaten met een waarde, gebruik dan `return` in de functie.
 
-```{r}
+```{r, eval=FALSE}
 f2 = function(x){
   if (x < 0){
     return(1)
@@ -748,7 +750,7 @@ sum(1:1000)
 
 The chain operator gebruik je om het resultaat van een functie aan een andere functie mee te geven. De code hieronder geeft een heel simpel voorbeeldje
 
-```{r}
+```{r, eval=FALSE}
 tan(cos(sin(0.33)))
 
 0.33 %>% sin %>% cos %>% tan
@@ -781,9 +783,9 @@ Er zijn een aantal packages die handig zijn om files in te lezen.
 R heeft ook standaard functies voor het inzegen van text files, maar ik gebruik vaak de functies uit het package `readr`. Voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
 
 
-```{r, eval=FALSE, include=FALSE}
+```{r, eval=FALSE}
 ### data met restaurants in Nederland
-Restaurants <- read_csv("data/Restaurants.csv")
+Restaurants = read_csv("data/Restaurants.csv")
 
 ### Excel files inlezen
 library(readxl)
@@ -820,7 +822,7 @@ sqlSave(cn, RandomPersons)
 
 Je kan R objecten (niet alleen data frames) weg schrijven met de `saveRDS` functie, en deze kunnen weer ingelezen worden met de `readRDS` functie. files die je krijgt zijn binaire bestanden, ze kleiner dan tekst files en zijn sneller om weer in R in te lezen.
 
-```{r}
+```{r, eval=FALSE}
 x = rnorm(100)
 saveRDS(x, "data/x.RDs")
 
@@ -835,7 +837,7 @@ GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 
 R verwerkt alles in het RAM geheugen van de computer. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
 
-```{r}
+```{r, eval=FALSE}
 library(pryr)
 
 ### hoeveelgeheugen kost een object met 1 miljoen getallen
