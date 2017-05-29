@@ -631,12 +631,14 @@ tb1[,1:2]
 tb1[,1]
 ```
 
-Om een eerste indruk te krijgen van wat er in een data.frame zit kan je `summary` of skimr gebruiken
+Om een eerste indruk te krijgen van wat er in een data.frame zit kan je `summary` of `skimr` gebruiken
 
 ```{r, eval = FALSE}
 summary(mtcars)
 summary(iris)
 ```
+
+Het package `skimr` moet je eerst installeren.
 
 ```{r, eval = FALSE}
 devtools::install_github("hadley/colformat")
