@@ -631,7 +631,21 @@ tb1[,1:2]
 tb1[,1]
 ```
 
+Om een eerste indruk te krijgen van wat er in een data.frame zit kan je `summary` of skimr gebruiken
 
+```{r, eval = FALSE}
+summary(mtcars)
+summary(iris)
+```
+
+```{r, eval = FALSE}
+devtools::install_github("hadley/colformat")
+devtools::install_github("ropenscilabs/skimr")
+
+library(skimr)
+skimr::skim(mtcars)
+skim(iris)
+```
 ## lists
 
 In R zijn lijsten de meest generieke data structuur, het kan beschouwd worden als een verzameling van andere data structuren. Een lijst kan een lijst bevatten, en lijsten zijn soms het resultaat van een functie die allerlei dingen terug geeft in een lijst.
