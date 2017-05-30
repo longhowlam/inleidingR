@@ -53,12 +53,11 @@ Scripts, zijn gewone tekst files (*.R) met R code. In RStudio kan je meerdere sc
 
 R notebooks bevatten meer dan alleen R code, het is een 'compleet' document met R code, output en een beschrijvende verhaallijn. In een R project kun je ook meerdere van deze notebooks en scripts beheren. Notebooks maak je met Rmarkdown, een soort light weight markup language. Deze R cursus werkt met notebooks. Een notebook bevat R code chunks die je kan runnen.
 
-Een R notebook kan je "knit" ('breien') tot een html/pdf/word document.
+Een R notebook kan je "knit" ('breien') tot een html/pdf/word document. De header van het markdown document vertelt hoe het een en ander gebreid moet worden. Zie bijvoorbeeld dit document.
 
 ## Een paar simpele expressie
 
 Hieronder een paar simpele expressies in R om te beginnen
-
 
 ```{r, eval=FALSE}
 1 + 1
@@ -73,7 +72,7 @@ test
 test <- 3
 ```
 
-In R zijn namen van objecten *case-sensitive!*
+In R zijn namen van objecten *case-sensitive!*, en we zien dat hekje gebruikt wordt om commentaar in code te plaatsen. Alles na een hekje wordt niet niet gerund.
 
 ```{r, eval=FALSE}
 x = 8
@@ -224,8 +223,11 @@ x2 = 1
 
 x1
 x2
+```
 
-## let op in R kunnen double aan integers gelijk zijn
+Merk op dat in R, een double gelijk kan zijn aan een integer, in andere talen kan dit anders zijn.
+
+```{r, eval = FALSE}
 is.integer(x2)
 is.integer(x1)
 
@@ -235,12 +237,24 @@ x1 == x2
 Het volgende blokje code laat logische operatoren zien.
 
 ```{r, eval=FALSE}
+# ampersand is testen op "DIT"" EN "DAT""
 TRUE & FALSE    # AND
+
+x = 9
+x < 10 & x > 5
+
+# negatie, tegenovergestelde
 !TRUE           # NOT
 !FALSE
-TRUE | FALSE    # OR
 
-# Je kan rekenen met logicals
+# vertical pipe is testen op "dit"" OF "dat""
+TRUE | FALSE    # OR
+x < 7 | x > 8
+```
+
+Je kan rekenen met logicals
+
+```{r, eval = FALSE}
 TRUE + TRUE
 FALSE + FALSE + TRUE
 
