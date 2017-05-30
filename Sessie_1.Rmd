@@ -304,7 +304,6 @@ is.na(x4)
 ```
 
 
-
 ## waar zijn mijn objecten
 
 ```{r, eval=FALSE}
@@ -367,7 +366,6 @@ save.image()
 ---
 
 Data in R kan in verschillende vormen verschijnen, de zogenaamde data structuren. We zullen hieronder een aantal basis structuren behandelen.
-
 
 ## vectors
 
