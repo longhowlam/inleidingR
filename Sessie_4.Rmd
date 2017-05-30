@@ -2,13 +2,20 @@
 title: "Avond Sessie 04: Machine learning"
 subtitle: "Inleiding R"
 author: "Longhow Lam"
-output:
+output: 
   html_notebook:
     theme: sandstone
     toc: true
     toc_depth: 2
     toc_float: true
     number_sections: true
+#output:
+#  prettydoc::html_pretty:
+#    highlight: github
+#    theme: cayman
+#    toc: true
+#    toc_depth: 2
+#    number_sections: true
 ---
 
 
@@ -45,7 +52,7 @@ Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart`
 
 We beginnen met lineare regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars.
 
-```{r}
+```{r, eval = FALSE}
 mtcars
 modelout = lm(  hp ~ wt    , data = mtcars)
 modelout2 = lm( hp ~ wt + mpg, data = mtcars) 
@@ -55,7 +62,7 @@ modelout
 
 Modeling functies in R retourneren vaan objecten met van alles er nog wat in. De functie `lm` levert een object af van de klasse lm.
 
-```{r}
+```{r, eval = FALSE}
 class(modelout)
 names(modelout)
 modelout$coefficients
@@ -66,7 +73,7 @@ plot(modelout)
 
 ### formula objects
 
-```{r}
+```{r, eval = FALSE}
 names(mtcars)
 
 f1 <- hp ~ wt + carb + vs
@@ -95,7 +102,7 @@ Het is gebruikelijk om een data set random te splitsen in een train en test set.
 
 We gebruiken hier een copy van de titanic set omdat we de data iets wijzigen.
 
-```{r}
+```{r, eval = FALSE}
 perc = 0.80
 
 ## maak een categorische kolom van survived
@@ -121,7 +128,7 @@ TTest = myTitan[-train,]
 
 Een logistic regression is een van de simpele predictive modellen om mee te beginnen als je classificatie wilt doen. we gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set om een model te fitten.
 
-```{r}
+```{r, eval = FALSE}
 out.glm = glm(Survived ~ Sex + Age +Pclass,  data = TTrain , family = binomial)
 summary(out.glm)
 
@@ -131,7 +138,7 @@ summary(out.glm)
 
 Een decision tree genereert op basis van een algoritme regels die je kan gebruiken om te classificeren. 
 
-```{r}
+```{r, eval = FALSE}
 tree.out = rpart(Survived ~ Sex + Age +Pclass, data = TTrain)
 
 plot(tree.out)
@@ -151,7 +158,7 @@ fancyRpartPlot(tree.out)
 
 Ee random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende bomen.
 
-```{r}
+```{r, eval = FALSE}
 ranger.out = ranger( Survived ~ Sex + Age + Pclass, data = TTrain)
 
 ### er zijn missende waarden. We zouden ze kunnen verwijdern
@@ -168,7 +175,7 @@ Extreme gradient boosting wordt de laatste tijd ook veel gebruikt in Kaggle comp
 
 Met de library `xgboost` kan je in R extreme gradient boosting modellen fitten. De aanroep is anders dan wat we tot nu toe gezien hebben. De `xgboost` functie moet een matrix met input variabelen worden meegegeven.
 
-```{r}
+```{r, eval = FALSE}
 Titan_Inputmatrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTrain)
 
 xgboost.out = xgboost(Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
@@ -191,14 +198,14 @@ Met een test set kan je bepalen hoe goed een model is. Gebruik het model object 
 
 Voor binaire classificaties is het handig om response kansen uit te rekenen. Voor logistische regressie met `glm` gebeurt dit niet automatisch
 
-```{r}
+```{r, eval = FALSE}
 pred_GLM = predict(out.glm, data = TTest, type='response')
 hist(pred_GLM)
 ```
 
 Voorspelling van de decision tree, en random forest ranger.
 
-```{r}
+```{r, eval = FALSE}
 pred_tree = predict(tree.out, data = TTest)
 hist(pred_tree)
 
@@ -209,7 +216,7 @@ hist(pred_ranger$predictions)
 
 En voor xgboost moet je ook de test set als matrix veranderen
 
-```{r}
+```{r, eval = FALSE}
 Titan_Testmatrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTest)
 pred_xgboost = predict(xgboost.out, newdata = Titan_Testmatrix)
 hist(pred_xgboost)
@@ -219,7 +226,7 @@ hist(pred_xgboost)
 
 Als je een tree of ensemble van trees hebt getrained kan je een idee krijgen welke variablen in het model belangrijk zijn geweest in het trainings process. Laten we voor de tree modellen die we hierboven getraind hebben de variable importance zien.
 
-```{r}
+```{r, eval = FALSE}
 # enkele decision tree
 tree.out$variable.importance
 
@@ -234,15 +241,12 @@ xgb.importance( colnames(Titan_Inputmatrix), model =xgboost.out)
 
 ### roc curves and hit rates
 
-````{r}
-
+```{r, eval = FALSE}
 testpr = predict(tree.out, TTest)
 TTest$predictie = testpr
 
-
 rocResultTEST = roc(Survived  ~ predictie, data = TTest , auc=TRUE, ci =TRUE)
 plot(rocResultTEST)
-
 
 ## HITRATES 
 TTest %>% 
@@ -250,8 +254,6 @@ TTest %>%
   geom_smooth() +
   geom_abline(slope = 1,intercept = 0) +
   ggtitle("survived rate rate on test set") + scale_y_continuous(limits=c(0,1))
-
-
 ````
 
 
@@ -263,7 +265,7 @@ TTest %>%
 
 H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen. Het bevat veel machine learning algoritmes, en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe moet uploaden. om daar de algoritmes op los te laten.
 
-```{r}
+```{r, eval = FALSE}
 library(h2o)
 
 # initialiseer h20 via R
@@ -290,7 +292,7 @@ h2o.ls()
 
 Er zijn diverse modellen die je kan trainen, we zullen hier een tweetal laten zien, neural netwerks en random forests
 
-```{r}
+```{r, eval = FALSE}
 ## model op titanic
 NNmodel = h2o.deeplearning(
   x = c(3,5:6),
@@ -306,7 +308,7 @@ show(NNmodel)
 h2o.varimp(NNmodel)
 ```
 
-```{r}
+```{r, eval = FALSE}
 RFmodel = h2o.randomForest(
   x = c(3,5:6),
   y = "Survived",
@@ -322,9 +324,18 @@ RFmodel
 
 ---
 
-Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak ook steeds net anders. Dit zagen we in de bonstaande code voor ranger, en xgboost al.
+Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak een object met net steeds weer andere componenten. Dit zagen we bijvoorbeeld in de bovenstaande code voor ranger en xgboost.
 
-Met het `mlr` package kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Deze zijn te beschrijven en uit te voeren in mlr.
+Met het `mlr` package kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Bijvoorbeeld:
+
+
+* specificeren van de target
+* specificeren van inputs
+* specificeren van variabelen die je niet wilt gebruiken
+* splitsen data
+* het model / algoritme
+
+Deze zijn te beschrijven en uit te voeren in mlr.
 
 We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen on een aantal modellen te benchmarken.
 
@@ -341,7 +352,7 @@ We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal sta
 
 Elk model heeft bepaalde parameters die je kan zetten, dit hoeft niet, dan worden defualt waarden gekozen.
 
-```{r}
+```{r, eval = FALSE}
 configureMlr(on.par.without.desc = "warn")
 
 n.importance = 30
@@ -374,7 +385,7 @@ parameters_xgboost = list(
 
 Maak nu een Lijst van modelen (ook wel learners genomed) die je wilt trainen op je data.
 
-```{r}
+```{r, eval = FALSE}
 RF_Learner = makeLearner(
   "classif.ranger",
   predict.type = ptype,
@@ -428,7 +439,7 @@ learners = list(
 
 
 
-```{r}
+```{r, eval = FALSE}
 # classificatie voorbeeld, dan moet je factor target hebben en factor inputs (geen character)
 
 ABT = titanic_train
@@ -453,7 +464,7 @@ Maak nu een 'task' aan waarin je de data, de inputs en de target specificeert. E
 
 Wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven. Bij een binaie target met Y en N levels wordt namelijk standaard "N"gebruik (alfabetisch)
 
-```{r}
+```{r, eval = FALSE}
 classify.task = makeClassifTask(id = "Titanic", data = ABT, target = "Target", positive = "Y")
 
 ## Overzicht van de taak en kolom informatie
@@ -466,7 +477,7 @@ summarizeColumns(classify.task)
 
 variablen hard uitsluiten 
 
-```{r}
+```{r, eval = FALSE}
 vars.to.drop = c("Name", "Survived", "Ticket")
 
 classify.task = dropFeatures(classify.task, vars.to.drop )
@@ -480,14 +491,14 @@ classify.task
 
 Zeldzame levels van factors samenvoegen. Het is gebruikelijk om zeldzame levels te verwijderen of te mergen
 
-```{r}
+```{r, eval = FALSE}
 classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
 summarizeColumns(classify.task)
 ```
 
 Welke features hebben een effect op de target?
 
-```{r}
+```{r, eval = FALSE}
 ## Feature selection 
 fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared"))
 
@@ -500,7 +511,7 @@ plotFilterValues(fv, n.show = 2*n.importance)
 
 laat nog eens variabelen weg die helemaal niks doen.
 
-```{r}
+```{r, eval = FALSE}
 vars.to.drop = c("PassengerId", "Parch", "SibSp")
 classify.task = dropFeatures(classify.task, vars.to.drop )
 ```
@@ -509,7 +520,7 @@ classify.task = dropFeatures(classify.task, vars.to.drop )
 
 Met mlr kan je data splitsen, niet alleen in train / test maar ook cross validation. Dit heet een sample schema.
 
-```{r}
+```{r, eval = FALSE}
 SampleStrageyHO = makeResampleDesc("Holdout", split=0.75)
 SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
 ```
@@ -518,7 +529,7 @@ SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
 
 Nu heb je de diverse stappen gespecificeerd en kan je een benchmark uitvoeren voor de verschillende learners,
 
-```{r}
+```{r, eval = FALSE}
 br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
 
 ## Vergelijking machine learning modellen
@@ -528,7 +539,7 @@ plotBMRSummary(br1, measure = mlr::auc)
 
 #### ROC curves
 
-```{r}
+```{r, eval = FALSE}
 NModels = length(br1$results$Titanic)
 for(i in 1:NModels)
 {
@@ -550,7 +561,7 @@ title("Titanic model")
 
 Als je een benchmark hebt gedaan heb je al de getrainede modellen in het benchmark object zitten. Die kan je al gebruiken om een data set te scoren. je dient dit model er wel 'eerst uit te halen'. 
 
-```{r}
+```{r, eval = FALSE}
 ## haal model er uit
 titanmodel = br1$results$Titanic$classif.ranger$models[[1]]
 
@@ -560,10 +571,8 @@ FT = titanmodel$features
 ## Maak even een score set van de ABT met alleen de features
 ScoreSet = ABT[, FT]
 
-
 outpredict = predict(titanmodel, newdata = ScoreSet)
 outpredict
-
 ```
 
 
@@ -579,7 +588,7 @@ De bovenstaande code was gericht op predictive modeling, ook wel supervised lear
 
 Dit is een van de bekendste clustering methode. Je dient een aantal clusters van te voren op te geven, de *k*, het algoritme gaat dan elke observatie aan een van de k clusters toekennen.
 
-```{r}
+```{r, eval = FALSE}
 mycars = mtcars %>% select (mpg, wt)
 cars.cluster = kmeans(mycars, 5)
 cars.cluster
@@ -597,7 +606,7 @@ points(cars.cluster$centers, col = 1:5, pch = 8, cex = 2)
 
 Met het `h2o` package kan je ook k-means clustering doen, dit is niet alleen sneller maar kan ook meteen factor variabelen aan. Start indien nodig h20.
 
-```{r}
+```{r, eval = FALSE}
 library(h2o)
 #h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
 h2o.init()
@@ -605,7 +614,7 @@ h2o.init()
 
 Breng data naar h2o, we gebruiken nu de sample data set mtcars maar we maken 1 factor column aan
 
-```{r}
+```{r, eval = FALSE}
 # am is de transimssie: 0 is automat en 1 is handgeschakeld, is eig
 mycars = mtcars %>% mutate(am = as.factor(am))
 cars.h2o = as.h2o(mycars)
@@ -613,14 +622,14 @@ cars.h2o = as.h2o(mycars)
 
 Laat het algoritme zelf bepalen hoeveel clusters er in de data zijn.
 
-```{r}
+```{r, eval = FALSE}
 cars_clustering = h2o.kmeans(cars.h2o,  k = 10, estimate_k = TRUE)
 cars_clustering
 ```
 
 na het trainen heb je een h2o cluster object met diverse informatie
 
-```{r}
+```{r, eval = FALSE}
 cars_clustering@model
 h2o.cluster_sizes(cars_clustering)
 h2o.centers(cars_clustering)
@@ -637,7 +646,7 @@ cluster_membership = h2o.predict(
 
 Met market basket analyse (ook wel association rules mining) genoemd kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje.
 
-```{r}
+```{r, eval = FALSE}
 library(arules)
 library(datasets)
 
@@ -650,7 +659,7 @@ inspect(head(rules,n = 15))
 
 De data `Groeceries` is al in een zogenaamde transactions object, vaak zul je deze data vanuit een transactionele data frame moeten converteren naar een transaction object.
 
-```{r}
+```{r, eval = FALSE}
 trxDF = readRDS("data/boodschappen.RDs")
 
 Groceries2 = as(
@@ -667,7 +676,7 @@ rules2 <- apriori(Groceries2, parameter = list(supp = 0.001, conf = 0.8))
 
 Nu je de regels hebt kan je filteren op regels. Welke regels bevatten bepaalde producten.
 
-```{r}
+```{r, eval = FALSE}
 rules.subset2 <- subset(rules, lhs %in% c("cereals", "curd"))
 rules.subset2
 inspect(head(rules.subset2,n=15))
@@ -675,7 +684,7 @@ inspect(head(rules.subset2,n=15))
 
 Of als iemand een bepaalde reeks transacties heeft welke regels horen daar bij en welk product kan je dan aanraden.
 
-```{r}
+```{r, eval = FALSE}
 PersoonA = data.frame(
   id = rep(1,3),
   #item = c("butter","jam"),

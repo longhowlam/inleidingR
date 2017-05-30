@@ -90,7 +90,7 @@ my.cars = mtcars %>% .[2:6]
 
 We zagen al dat je kolommen in een data frame kon maken of wijzigen met `$` 
 
-```{r}
+```{r, eval=FALSE}
 my.cars$kolom2  = rnorm(32)
 my.cars$kolom3  = my.cars$kolom2 + 9
 ```
@@ -111,7 +111,7 @@ mycars = mtcars %>%
 
 Je kan nieuwe kolommen maken die afhankelijk zijn van kolommen die je net in mutate maakt
 
-```{r}
+```{r, eval=FALSE}
 mycars = mtcars %>%
   mutate(
     displ_l = disp / 61.0237,
@@ -122,7 +122,7 @@ mycars = mtcars %>%
 
 Je kan ook zelf gemaakte functies gebruiken. 
 
-```{r}
+```{r, eval=FALSE}
 normalize <- function(x){
     return((x- mean(x))/(max(x)-min(x)))
 }
@@ -135,7 +135,7 @@ mycars = mtcars %>%
 
 Twee functies die ontzettend handig kunnen zijn: `mutate_at` en `mutate_if`
 
-```{r}
+```{r, eval=FALSE}
 ABT = data.frame(
   matrix(round(100*runif(100)), ncol=10)
 )
@@ -167,7 +167,7 @@ ABT3
 
 Soms wil je data ontdubbelen, dit kan je in R doen met de functie `distinct`
 
-```{r}
+```{r, eval=FALSE}
 distinct( select(mtcars, carb, gear))
 
 distinct(select(mtcars, 10,11))
@@ -207,7 +207,7 @@ filter(
 
 Met `slice` kan je op basis van row numbers data selecteren
 
-```{r}
+```{r, eval=FALSE}
 slice(mtcars, 1:8)
 slice(mtcars, 8:n())
 ```
@@ -217,7 +217,7 @@ slice(mtcars, 8:n())
 
 Aggregeren met de functie `group_by` en `summarise` deze gaan vaak hand in hand samen.
 
-```{r}
+```{r, eval=FALSE}
 ## apart aanroep van group_by en summarise... zo kan je zien wat group_by oplevert
 by_cyl = group_by(mtcars, cyl) 
 class(by_cyl)
@@ -257,7 +257,7 @@ out = filter(
 Met dplyr kun je makkelijk tabellen joinen. Er zijn verschillende joins die ondersteunt worden. We geven hier een aantal voorbeelden.
 
 
-```{r}
+```{r, eval=FALSE}
 ### maak twee data frames aan
 df1 = data.frame(
   col1 = c(1,2,3,4,5), tt = rnorm(5)
@@ -304,7 +304,7 @@ full_join(df1, df2, by = c("col1" = "col1"))
 
 Soms wil je twee tabellen op elkaar stappelen tot een nieuwe tabel, dat kan je doen met `bind_rows`. Als je twee tabellen naast elkaar wilt zetten tot een nieuwe tabel, gebruik dan `bind_rows`.
 
-```{r}
+```{r, eval=FALSE}
 ## bind_rows
 A = data.frame(x=1:5, y = rnorm(5))
 B = data.frame(x=11:15, y = rnorm(5))
@@ -316,7 +316,7 @@ E = data.frame(x=21:25, y = rnorm(5), z = rnorm(5))
 bind_rows(A,E)
 ```
 
-```{r}
+```{r, eval=FALSE}
 A = data.frame(x=1:5, y = rnorm(5))
 B = data.frame(q=11:15, q = rnorm(5))
 bind_cols(A,B)
@@ -341,7 +341,7 @@ Tidy data is wanneer data in de volgende vorm zit:
 
 Stel we hebben de volgende data set
 
-```{r}
+```{r, eval=FALSE}
 library(tidyr)
 stocks <- data.frame(
   time = as.Date('2009-01-01') + 0:9,
@@ -354,14 +354,14 @@ stocks
 
 Soms is het handig om data waarden in 1 kolom te hebben en een aparte variabele die de variabele weergeeft
 
-```{r}
+```{r, eval=FALSE}
 stocksm <- stocks %>% gather(stock, price, -time)
 stocksm
 ```
 
 en spread is het omgekeerde proces
 
-```{r}
+```{r, eval=FALSE}
 stock2 = stocksm %>% spread(stock, price)
 stock2
  
@@ -378,7 +378,7 @@ test2 = test %>% spread(V,price)
 
 Een handige functie in tidyr is `separate`, dit kan je gebruiken om een kolom uit elkaar te trekken. Standaard worden niet alpha numerieke tekens als separator gebruikt.
 
-```{r}
+```{r, eval=FALSE}
 df = tibble(x = c("A.B", "C.P", "P.Q"))
 df %>% separate(x, c("Kol1", "Kol2"))
 
@@ -404,14 +404,14 @@ Character data in R kan je bewerken/manipuleren met het `stringr` package. Voord
 
 Dit is een soort 'mini' taaltje om character patronen te specificeren om er vervolgens bijvoorbeeld op te zoeken. Eerst wat dummy character data.
 
-```{r}
+```{r, eval=FALSE}
 test = c("Mijn nummer is 06-12345678", "dit is .. een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK", "12345 Aabcde", "&yfy.")
 test
 ```
 
 Een paar voorbeelden van reguliere expressies.
 
-```{r}
+```{r, eval=FALSE}
 library(stringr)
 
 ## een digit, en precies 1 digit
@@ -441,7 +441,7 @@ str_extract(test, patroon)
 
 Sommige mensen zijn de wildcard notatie gewend om te zoeken in strings, deze wildcard notatie kan je vertalen naar reguliere expressies met `glob2rx`. Een paar voorbeelden zullen hieronder geven. 
 
-```{r}
+```{r, eval=FALSE}
 patroon = glob2rx("*23*")
 str_extract(test, patroon)
 ```
@@ -452,7 +452,7 @@ Voor een cheatsheet over reguliere expressies zie [regex cheatsheet](https://www
 
 In het package stringr zijn diverse functies om met characters te werken, een aantal zullen we laten zien
 
-```{r}
+```{r, eval=FALSE}
 testset = titanic::titanic_train %>% select(Name)
 ## maak extra kolom aan in titanic die namen zoekt
 testset = testset %>%
@@ -474,7 +474,7 @@ str_locate(testset$Name, "Mr")
 
 In R kun je factor variabelen bewerken met functies uit het `forcats` package. We geven een aantal voorbeelden op random gegenereerde data
 
-```{r}
+```{r, eval=FALSE}
 library(forcats)
 
 x = rnorm(1000)
@@ -486,7 +486,7 @@ table(test$type)
 
 Samenvoegen van levels: Op aantallen (Weinig voorkomende levels) of handmatig
 
-```{r}
+```{r, eval=FALSE}
 test = test %>% 
   mutate(
     z = fct_lump(type, n=5)
@@ -506,7 +506,7 @@ table(test$z3)
 
 Hernoemen van factor levels
 
-```{r}
+```{r, eval=FALSE}
 test = test %>% 
   mutate(
     z2 = fct_recode(
@@ -531,13 +531,15 @@ table(test$z3)
 
 Herordenen van factor levels, factor levels kunnen een order bevatten, deze kan je maken of veranderen, kan soms nodig zijn bij plotten.
 
-```{r}
+```{r, eval=FALSE}
 test = test %>% 
   mutate(
     z2 = fct_reorder(type, gewicht, mean)
   )
+
 table(test$type)
 table(test$z2)
+
 levels(test$type)
 levels(test$z2)
 ```
@@ -551,7 +553,7 @@ levels(test$z2)
 
 Voor datums (en tijden) in R zijn de packages `anydate` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken.
 
-```{r}
+```{r, eval=FALSE}
 y = c("1973-09-12", "1980-05-23", "1981-12-09")
 
 testdata = tibble(DoB = y)
@@ -564,7 +566,7 @@ testdata = testdata %>%
 
 De functie `anydate` parsed diverse character notatie naar een date kolom, de gaat meestal goed :-)
 
-```{r}
+```{r, eval=FALSE}
 y = c("1973/09/12", "05/23/1980", "23/05/1980","1981-12-09")
 
 testdata = tibble(DoB = y)
@@ -577,7 +579,7 @@ testdata = testdata %>%
 
 Nu we een datum echt als date column in een data frame of tibble hebben kunnen we er mee rekenen.
 
-```{r}
+```{r, eval=FALSE}
 testdata = testdata %>%
   mutate(
     leeftijd = today() - GeboorteDatum,
@@ -590,7 +592,7 @@ testdata = testdata %>%
 
 Een Unix time stamps is het aantal seconden sinds 1-1-1970. Mocht je dit ooit tegen komen dan kan anytime er ook mee uit de voeten.
 
-```{r}
+```{r, eval=FALSE}
 tmp = read_csv("data/unixtimestamps.csv")
 tmp$datum = anydate(tmp$timestamp)
 tmp

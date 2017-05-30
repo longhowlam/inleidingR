@@ -9,6 +9,13 @@ output:
     toc_depth: 2
     toc_float: true
     number_sections: true
+#output:
+#  prettydoc::html_pretty:
+#    highlight: github
+#    theme: cayman
+#    toc: true
+#    toc_depth: 2
+#    number_sections: true
 ---
 
 ---
