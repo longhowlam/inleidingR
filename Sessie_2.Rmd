@@ -1,15 +1,15 @@
 ---
-title: "Avond Sessie 02: Data preparatie"
-subtitle: "Inleiding R"
+title: 'Avond Sessie 02: Data preparatie'
 author: "Longhow Lam"
-output: 
+subtitle: Inleiding R
+output:
   html_notebook:
     theme: sandstone
     toc: true
     toc_depth: 2
     toc_float: true
     number_sections: true
-#output:
+# output:
 #  prettydoc::html_pretty:
 #    highlight: github
 #    theme: cayman
@@ -97,7 +97,7 @@ my.cars$kolom3  = my.cars$kolom2 + 9
 
 Maar met `mutate` kan je dit veel eleganter doen
 
-```{r}
+```{r, eval=FALSE}
 mycars = mtcars %>%
   select(
     disp, 
