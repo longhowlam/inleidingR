@@ -67,7 +67,7 @@ plot(mtcars %>% select(mpg,cyl,hp))
 Een histogram kan je snel maken met de functie `hist`, deze accepteert een vector van getallen.
 
 ```{r, eval=FALSE}
-hist(x1)
+hist(x)
 
 ## teksten op een plaatje 
 plot(x,y)

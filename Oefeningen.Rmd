@@ -175,11 +175,24 @@ str_extract(x, mob_pattern)
 ## Dates and times.
 A.	Create a date object from the characters "31-jan-05"   "22-Sep-07".
 B.	Create a date object from the characters "31-jan-05 3:03:20"  "22-Sep-07 22:29:56".
-C.	Add 3 months and 2 days to the dates from exercise (B)
-D.	Create a date sequence vector x with the dates: 31-1-2016, 28-2-2016, 31-03-2016,……,31-12-2016 
+C.	Add 4 months and 2 days to the dates from exercise (B)
+D.	Create a date sequence vector x with the dates: 31-1-2016, 29-2-2016, 31-03-2016,……,31-12-2016 
 
 ```{r}
+library(anytime)
+x = anydate(c("31-jan-2005", "22-Sep-2007"))
+y = anytime(c("31-jan-2005 3:03:20",  "22-Sep-2007 22:29:56"))
 
+library(lubridate)
+
+month(x) = month(x) +4
+day(x) = day(x) +2
+x
+
+x = anydate( rep("2016-01-01", 12))
+month(x) = 1:12
+month(x) = month(x) + 1
+x = x -1
 ```
 
 For the following two exercises we are going to use restaurant data in the file Restaurants.csv in the data folder. Use the read_csv function to import this data set.
@@ -192,26 +205,88 @@ D.	Create a sub set of the data, filter only the restaurants that have price sma
 E.	Give the number per kitchen types of that sub set.
 
 ```{r}
+library(readr)
+library(stringr)
+library(dplyr)
+restaurants = read_csv("data/Restaurants.csv")
+
+restaurants %>% filter(
+  str_detect(restNamen, "Kota")
+  )
+
+restaurants %>% filter( plaats == "Amsterdam") %>% arrange(desc(prijs)) %>% slice(1:10)
+
+restaurants = restaurants %>% 
+  mutate(
+    Chinese = ifelse(typerest == "Chinees",1,0)
+  )
+
+elcheapo = restaurants %>% filter(prijs < 25)
+
+elcheapo %>% group_by(keuken) %>% summarise(n=n())
 
 ```
 
 ## Basic data manipulation 2
-A.	In the data folder there is a Postcide_NL.RDs file, import that set. 
+A.	In the data folder there is a Postcode_NL.RDs file, import that set. 
 B.	Use it to enrich the restaurant data set whith an extra column provincie.
 C.	Count the number of restaurants per province of the whole set.
 D.	Give the max and min prices per province.
 E.	In the column “keuken” there are some mistakes. A price where there should have been a kitchen type. Remove all kitchen types that have a digit in.
 
 ```{r}
+postcode = readRDS("data/postocdes_NL.RDs")
+restaurants = left_join(restaurants, postcode, by=c("PCs"="Postcode_spatie"))
 
+restaurants %>% 
+  group_by(province) %>%
+  summarise(n=n())
+
+## pas op NA
+restaurants %>% 
+  group_by(province) %>%
+  summarise(
+    maxPrijs = max(prijs),
+    minPrijs = min(prijs)
+    )
+
+restaurants %>% 
+  group_by(province) %>%
+  summarise(
+    maxPrijs = max(prijs, na.rm = TRUE),
+    minPrijs = min(prijs, na.rm = TRUE)
+    )
+
+restaurants = restaurants %>% 
+  filter(
+    !str_detect(keuken,"[:digit:]")
+  )
 ```
 
 ## Auto data van gaspedaal
-In the data folder there is a file R data set AllCarsGasPedaal.Rds  import this data set using readRDS
+In the data folder there is a file R data set AllCarsGasPedaal.Rds  import this data set using `readRDS`.
 
 A.	List the names of the columns of the data set.
-B.	In this data set there is a column Kilometerstand which is character, convert it to numeric so that we can calculate with it.
+B.	In this data set there is a column bjkm which is character, containing the kilometerstand, extract it and convert it to numeric so that we can calculate with it.
 C.	Select only the brands Audi, Renault and BMW put those records in a new data frame.
+
+```{r}
+gaspedaal = readRDS("data/AllCarsGasPedaal.Rds")
+names(gaspedaal)
+
+### in stapjes
+# HAAL EERST ALLES WAT VOOR KM STAAT
+gaspedaal$tmp = str_extract(gaspedaal$bjkm, "[:digit:]*[\\.]*[:digit:]*\\skm")
+
+#HAAL KM WEG EN HAAL PUNT WEG EN TRANSFORMEER NAAR NUMERIC
+gaspedaal$KM = gaspedaal$tmp %>% 
+  str_replace("km","") %>% 
+  str_replace_all("\\.","") %>%
+  as.numeric()
+
+TEST = gaspedaal %>% filter(Merk %in% c("Audi","Renault","BMW"))
+
+```
 
 ## Split data and stack data
 Consider the following simple data set with 3 rows:
@@ -252,7 +327,12 @@ B. Create df2 which samples 500 rows from df1
 C. Create df3 which samples 50% of the rows from df1
 
 ```{r}
+# maak een 0/1 vector stop in een matrix en dan in een dataframe 
+sample(c(0,1), replace = T, size = 100*1000) %>% matrix(ncol=100) %>% as.data.frame() -> df1
 
+df2 = sample_n(df1,500)
+
+df3 = sample_frac(df1, size=0.5)
 ```
 
 
@@ -336,7 +416,3 @@ AllCars %>%
 ```
 
 
-## plotting using plotly
-
-
-## plotting using leaflet
