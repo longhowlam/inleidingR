@@ -45,22 +45,23 @@ library(ggplot2)
 ---
 
 In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie. 
-Lineare regressie `lm`, logistische regressie met `glm`, decision trees, `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kan proberen op een data set.
+Lineare regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kan proberen op een data set.
 
 
 ## lineare regressie 
 
-We beginnen met lineare regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars.
+We beginnen met lineare regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars. waarin we horse power (hp) voorspellen op basis van een aantal input variabelen.
 
 ```{r, eval = FALSE}
 mtcars
-modelout = lm(  hp ~ wt    , data = mtcars)
-modelout2 = lm( hp ~ wt + mpg, data = mtcars) 
+modelout = lm(  hp ~ wt       , data = mtcars)
+modelout2 = lm( hp ~ wt + mpg , data = mtcars) 
 
 modelout
+modelout2
 ```
 
-Modeling functies in R retourneren vaan objecten met van alles er nog wat in. De functie `lm` levert een object af van de klasse lm.
+Modeling functies in R retourneren objecten met van alles er nog wat in. De functie `lm` levert een object af van de klasse lm.
 
 ```{r, eval = FALSE}
 class(modelout)
@@ -73,21 +74,27 @@ plot(modelout)
 
 ### formula objects
 
+Modellen in R kan je specificeren met zogenaamde de formula objects. Hieronder zie je een aantal voorbeelden.
+
 ```{r, eval = FALSE}
 names(mtcars)
 
 f1 <- hp ~ wt + carb + vs
 m1 = lm(f1, data = mtcars)
 
+## interactie termen
 f2 <- hp ~ carb*wt*vs
 m2 = lm(f2, data = mtcars)
 
+## product termen
 f2a <- hp ~ I(carb*wt*vs)
 m2a = lm(f2a, data = mtcars)
 
+## aantal termen weglaten
 f3 <- hp ~ carb*wt*vs - carb:wt:vs
 m3 = lm(f3, data = mtcars)
 
+## een target en de rest van de variabelen als inputs
 f4 = hp ~ .
 m4 = lm(f4, data = mtcars)
 
