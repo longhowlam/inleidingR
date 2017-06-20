@@ -45,12 +45,12 @@ library(ggplot2)
 ---
 
 In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie. 
-Lineare regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer unforme manier meerdere modellen kan proberen op een data set.
+Lineaire regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer uniforme manier meerdere modellen kan proberen op een data set.
 
 
 ## lineare regressie 
 
-We beginnen met lineare regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars. waarin we horse power (hp) voorspellen op basis van een aantal input variabelen.
+We beginnen met lineaire regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars. waarin we horse power (hp) voorspellen op basis van een aantal input variabelen.
 
 ```{r, eval = FALSE}
 mtcars
@@ -136,7 +136,7 @@ TTest = myTitan[-train,]
 
 ## logistic regression
 
-Een logistic regression is een van de simpeleste predictive modellen om mee te beginnen als je classificatie wilt doen. We gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set die we zojuist gemaakt hebben om een model te fitten.
+Een logistic regression is een van de simpelste predictive modellen om mee te beginnen als je classificatie wilt doen. We gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set die we zojuist gemaakt hebben om een model te fitten.
 
 ```{r, eval = FALSE}
 out.glm = glm(Survived ~ Sex + Age + Pclass,  data = TTrain , family = binomial)
@@ -234,7 +234,7 @@ hist(pred_xgboost)
 
 ### Variable importance in trees
 
-Als je een tree of ensemble van trees hebt getrained kan je een idee krijgen welke variablen in het model belangrijk zijn geweest in het trainings process. Laten we voor de tree modellen die we hierboven getraind hebben de variable importance zien.
+Als je een tree of ensemble van trees hebt getrained kan je een idee krijgen welke variabelen in het model belangrijk zijn geweest in het trainings proces. Laten we voor de tree modellen die we hierboven getraind hebben de variable importance zien.
 
 ```{r, eval = FALSE}
 # enkele decision tree
@@ -273,7 +273,7 @@ TTest %>%
 
 ---
 
-H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen. Het bevat veel machine learning algoritmes, en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o process opgestart waar je data vanuit R naar toe moet uploaden. om daar de algoritmes op los te laten.
+H2O is een schaalbaar machine learning platform die je vanuit R kan bedienen. Het bevat veel machine learning algoritmes, en voor grotere sets waar gewoon R moeite mee heeft kan h2o een uitkomst bieden. H2o heeft een eigen 'executie engine' geschreven in java. Bij het opstarten van h2o vanuit R wordt dan ook een apart h2o proces opgestart waar je data vanuit R naar toe moet uploaden. om daar de algoritmes op los te laten.
 
 ```{r, eval = FALSE}
 library(h2o)
@@ -376,7 +376,7 @@ ptype = "prob"
 N_CV_iter = 10
 ```
 
-Naast algemene parameters, heeft elk model bepaalde parameters die je kan zetten. Dit hoeft niet, dan worden defualt waarden gekozen.
+Naast algemene parameters, heeft elk model bepaalde parameters die je kan zetten. Dit hoeft niet, dan worden default waarden gekozen.
 
 
 ```{r, eval = FALSE}
@@ -486,7 +486,7 @@ ABT = impObject$data
 
 Maak nu een 'task' aan waarin je de data, de inputs en de target specificeert. Een classificatie taak voor categorische target of een regressie task voor een numerieke target.
 
-Wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven. Bij een binaie target met Y en N levels wordt namelijk standaard "N"gebruik (alfabetisch)
+Wat wil je modelleren: Kans op level "Y", dan dien je positive = "Y" op te geven. Bij een binair target met Y en N levels wordt namelijk standaard "N"gebruik (alfabetisch)
 
 ```{r, eval = FALSE}
 classify.task = makeClassifTask(id = "Titanic", data = ABT, target = "Target", positive = "Y")
@@ -592,7 +592,7 @@ title("Titanic model")
 
 ### model gebruiken om te scoren
 
-Als je een benchmark hebt gedaan heb je al de getrainede modellen in het benchmark object zitten. Die kan je al gebruiken om een data set te scoren. je dient dit model er wel 'eerst uit te halen'. 
+Als je een benchmark hebt gedaan heb je al de getrainde modellen in het benchmark object zitten. Die kan je al gebruiken om een data set te scoren. je dient dit model er wel 'eerst uit te halen'. 
 
 ```{r, eval = FALSE}
 ## haal model er uit
@@ -684,7 +684,7 @@ data(Groceries)
 summary(Groceries)
 ```
 
-Met de functie `apriori` uit het arules package kan je nu vaak vooromende combinaties van prioducten identificeren.
+Met de functie `apriori` uit het arules package kan je nu vaak voorkomende combinaties van producten identificeren.
 
 ```{r, eval = FALSE}
 rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
