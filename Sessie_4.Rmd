@@ -1,15 +1,15 @@
 ---
-title: "Avond Sessie 04: Machine learning"
-subtitle: "Inleiding R"
+title: 'Avond Sessie 04: Machine learning'
 author: "Longhow Lam"
-output: 
+subtitle: Inleiding R
+output:
   html_notebook:
     theme: sandstone
     toc: true
     toc_depth: 2
     toc_float: true
     number_sections: true
-#output:
+# output:
 #  prettydoc::html_pretty:
 #    highlight: github
 #    theme: cayman
@@ -496,10 +496,11 @@ classify.task = makeClassifTask(id = "Titanic", data = ABT, target = "Target", p
 print(classify.task)
 getTaskDescription(classify.task)
 summarizeColumns(classify.task)
-
 ```
 
 ## Variablen hard uitsluiten 
+
+Soms zijn er variabelen die je niet wilt meenemen in je model. Deze kan je hard uitsluiten.
 
 ```{r, eval = FALSE}
 vars.to.drop = c("Name", "Survived", "Ticket")
@@ -568,7 +569,7 @@ plotBMRSummary(br1, measure = mlr::auc)
 ```
 
 
-#### ROC curves
+### ROC curves
 
 In het benchmark object zit eigenlijk nog veel meer data. Met onderstaande code pluk je alle stukjes data per model uit om deze vervolgens in een ROC grafiek te zetten.
 
