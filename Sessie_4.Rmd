@@ -97,8 +97,13 @@ m3 = lm(f3, data = mtcars)
 ## een target en de rest van de variabelen als inputs
 f4 = hp ~ .
 m4 = lm(f4, data = mtcars)
+```
 
-## vergelijken van verschillende modellen
+
+Als je verschillende model objecten hebt gemaakt kan je de functie `anova` gebruiken om ze met elkaar te vergelijken. Dit gebeurt met behulp van F statistics.
+
+
+```{r, eval =FALSE}
 anova(m1,m3,m2)
 ```
 
@@ -126,24 +131,21 @@ train = sample(1:N, size = floor(perc*N))
 
 TTrain = myTitan[train,]
 TTest = myTitan[-train,]
-
-
 ```
 
 
 ## logistic regression
 
-Een logistic regression is een van de simpele predictive modellen om mee te beginnen als je classificatie wilt doen. we gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set om een model te fitten.
+Een logistic regression is een van de simpeleste predictive modellen om mee te beginnen als je classificatie wilt doen. We gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set die we zojuist gemaakt hebben om een model te fitten.
 
 ```{r, eval = FALSE}
-out.glm = glm(Survived ~ Sex + Age +Pclass,  data = TTrain , family = binomial)
+out.glm = glm(Survived ~ Sex + Age + Pclass,  data = TTrain , family = binomial)
 summary(out.glm)
-
 ```
 
 ## decision tree
 
-Een decision tree genereert op basis van een algoritme regels die je kan gebruiken om te classificeren. 
+Een decision tree genereert op basis van een algoritme regels die je kan gebruiken om te classificeren. Het is een eenvoudig algoritme dat per variabele kijkt hoe deze te gebruiken om de data set in twee stukken te splitsen (kan ook meer, maar gebruikelijk is twee). 
 
 ```{r, eval = FALSE}
 tree.out = rpart(Survived ~ Sex + Age +Pclass, data = TTrain)
@@ -157,13 +159,12 @@ fancyRpartPlot(tree.out)
 ### larger trees with complexity parameter
 tree.out = rpart(Survived ~ Sex + Age +Pclass, data = titanic_train, control = list(cp=0.005))
 fancyRpartPlot(tree.out)
-
 ```
 
 
 ## random forest met ranger
 
-Ee random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende bomen.
+Een random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende decision trees.
 
 ```{r, eval = FALSE}
 ranger.out = ranger( Survived ~ Sex + Age + Pclass, data = TTrain)
@@ -178,12 +179,14 @@ ranger.out
 
 ## xgboost
 
-Extreme gradient boosting wordt de laatste tijd ook veel gebruikt in Kaggle competities. Zoals bij random forests is een xgboost model ook een ensemble van decision trees, maar de trees zijn nu niet onafhankelijk van elkaar.
+Extreme gradient boosting wordt de laatste tijd ook veel gebruikt in Kaggle competities. Zoals bij random forests is een xgboost model ook een ensemble van decision trees, maar de trees zijn nu niet onafhankelijk van elkaar. Eerst wordt een tree gefit, daarna een andere op basis van de eerste, etc.
 
 Met de library `xgboost` kan je in R extreme gradient boosting modellen fitten. De aanroep is anders dan wat we tot nu toe gezien hebben. De `xgboost` functie moet een matrix met input variabelen worden meegegeven.
 
 ```{r, eval = FALSE}
-Titan_Inputmatrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTrain)
+Titan_Inputmatrix = sparse.model.matrix( Survived ~ Sex + Age + Pclass, data = TTrain)
+
+Titan_Inputmatrix
 
 xgboost.out = xgboost(Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
 
@@ -336,15 +339,15 @@ Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen 
 Met het `mlr` package kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Bijvoorbeeld:
 
 
-* specificeren van de target
-* specificeren van inputs
-* specificeren van variabelen die je niet wilt gebruiken
-* splitsen data
+* specificeren van de target,
+* specificeren van inputs,
+* specificeren van variabelen die je niet wilt gebruiken,
+* splitsen data,
 * het model / algoritme
 
 Deze zijn te beschrijven en uit te voeren in mlr.
 
-We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen on een aantal modellen te benchmarken.
+We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal stappen on een aantal modellen te benchmarken. De modellen die we willen benchmarken zijn:
 
 * neuraal netwerk,
 * gradient boosting,
@@ -357,16 +360,26 @@ We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal sta
 
 ## specificeren van technieken en hun opties
 
-Elk model heeft bepaalde parameters die je kan zetten, dit hoeft niet, dan worden defualt waarden gekozen.
+In mlr kan je een aantal algemene parameters weergeven.
 
 ```{r, eval = FALSE}
+## parameters die geen beschrijving hebben willen we ook kunnen opgeven
 configureMlr(on.par.without.desc = "warn")
 
+## we kijken naar maximaal dertig variabelen
 n.importance = 30
+
+## voorspel type, we willen kansen uitrekenen
 ptype = "prob"
 
+## aantal crossvalidation splitsingen
 N_CV_iter = 10
+```
 
+Naast algemene parameters, heeft elk model bepaalde parameters die je kan zetten. Dit hoeft niet, dan worden defualt waarden gekozen.
+
+
+```{r, eval = FALSE}
 parameters_rf = list(
   num.trees  = 500
 )
@@ -433,7 +446,7 @@ h2oNN_Learner = makeLearner(
   par.vals = parameters_NN
 )
 
-
+## lijst van de learners
 learners = list(
   rpart_Learner,
   RF_Learner,
@@ -444,15 +457,19 @@ learners = list(
 )
 ```
 
-
+Als je categorische variabelen in je voorspel model wilt gebruiken eist het mlr package dat ze `factor` zijn. En in het geval van een classificatie probleem moet de target variabele ook een factor variabele zijn.
 
 ```{r, eval = FALSE}
-# classificatie voorbeeld, dan moet je factor target hebben en factor inputs (geen character)
-
 ABT = titanic_train
 ABT$Target = as.factor(ifelse(ABT$Survived < 1, "N", "Y"))
 ABT = ABT %>% mutate_if(is.character, as.factor)
-                  
+```
+
+## Imputeren van missende waarden
+
+Als er missende waarden zijn kan je mlr deze laten imputeren door een bepaalde waarde.
+
+```{r, eval = FALSE}
 impObject = impute(
   ABT, 
   classes = list(
@@ -465,7 +482,7 @@ impObject = impute(
 
 ABT = impObject$data
 ```
-
+## Het aanmaken van een task
 
 Maak nu een 'task' aan waarin je de data, de inputs en de target specificeert. Een classificatie taak voor categorische target of een regressie task voor een numerieke target.
 
@@ -482,7 +499,7 @@ summarizeColumns(classify.task)
 
 ```
 
-variablen hard uitsluiten 
+## Variablen hard uitsluiten 
 
 ```{r, eval = FALSE}
 vars.to.drop = c("Name", "Survived", "Ticket")
@@ -522,6 +539,7 @@ laat nog eens variabelen weg die helemaal niks doen.
 vars.to.drop = c("PassengerId", "Parch", "SibSp")
 classify.task = dropFeatures(classify.task, vars.to.drop )
 ```
+
 ## Sample schema 
 
 
@@ -538,13 +556,21 @@ Nu heb je de diverse stappen gespecificeerd en kan je een benchmark uitvoeren vo
 
 ```{r, eval = FALSE}
 br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
+```
+
 
 ## Vergelijking machine learning modellen
+Na het trainen van de modellen met mlr heb je een zogenaamde benchmark object, die kan je printen en plotten om wat meer info te krijgen.
+
+```{r, eval = FALSE}
 data.frame(br1) %>% arrange(desc(auc))
 plotBMRSummary(br1, measure = mlr::auc)
 ```
 
+
 #### ROC curves
+
+In het benchmark object zit eigenlijk nog veel meer data. Met onderstaande code pluk je alle stukjes data per model uit om deze vervolgens in een ROC grafiek te zetten.
 
 ```{r, eval = FALSE}
 NModels = length(br1$results$Titanic)
@@ -604,11 +630,8 @@ cars.cluster
 mycars$cluster = cars.cluster$cluster
 mycars
 
-plot(tmp, col = cars.cluster$cluster )
+plot(mycars$mpg, mycars$wt, col = cars.cluster$cluster )
 points(cars.cluster$centers, col = 1:5, pch = 8, cex = 2)
-
-
-
 ```
 
 Met het `h2o` package kan je ook k-means clustering doen, dit is niet alleen sneller maar kan ook meteen factor variabelen aan. Start indien nodig h20.
@@ -651,14 +674,19 @@ cluster_membership = h2o.predict(
 
 # Market basket analyse
 
-Met market basket analyse (ook wel association rules mining) genoemd kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje.
+Met market basket analyse (ook wel association rules mining) genoemd kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje op een fictief grocery data setje
 
 ```{r, eval = FALSE}
 library(arules)
 library(datasets)
 
 data(Groceries)
+summary(Groceries)
+```
 
+Met de functie `apriori` uit het arules package kan je nu vaak vooromende combinaties van prioducten identificeren.
+
+```{r, eval = FALSE}
 rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
 rules = sort(rules, decreasing = TRUE, na.last = NA, by = "lift")
 inspect(head(rules,n = 15))
@@ -694,7 +722,6 @@ Of als iemand een bepaalde reeks transacties heeft welke regels horen daar bij e
 ```{r, eval = FALSE}
 PersoonA = data.frame(
   id = rep(1,3),
-  #item = c("butter","jam"),
   item2 = c("butter","curd","domestic eggs")
 )
 
