@@ -34,7 +34,9 @@ library(pROC)
 library(titanic)
 library(rattle)
 library(mlr)
+
 library(dplyr)
+
 library(ggplot2)
 ```
 
@@ -81,6 +83,7 @@ names(mtcars)
 
 f1 <- hp ~ wt + carb + vs
 m1 = lm(f1, data = mtcars)
+m1
 
 ## interactie termen
 f2 <- hp ~ carb*wt*vs
@@ -89,14 +92,16 @@ m2 = lm(f2, data = mtcars)
 ## product termen
 f2a <- hp ~ I(carb*wt*vs)
 m2a = lm(f2a, data = mtcars)
+summary(m2a)
 
 ## aantal termen weglaten
 f3 <- hp ~ carb*wt*vs - carb:wt:vs
 m3 = lm(f3, data = mtcars)
 
 ## een target en de rest van de variabelen als inputs
-f4 = hp ~ .
+f4 = hp ~ . + mpg:cyl
 m4 = lm(f4, data = mtcars)
+summary(m4)
 ```
 
 
