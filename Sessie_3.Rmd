@@ -806,4 +806,16 @@ and plot it
 circlepackeR::circlepackeR(hierarchical_list)
 ```
 
+# sunburst
 
+```{r}
+library(sunburstR)
+
+sequences <- read.csv(
+  system.file("examples/visit-sequences.csv",package="sunburstR")
+  ,header = FALSE
+  ,stringsAsFactors = FALSE
+)[1:100,]
+
+sunburst(sequences)
+```
