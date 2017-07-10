@@ -758,7 +758,7 @@ visNetwork(Hoornnodes, HoornEdges) %>%
 ```
 
 
-# Zoomable circle packing plots
+# Zoomable circle packing plots en sunburst plots
 
 Circle packings zijn een leuke manier om hierarchische data te visualiseren. Installeer eerst het package van Github.
 
@@ -806,7 +806,7 @@ and plot it
 circlepackeR::circlepackeR(hierarchical_list)
 ```
 
-# sunburst
+Interactiven sunburst plots kan je ook mooi gebruiken voor hierarchische data.
 
 ```{r}
 library(sunburstR)
