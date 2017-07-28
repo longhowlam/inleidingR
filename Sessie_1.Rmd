@@ -31,9 +31,9 @@ output:
 
 Begin met powerpoint slides over R en R Studio
 
-* Rstudio
-* Environment tab (Object browser)
-* packages
+* Rstudio,
+* Environment tab (Object browser),
+* packages.
 
 ## R Projecten
 
