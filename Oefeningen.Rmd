@@ -353,8 +353,8 @@ AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 
 ## plotting using ggplot2
 
-A.	Create a scatterplot of the VraagPrijs and KMStand.
-B.	Remove outlying points and create plot again using alpha = 0.05
+A.	Create a scatterplot of the VraagPrijs and KMStand.<br>
+B.	Remove outlying points (say KM > 500000 and Prijs > 100000) and create plot again using alpha = 0.05
 C.  Add a smoothed line trough the points to get an idea of the relation between KM and Price.
 D.	Filter the set so that we only have the top eight brands (based on # observations)
 E.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise 
