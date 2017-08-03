@@ -15,10 +15,10 @@ output:
 ---
 
 ## Data types
-A.	Create the object x1 with the numbers 1, 3.51, 0.7 and 5.
-B.	Show the data class of x1.
-C.	Transform x1 into an integer data type and store the result in x2.
-D.	Use the round function to round x1 and store the result in x3.
+A.	Create the object x1 with the numbers 1, 3.51, 0.7 and 5. <br>
+B.	Show the data class of x1. <br>
+C.	Transform x1 into an integer data type and store the result in x2. <br>
+D.	Use the round function to round x1 and store the result in x3. <br>
 E.	Is x3 of data type integer?
 
 
@@ -31,8 +31,8 @@ is.integer(x3)
 ```
 
 ## Logical data type.
-A.	Create the vector y1 with the numbers 1, 2, 3, 4, 5, 6, 7, 8, 9 and 10.
-B.	Create a logical vector y2 from y1. An element of y2 should be TRUE if the corresponding element of y1 is larger than 5.
+A.	Create the vector y1 with the numbers 1, 2, 3, 4, 5, 6, 7, 8, 9 and 10. <br>
+B.	Create a logical vector y2 from y1. An element of y2 should be TRUE if the corresponding element of y1 is larger than 5. <br>
 C.	How many elements are smaller than 5?
 
 ```{r}
@@ -43,9 +43,9 @@ sum(y2)
 
 
 ## Character data type and factor data type.
-A.	Create the character vector y1, with the characters “high”, “low”, “high”, “high”, “low”.
-B.	Create the factor variable y2 from y1. Print the levels of y2.
-C.	Transform y2 to a numeric vector y3, so that high becomes 2 and low becomes 1.
+A.	Create the character vector y1, with the characters “high”, “low”, “high”, “high”, “low”. <br>
+B.	Create the factor variable y2 from y1. Print the levels of y2. <br>
+C.	Transform y2 to a numeric vector y3, so that high becomes 2 and low becomes 1. <br>
 
 ```{r}
 y1 = c("high", "low", "high", "high", "low")
@@ -58,11 +58,11 @@ as.integer(y2)
 ```
 
 ## Creating sequences.
-A.	Create a vector x, with elements (1,2,3,4,..,100).
-B.	Create a vector y, with elements (0,5,10,...,500).
-C.	Create a vector z1, with elements (1,1,1,2,2,2,...,50,50,50).
-D.	Create a vector z2, with elements (1,2,2,3,3,3,.....,10,....10).
-E.	Create a vector z3, with elements (1,2,2,3,4,4,5,6,6,7,8,8,...,50,50).
+A.	Create a vector x, with elements (1,2,3,4,..,100). <br>
+B.	Create a vector y, with elements (0,5,10,...,500). <br>
+C.	Create a vector z1, with elements (1,1,1,2,2,2,...,50,50,50). <br>
+D.	Create a vector z2, with elements (1,2,2,3,3,3,.....,10,....10). <br>
+E.	Create a vector z3, with elements (1,2,2,3,4,4,5,6,6,7,8,8,...,50,50). <br>
 
 ```{r}
 x = 1:100
@@ -73,8 +73,8 @@ z3 = rep(1:10, rep(1:2,5))
 ```
 
 ## Creating factors from double data.
-A.	Generate a vector x with 100 random normal numbers.
-B.	Use x to generate a factor vector y with three levels: “low”, “average” and “high”. If an element in x is:
+A.	Generate a vector x with 100 random normal numbers.  <br>
+B.	Use x to generate a factor vector y with three levels: “low”, “average” and “high”. If an element in x is:  <br>
 
 *	between -Inf and -1.5 then the level in y should be “low”,
 *	between -1.5 and 1.5 then the level in y should be “average”,
@@ -159,7 +159,9 @@ f3 <- read.csv("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/d
 ## String bewerkingen
 Copy the following vector to R.
 X = c("abd 06-456", "blab la (06)-123.45678", "hoi 06-12123478", "mijn nr 0689452312")
+
 A.	For this exercise a valid mobile phone number starts with 06 followed by hyphen or space or not and then 8 consecutive digits. What are the valid numbers in x, use a regular expression.
+
 B.	Extract the phone numbers from x into a new vector y
 
 ```{r}
@@ -174,8 +176,11 @@ str_extract(x, mob_pattern)
 
 ## Dates and times.
 A.	Create a date object from the characters "31-jan-05"   "22-Sep-07".
+
 B.	Create a date object from the characters "31-jan-05 3:03:20"  "22-Sep-07 22:29:56".
-C.	Add 4 months and 2 days to the dates from exercise (B)
+
+C.	Add 4 months and 2 days to the dates from exercise 
+
 D.	Create a date sequence vector x with the dates: 31-1-2016, 29-2-2016, 31-03-2016,……,31-12-2016 
 
 ```{r}
@@ -199,9 +204,13 @@ For the following two exercises we are going to use restaurant data in the file 
 
 ## Basic data manipulation 1
 A.	Create a subset of the restaurants whose name is “kota radja”, how many are there?
+
 B.	Give a top ten restaurants in Amsterdam based on price.
+
 C.	Create an extra column that has the values zero or one.   1 if Kitchen type is Chinees and 0 otherwise.
+
 D.	Create a sub set of the data, filter only the restaurants that have price smaller than 25.
+
 E.	Give the number per kitchen types of that sub set.
 
 ```{r}
@@ -229,9 +238,13 @@ elcheapo %>% group_by(keuken) %>% summarise(n=n())
 
 ## Basic data manipulation 2
 A.	In the data folder there is a Postcode_NL.RDs file, import that set. 
+
 B.	Use it to enrich the restaurant data set whith an extra column provincie.
+
 C.	Count the number of restaurants per province of the whole set.
+
 D.	Give the max and min prices per province.
+
 E.	In the column “keuken” there are some mistakes. A price where there should have been a kitchen type. Remove all kitchen types that have a digit in.
 
 ```{r}
@@ -267,7 +280,9 @@ restaurants = restaurants %>%
 In the data folder there is a file R data set AllCarsGasPedaal.Rds  import this data set using `readRDS`.
 
 A.	List the names of the columns of the data set.
+
 B.	In this data set there is a column bjkm which is character, containing the kilometerstand, extract it and convert it to numeric so that we can calculate with it.
+
 C.	Select only the brands Audi, Renault and BMW put those records in a new data frame.
 
 ```{r}
@@ -322,8 +337,11 @@ tmp = tidyr::separate(Df, V1, into = paste0("V",1:10)) %>%
 
 ## sampling van data 
 Kijk naar sample_n of sample_frac uit dplyr.
+
 A. Create a df1 data frame with 100 columns and 1000 rows. Filled with random numbers between 0 and 1.
+
 B. Create df2 which samples 500 rows from df1
+
 C. Create df3 which samples 50% of the rows from df1
 
 ```{r}
@@ -354,13 +372,13 @@ AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 ## plotting using ggplot2
 
 A.	Create a scatterplot of the VraagPrijs and KMStand.<br>
-B.	Remove outlying points (say KM > 500000 and Prijs > 100000) and create plot again using alpha = 0.05
-C.  Add a smoothed line trough the points to get an idea of the relation between KM and Price.
-D.	Filter the set so that we only have the top eight brands (based on # observations)
-E.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise 
-F.  Create also a smoothing line per brand
-G.	Create facets by brand, each facet should have a histogram of the price, create also a grid of 2 rows and 4 columns. 
-H.	Create facets by brand, each facet should contain a scatter plot between price and KM stand
+B.	Remove outlying points (say KM > 500000 and Prijs > 100000) and create plot again using alpha = 0.05 <br>
+C.  Add a smoothed line trough the points to get an idea of the relation between KM and Price. <br>
+D.	Filter the set so that we only have the top eight brands (based on # observations). <br>
+E.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise. <br>
+F.  Create also a smoothing line per brand. <br>
+G.	Create facets by brand, each facet should have a histogram of the price, create also a grid of 2 rows and 4 columns. <br>
+H.	Create facets by brand, each facet should contain a scatter plot between price and KM stand.
 
 
 ```{r}
