@@ -87,7 +87,7 @@ test <- 3
 test
 ```
 
-In R zijn namen van objecten *case-sensitive!*, en we zien dat hekje gebruikt wordt om commentaar in code te plaatsen. Alles na een hekje wordt niet niet gerund.
+In R zijn namen van objecten *case-sensitive!*, en we zien dat hekje `#` gebruikt wordt om commentaar in code te plaatsen. Alles na een hekje wordt niet niet gerund.
 
 ```{r, eval=FALSE}
 x = 8
