@@ -29,6 +29,7 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 library(plotly)
+library(readr)
 ```
 
 
@@ -199,7 +200,7 @@ p + geom_line()
 
 ## bar plots
 
-Bar plots zijn handig om bijvoorbeeld aantallen per categorie te visualiseren. Laten we naar top 10 keukens kijken in de iens data set.
+Bar plots zijn handig om bijvoorbeeld aantallen per categorie te visualiseren. Laten we naar top 10 keukens kijken in 'restaurant' data. Deze data heb ik een tijdje geleden van de site Iens gescraped, er staan 20.000 restaurants in met een aantal kenmerken.
 
 ```{r, eval=FALSE, fig.width=10, fig.height=8}
 restaurants = read_csv("data/Restaurants.csv")
@@ -818,4 +819,18 @@ sequences <- read.csv(
 )[1:100,]
 
 sunburst(sequences)
+
+sunburst(
+  sequences
+  ,count = TRUE
+)
+
+## aangepaste text in het midden
+sunburst(
+  sequences
+  # apply sort order to the legends
+  ,legendOrder = unique(unlist(strsplit(sequences[,1],"-")))
+  # just provide the name in the explanation in the center
+  ,explanation = "function(d){return d.data.name}"
+)
 ```

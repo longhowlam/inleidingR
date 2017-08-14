@@ -158,7 +158,6 @@ tree.out = rpart(Survived ~ Sex + Age +Pclass, data = TTrain)
 plot(tree.out)
 text(tree.out, use.n = TRUE)
 
-
 fancyRpartPlot(tree.out)
 
 ### larger trees with complexity parameter

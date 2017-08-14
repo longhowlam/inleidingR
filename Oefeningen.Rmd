@@ -435,3 +435,22 @@ AllCars %>%
 
 
 ## Sunburst graphs
+
+```{r}
+library(dplyr)
+boodschappen = readRDS("data/boodschappen.RDs")
+TMP = boodschappen %>% 
+  group_by(id) %>%
+  summarise(
+    sequence = paste(item,collapse="-")
+  ) %>%
+  group_by(sequence) %>%
+  summarise(n=n()) %>%
+  filter(n > 2, n < 20)
+
+sunburst(TMP)
+```
+
+
+
+

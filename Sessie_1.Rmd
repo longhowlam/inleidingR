@@ -829,6 +829,7 @@ R heeft ook standaard functies voor het inzegen van text files, maar ik gebruik 
 
 ```{r, eval=FALSE}
 ### data met restaurants in Nederland
+library(readr)
 Restaurants = read_csv("data/Restaurants.csv")
 
 ### Excel files inlezen
@@ -838,6 +839,22 @@ test = read_excel(
   range = "D8:F14"
 )
 ```
+
+
+## R Datasets
+
+Je kan R objecten (niet alleen data frames) weg schrijven met de `saveRDS` functie, en deze kunnen weer ingelezen worden met de `readRDS` functie. files die je krijgt zijn binaire bestanden, ze kleiner dan tekst files en zijn sneller om weer in R in te lezen.
+
+```{r, eval=FALSE}
+x = rnorm(100)
+saveRDS(x, "data/x.RDs")
+
+rm(x)
+x = readRDS("data/x.RDs")
+
+GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
+```
+
 
 ## Inlezen uit een data base
 
@@ -861,20 +878,6 @@ sqlFetch(cn,"cars")
 sqlSave(cn, RandomPersons)
 ```
 
-
-## R Datasets
-
-Je kan R objecten (niet alleen data frames) weg schrijven met de `saveRDS` functie, en deze kunnen weer ingelezen worden met de `readRDS` functie. files die je krijgt zijn binaire bestanden, ze kleiner dan tekst files en zijn sneller om weer in R in te lezen.
-
-```{r, eval=FALSE}
-x = rnorm(100)
-saveRDS(x, "data/x.RDs")
-
-rm(x)
-x = readRDS("data/x.RDs")
-
-GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
-```
 
 
 # Nog iets over geheugen gebruik
