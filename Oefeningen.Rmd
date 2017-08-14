@@ -438,15 +438,19 @@ AllCars %>%
 
 ```{r}
 library(dplyr)
-boodschappen = readRDS("data/boodschappen.RDs")
-TMP = boodschappen %>% 
-  group_by(id) %>%
+library(sunburstR)
+
+iensReviewers = readRDS("data/IensReviewers.RDs")
+
+TMP = iensReviewers %>% 
+  group_by(reviewer) %>%
+  arrange(reviewer,datum) %>%
   summarise(
-    sequence = paste(item,collapse="-")
+    sequence = paste(keuken,collapse="-")
   ) %>%
   group_by(sequence) %>%
   summarise(n=n()) %>%
-  filter(n > 2, n < 20)
+  filter(stringr::str_detect(sequence,"-"), n > 20, n < 40)
 
 sunburst(TMP)
 ```
