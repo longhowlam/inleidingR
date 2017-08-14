@@ -442,17 +442,19 @@ library(sunburstR)
 
 iensReviewers = readRDS("data/IensReviewers.RDs")
 
-TMP = iensReviewers %>% 
+Reviewerlevel = iensReviewers %>% 
   group_by(reviewer) %>%
   arrange(reviewer,datum) %>%
   summarise(
     sequence = paste(keuken,collapse="-")
-  ) %>%
+  ) 
+
+PathLevel = Reviewerlevel %>%
   group_by(sequence) %>%
   summarise(n=n()) %>%
-  filter(stringr::str_detect(sequence,"-"), n > 20, n < 40)
+  filter(stringr::str_detect(sequence,"-"), n >10)
 
-sunburst(TMP)
+sunburst(PathLevel)
 ```
 
 
