@@ -12,7 +12,7 @@ install.packages(
 
 # sessie 03
 install.packages(
-  c("ggplot2" , "plotly", "grid", "ggvis", "leaflet", "visNetwork", "sunburstR", "devtools", "rgeos", "raster")
+  c("ggplot2" , "plotly", "grid", "ggvis", "leaflet", "visNetwork", "sunburstR", "devtools", "rgeos", "raster", "sp", "colorRamps", "RColorBrewer")
 )
 
 devtools::install_github("jeromefroe/circlepackeR")

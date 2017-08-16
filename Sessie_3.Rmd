@@ -30,9 +30,13 @@ library(ggplot2)
 library(readr)
 library(plotly)
 library(readr)
+
+library(RColorBrewer)
+library(colorRamps)
+library(leaflet)
 library(rgeos)
 library(raster)
-
+library(sp)
 ```
 
 
@@ -287,7 +291,6 @@ ggplot(df, aes(x=x,y=y)) + geom_bin2d()
 ```
 
 
-
 ## geom_map
 
 Met geom_map kun je kaarten maken. Als je de kaart van Nederland wil maken zul je die eerst ergens vandaan moeten halen. Vanuit het `raster` package is er een handige functie `getData` om dit te doen.
@@ -296,17 +299,34 @@ Met geom_map kun je kaarten maken. Als je de kaart van Nederland wil maken zul j
 NLD <- gSimplify(getData("GADM", country= "NLD", level=1), tol=0.001, TRUE)
 NLD <- fortify(NLD)
 
-gg <- ggplot() +
+g1 <- ggplot() +
   geom_map(
     data = NLD, map=NLD, 
     aes( x=long, y=lat, map_id=id, group=group),
     fill=NA, color="black"
     )
-gg
+g1
+```
 
-gg <- gg + geom_point(data=br, aes(x=Long_Postcode6P, y=Lat_Postcode6P), size=0.7, 
-                      alpha=0.01, na.rm=TRUE)
-gg
+Gebruik de 'restaurant' data, in deze set staan ook de longitude en latitude coordinaten. Haal wat foute locaties weg.
+
+```{r, eval = FALSE}
+restaurants = readr::read_csv("data/Restaurants.csv")
+restaurants = restaurants %>% 
+  filter(
+    LONGs < 7,
+    LONGs > 3
+    )
+
+g2 <- g1 + geom_point(
+  data = restaurants,
+  aes(x = LONGs, y = LATs),
+  size=1.7, 
+  color = "red",
+  alpha=0.06, 
+  na.rm=TRUE
+)
+g2
 ```
 
 
@@ -599,9 +619,10 @@ p
 ggplotly(p)
 ```
 
+
 ## leaflet
 
-Leaflets worden gebruikt om interactieve kaartjes te maken. Ze gebruiken open street maps.
+Leaflets worden gebruikt om interactieve kaartjes te maken. By deault gebruiken open street maps als achtergrond.
 
 ```{r, eval=FALSE}
 library(leaflet)
@@ -643,6 +664,70 @@ m2 = m2 %>%
   addTiles() %>%
   addCircleMarkers(lng = ~LONGs, lat = ~LATs, fillColor = ~reds(aantalreviews), fillOpacity = 1, popup = ptekst)
 m2
+```
+
+
+### polygonen op een leaflet
+
+Je kan ook vormen/polygons op een leaflet kaart krijgen. Hieronder is een voorbeeld om op postcode 2 posities niveau een kaart te maken. We hebben eerst de data nodig die de contouren van een PC2 gebied definieert.
+
+```{r, eval = FALSE}
+# importeer data
+pc2_kaart <- read_csv("data/pc2_kaart.csv")
+PC2_data = dplyr::select(pc2_kaart, Longitude, Latitude, PC2CODE ) %>% as.data.frame()
+
+# Het moet een lijst van gebieden zijn.
+Pc2_list = split(PC2_data, PC2_data$PC2CODE)
+Pc2_list = lapply(Pc2_list, function(x) { x["PC2CODE"] <- NULL; x })
+
+
+### Maak van elk lijst object een Polygon
+plg = sapply(Pc2_list, Polygon)
+```
+
+Nu gaan we per PC2 gebied het aantal restaurants tellen en dit in een kaartje zetten.
+
+```{r, eval FALSE}
+PC2 = restaurants %>%
+  mutate(
+    PC2 = stringr::str_sub(PCs,1,2)
+  ) %>%
+  group_by(PC2) %>%
+  summarise(n=n()) %>% 
+  filter(PC2 >= "10")
+
+## initieer de leaflet en voeg PC2 polygon 1 voor 1 toe
+
+pc2_lf = leaflet() %>%  addTiles() 
+
+## definieer een kleuren schema
+colpal <- colorQuantile(
+  palette = green2red(7), n=7,
+  domain = PC2$n
+)
+
+## elk polygoontje krijgt nu op basis van zijn restaurant aantal het 'juiste' kleurtje
+
+### teken per polygon, dat is het makkelijkst
+for (i in 1:length(plg)){
+  ptxt = paste(
+    "PC2: ", as.character(PC2$PC2[i]),
+    "<br>",
+    "Aantal Restaurants",
+    as.character(PC2$n[i])
+  )
+  pc2_lf = pc2_lf %>%
+    addPolygons(
+      data = plg[[i]],
+      weight = 2,
+      smoothFactor = 1,
+      fillOpacity = 0.55,
+      fillColor= colpal(PC2$n[i]),
+      popup = ptxt
+    )
+}
+
+pc2_lf
 ```
 
 
