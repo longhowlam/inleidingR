@@ -30,6 +30,9 @@ library(ggplot2)
 library(readr)
 library(plotly)
 library(readr)
+library(rgeos)
+library(raster)
+
 ```
 
 
@@ -285,7 +288,31 @@ ggplot(df, aes(x=x,y=y)) + geom_bin2d()
 
 
 
+## geom_map
+
+Met geom_map kun je kaarten maken. Als je de kaart van Nederland wil maken zul je die eerst ergens vandaan moeten halen. Vanuit het `raster` package is er een handige functie `getData` om dit te doen.
+
+```{r}
+NLD <- gSimplify(getData("GADM", country= "NLD", level=1), tol=0.001, TRUE)
+NLD <- fortify(NLD)
+
+gg <- ggplot() +
+  geom_map(
+    data = NLD, map=NLD, 
+    aes( x=long, y=lat, map_id=id, group=group),
+    fill=NA, color="black"
+    )
+gg
+
+gg <- gg + geom_point(data=br, aes(x=Long_Postcode6P, y=Lat_Postcode6P), size=0.7, 
+                      alpha=0.01, na.rm=TRUE)
+gg
+```
+
+
+
 ## facets in ggplot
+
 Met `facets` kan je een matrix van plots maken. Een simpel voorbeeld is als je apart een histogram voor mannen en vrouwen wilt maken en dat naast elkaar of onder elkaar in een plot wilt zetten. Er zijn twee functies in ggplot2 die dit ondersteunen, `facet_grid` en `facet_wrap`
 
 ```{r, eval=FALSE}
