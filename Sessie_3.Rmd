@@ -662,19 +662,29 @@ ptekst = paste(Zwolle$restNamen, '<BR> aantal reviews: ', Zwolle$aantalreviews)
 m2 = leaflet(data = Zwolle)
 m2 = m2 %>%
   addTiles() %>%
-  addCircleMarkers(lng = ~LONGs, lat = ~LATs, fillColor = ~reds(aantalreviews), fillOpacity = 1, popup = ptekst)
+  addCircleMarkers(
+    lng = ~LONGs,
+    lat = ~LATs, 
+    fillColor = ~reds(aantalreviews), 
+    fillOpacity = 1, popup = ptekst
+  )
 m2
 ```
 
 
 ### polygonen op een leaflet
 
-Je kan ook vormen/polygons op een leaflet kaart krijgen. Hieronder is een voorbeeld om op postcode 2 posities niveau een kaart te maken. We hebben eerst de data nodig die de contouren van een PC2 gebied definieert.
+Je kan ook vormen/polygons op een leaflet kaart krijgen. Hieronder is een voorbeeld om op postcode 2 posities niveau een kaart te maken. We hebben eerst de data nodig die de contouren van een PC2 gebied definieert, en dan is er wat preparatie nodig om de data in polygoon objecten te krijgen.
 
 ```{r, eval = FALSE}
-# importeer data
+# importeer data uit een CSV file
 pc2_kaart <- read_csv("data/pc2_kaart.csv")
-PC2_data = dplyr::select(pc2_kaart, Longitude, Latitude, PC2CODE ) %>% as.data.frame()
+PC2_data = dplyr::select(
+  pc2_kaart, 
+  Longitude,
+  Latitude, 
+  PC2CODE ) %>%
+  as.data.frame()
 
 # Het moet een lijst van gebieden zijn.
 Pc2_list = split(PC2_data, PC2_data$PC2CODE)
@@ -683,12 +693,14 @@ Pc2_list = lapply(Pc2_list, function(x) { x["PC2CODE"] <- NULL; x })
 
 ### Maak van elk lijst object een Polygon
 plg = sapply(Pc2_list, Polygon)
+
+plg[[1]]
 ```
 
 Nu gaan we per PC2 gebied het aantal restaurants tellen en dit in een kaartje zetten.
 
 ```{r, eval FALSE}
-PC2 = restaurants %>%
+PC2 = Restaurants %>%
   mutate(
     PC2 = stringr::str_sub(PCs,1,2)
   ) %>%
