@@ -949,7 +949,7 @@ sunburst(
   ,count = TRUE
 )
 
-## aangepaste text in het midden
+## aangepaste text in het midden 
 sunburst(
   sequences
   # apply sort order to the legends
