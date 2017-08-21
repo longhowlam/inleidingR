@@ -3,13 +3,13 @@ title: 'Avond Sessie 01: Data types/structures'
 subtitle: "Inleiding R"
 author: "Longhow Lam"
 output:
-  html_notebook:
-    theme: sandstone
-    toc: true
-    toc_depth: 2
-    toc_float: true
-    number_sections: true
-# output:
+   html_notebook:
+     theme: sandstone
+     toc: true
+     toc_depth: 2
+     toc_float: true
+     number_sections: true
+#output:
 #  prettydoc::html_pretty:
 #    highlight: github
 #    theme: cayman
@@ -29,11 +29,12 @@ output:
 
 ## De RStudio omgeving
 
-Begin met powerpoint slides over R en R Studio
+Begin met powerpoint slides over R gevolgd door intro in RStudio:
 
-* Rstudio,
+* Console,
+* Script windows,
 * Environment tab (Object browser),
-* packages.
+* Packages.
 
 ## R Projecten
 
