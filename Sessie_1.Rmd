@@ -883,7 +883,7 @@ sqlSave(cn, RandomPersons)
 
 # Nog iets over geheugen gebruik
 
-R verwerkt alles in het RAM geheugen van de computer. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies
+R verwerkt alles in het RAM geheugen van de computer. Het is handig om te weten hoe veel geheugen R verbruikt en hoe groot objecten zijn. Het package `pryr` bevat een aantal handig functies.
 
 ```{r, eval=FALSE}
 library(pryr)
@@ -908,3 +908,4 @@ mem_used()
 
 ```
 
+Via de 'Environment' tab kan je ook per object makkelijk zien hoe groot het is. Verander van 'List' view naar 'Grid' view.
