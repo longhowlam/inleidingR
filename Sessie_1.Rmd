@@ -36,6 +36,8 @@ Begin met powerpoint slides over R gevolgd door intro in RStudio:
 * Environment tab (Object browser),
 * Packages.
 
+![](RStudio.png)
+
 ## R Projecten
 
 Organiseer je R werk in projecten. Een project kan bestaan uit verschillende scripts, notebooks, data en output, deze wil je handig in 1 folder hebben. In RStudio kan je heel handig met verschillende R projecten werken. Via de GUI kun je nieuwe projecten aanmaken en beheren.  
