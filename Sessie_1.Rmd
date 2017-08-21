@@ -321,15 +321,17 @@ is.na(x4)
 ```
 
 
-## waar zijn mijn objecten
+## Waar zijn mijn objecten
+
+Als je in R een aantal objecten hebt gemaakt dan staan deze in de zogenaamde 'Global Environment'. Je ziet de objecten terug in de 'Environment' window, of je kan ze met functies opvragen.
 
 ```{r, eval=FALSE}
+# Opvragen van objecten in R
 ls()
-
 objects()
 ```
 
-wat is een search path...
+Als je R opstart dan zijn er ook een aantal libraries aanwezig, daar staan ook objecten in. Wat is een search path...
 
 ```{r, eval=FALSE}
 Pietje  # wordt niet gevonden
@@ -350,7 +352,9 @@ iris = 9
 iris
 ```
 
-Het weghalen van objecten
+Ook via de 'Environment' window kan je zien welke objecten er in libraries zijn.
+
+### Het weghalen van objecten
 
 ```{r, eval=FALSE}
 x = 5
@@ -375,6 +379,7 @@ saveRDS(x, file = "ObjectX.Rds")
 save.image()
 ```
 
+Ook via de 'Environment' window kan je objecten weghalen. In een keer alles via het 'bezempje', of als je in plaats van 'List mode' naar 'Grid mode' gaat, kan je objecten selecteren die je weg wilt halen.
 <br>
 
 
