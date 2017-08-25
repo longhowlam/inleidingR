@@ -55,7 +55,7 @@ In een script type je R code en als je met de cursor op een regel staat kan je d
 
 R notebooks bevatten meer dan alleen R code, het is een 'compleet' document met R code, output en een beschrijvende verhaallijn. In een R project kun je ook meerdere van deze notebooks en scripts beheren. Notebooks maak je met Rmarkdown, een soort light weight markup language. Deze R cursus werkt met R notebooks. Een notebook bevat **R code chunks** die je kan runnen.
 
-Als je op de 'Preview' knop drukt boven het R notebook krijg je een apart window te zien met het **resultaat van het R notebook**. Er wordt dan ook door RStudio een aprte file gemaakt die de naam <file_naam>.nb.html heeft. Dit is een html file die je kan delen met anderen.
+Als je op de 'Preview' knop drukt boven het R notebook krijg je een apart window te zien met het **resultaat van het R notebook**. Er wordt dan ook door RStudio een aparte file gemaakt die de naam <file_naam>.nb.html heeft. Dit is een html file die je kan delen met anderen.
  
 Naast de nb.html, kan je een R notebook ook "knit" ('breien') tot een html, pdf of Word document. De header van het markdown document vertelt hoe het een en ander gebreid moet worden. Zie bijvoorbeeld dit document. Naast de 'Preview' knop zie je een pijltje waaruit je kan kiezen.
 
