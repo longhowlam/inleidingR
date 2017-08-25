@@ -205,7 +205,7 @@ filter(
 )
 ```
 
-Met `slice` kan je op basis van row numbers data selecteren
+Met `slice` kan je op basis van row numbers data selecteren. Als voorbeeld, de eerste 8 records, of record 8 tot en met de laatste record.
 
 ```{r, eval=FALSE}
 slice(mtcars, 1:8)
