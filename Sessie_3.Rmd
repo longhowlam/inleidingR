@@ -9,7 +9,7 @@ output:
     toc_depth: 2
     toc_float: true
     number_sections: true
-# output:
+#output:
 #  prettydoc::html_pretty:
 #    highlight: github
 #    theme: cayman
@@ -295,7 +295,7 @@ ggplot(df, aes(x=x,y=y)) + geom_bin2d()
 
 Met geom_map kun je kaarten maken. Als je de kaart van Nederland wil maken zul je die eerst ergens vandaan moeten halen. Vanuit het `raster` package is er een handige functie `getData` om dit te doen.
 
-```{r}
+```{r, eval = FALSE}
 NLD <- gSimplify(getData("GADM", country= "NLD", level=1), tol=0.001, TRUE)
 NLD <- fortify(NLD)
 
@@ -699,7 +699,7 @@ plg[[1]]
 
 Nu gaan we per PC2 gebied het aantal restaurants tellen en dit in een kaartje zetten.
 
-```{r, eval FALSE}
+```{r, eval = FALSE}
 PC2 = restaurants %>%
   mutate(
     PC2 = stringr::str_sub(PCs,1,2)
@@ -931,7 +931,7 @@ and plot it
 circlepackeR::circlepackeR(hierarchical_list)
 ```
 
-Interactiven sunburst plots kan je ook mooi gebruiken voor hierarchische data.
+Interactieve sunburst plots kan je ook mooi gebruiken voor hierarchische data.
 
 ```{r}
 library(sunburstR)
