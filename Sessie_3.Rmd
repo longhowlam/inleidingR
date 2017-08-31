@@ -813,7 +813,7 @@ visNetwork(nodes, edges) %>%
 Nog een netwerk voorbeeldje van restaurant bezoekers in het mooie stadje Hoorn. Vereist wat data gewroet.... maar dat is vaak zo :-)
 
 Lees eerst link data in.
-```{r}
+```{r, eval = FALSE}
 RestaurantLinks <- readRDS("data/RestaurantLinks.RDs")
 
 ## bevat vanuit iens.nl per regel een restaurant link.
@@ -933,7 +933,7 @@ circlepackeR::circlepackeR(hierarchical_list)
 
 Interactieve sunburst plots kan je ook mooi gebruiken voor hierarchische data.
 
-```{r}
+```{r, eval=FALSE}
 library(sunburstR)
 
 sequences <- read.csv(
