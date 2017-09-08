@@ -598,7 +598,3 @@ tmp = read_csv("data/unixtimestamps.csv")
 tmp$datum = anydate(tmp$timestamp)
 tmp
 ```
-
-
-
-
