@@ -552,7 +552,7 @@ levels(test$z2)
 
 ---
 
-Voor datums (en tijden) in R zijn de packages `anydate` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken.
+Voor datums (en tijden) in R zijn de packages `anytime` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken.
 
 ```{r, eval=FALSE}
 y = c("1973-09-12", "1980-05-23", "1981-12-09")
