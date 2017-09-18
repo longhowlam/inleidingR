@@ -700,7 +700,7 @@ plg[[1]]
 Nu gaan we per PC2 gebied het aantal restaurants tellen en dit in een kaartje zetten.
 
 ```{r, eval = FALSE}
-PC2 = restaurants %>%
+PC2 = Restaurants %>%
   mutate(
     PC2 = stringr::str_sub(PCs,1,2)
   ) %>%
