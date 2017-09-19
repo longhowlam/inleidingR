@@ -37,6 +37,8 @@ library(leaflet)
 library(rgeos)
 library(raster)
 library(sp)
+library(maptools)
+library(rgdal)
 ```
 
 
@@ -674,7 +676,85 @@ m2
 
 ### polygonen op een leaflet
 
-Je kan ook vormen/polygons op een leaflet kaart krijgen. Hieronder is een voorbeeld om op postcode 2 posities niveau een kaart te maken. We hebben eerst de data nodig die de contouren van een PC2 gebied definieert, en dan is er wat preparatie nodig om de data in polygoon objecten te krijgen.
+Je kan ook vormen/polygons op een leaflet kaart krijgen. Hieronder is een voorbeeld van provincies, eerst moet je de data van de polygonen hebben. Dit staat in zogenaamde shape files van de provincies, deze kan je downloaden van http://www.imergis.nl/asp/47.asp. Op deze site zie je provinciegrenzen_exact, download deze en pak deze uit. In mijn data directory is dat al gedaan. 
+
+Eerst is er een beetje voorbewerking nodig om de shape file te bewerken in R tot een zogenaamde SpatialPolygonsDataframe. Dan kan je dit met leaflet te kunnen plotten.
+
+```{r, eval=FALSE}
+#### inlezen shape file
+ProvNL <- readShapeSpatial("data/TopGrenzen-prov-actueel.shp")
+class(ProvNL)
+summary(ProvNL)
+
+#### Zet coordinatensysteem
+proj4string(ProvNL) <- CRS("+init=epsg:28992")
+
+#### transformeer naar long /lat
+ProvNL = spTransform(ProvNL, CRS("+proj=longlat +datum=WGS84"))
+
+#### Het object ProvNL is een zgn spatialpolygons object, daar zit een data frame in
+ProvNL@data
+
+#### maak een hele simpele plot
+plot(ProvNL)
+```
+
+Maar nu kun je het spatial polygons object ook op een leaflet plotten.
+
+```{r, eval = FALSE}
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, weight = 1, fillOpacity = 0.15, smoothFactor = 0.15
+  )
+```
+
+Je kan de kleueren van de provincies ook veranderen
+
+```{r}
+
+ProvNL$Kleur = sample(c("red","blue"), 12, replace = TRUE)
+
+ProvNL@data
+
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, weight = 1, fillOpacity = 0.25, smoothFactor = 0.15, fillColor = ~Kleur
+  )
+
+```
+
+** Kleuren Schemas **
+
+De kleuren kan je ook data gedreven met een kleuren schema bepalen. 
+
+```{r}
+#### maak eerst wat data voor de provincies
+ProvNL$Leeftijd = runif(12)
+
+### definieer een 3 niveau schema
+colpal <- colorQuantile(
+  palette = green2red(3), n=3,
+  domain = ProvNL$Leeftijd
+)
+
+### gebruik kleurtjes en een popup tekst
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, 
+    weight = 1, 
+    fillOpacity = 0.25, 
+    smoothFactor = 0.15, 
+    fillColor = colpal(ProvNL$Leeftijd),
+    popup = as.character(ProvNL$Leeftijd)
+  )
+
+```
+
+
+Hieronder is een voorbeeld om op postcode 2 posities niveau een kaart te maken. We hebben eerst de data nodig die de contouren van een PC2 gebied definieert, en dan is er wat preparatie nodig om de data in polygoon objecten te krijgen. Deze gaat iets anders dan de provincies die in 1 shape file stonden.
 
 ```{r, eval = FALSE}
 # importeer data uit een CSV file
