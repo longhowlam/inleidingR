@@ -680,7 +680,7 @@ Je kan ook vormen/polygons op een leaflet kaart krijgen. Hieronder is een voorbe
 
 Eerst is er een beetje voorbewerking nodig om de shape file te bewerken in R tot een zogenaamde SpatialPolygonsDataframe. Dan kan je dit met leaflet te kunnen plotten.
 
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 #### inlezen shape file
 ProvNL <- readShapeSpatial("data/TopGrenzen-prov-actueel.shp")
 class(ProvNL)
@@ -711,8 +711,7 @@ leaflet(ProvNL) %>%
 
 Je kan de kleueren van de provincies ook veranderen
 
-```{r}
-
+```{r, eval=FALSE}
 ProvNL$Kleur = sample(c("red","blue"), 12, replace = TRUE)
 
 ProvNL@data
@@ -729,7 +728,7 @@ leaflet(ProvNL) %>%
 
 De kleuren kan je ook data gedreven met een kleuren schema bepalen. 
 
-```{r}
+```{r, eval = FALSE}
 #### maak eerst wat data voor de provincies
 ProvNL$Leeftijd = runif(12)
 
