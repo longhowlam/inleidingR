@@ -34,7 +34,7 @@ library(pROC)
 library(titanic)
 library(rattle)
 library(mlr)
-
+library(h2o)
 library(dplyr)
 
 library(ggplot2)
@@ -687,6 +687,10 @@ library(datasets)
 
 data(Groceries)
 summary(Groceries)
+
+Groceries@itemInfo
+### Klant 1 heeft gekocht:
+Groceries@data[,1]
 ```
 
 Met de functie `apriori` uit het arules package kan je nu vaak voorkomende combinaties van producten identificeren.
