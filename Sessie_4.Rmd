@@ -52,12 +52,13 @@ Lineaire regressie met de functie `lm`, logistische regressie met de functie `gl
 
 ## lineare regressie 
 
-We beginnen met lineaire regressie. Modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld de data in mtcars. waarin we horse power (hp) voorspellen op basis van een aantal input variabelen.
+We beginnen met simpele lineaire regressie, bruikbaar voor voorspel modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld huizen prijs data die ik gescraped heb van jaap.nl. We willen de prijs van een huis voorspellen basis van een aantal input variabelen/kenmerken.
 
 ```{r, eval = FALSE}
-mtcars
-modelout = lm(  hp ~ wt       , data = mtcars)
-modelout2 = lm( hp ~ wt + mpg , data = mtcars) 
+jaap = readRDS("data/Jaap.RDs")
+
+modelout  = lm( prijs ~ kamers              , data = jaap)
+modelout2 = lm( prijs ~kamers + Oppervlakte , data = jaap) 
 
 modelout
 modelout2
@@ -79,11 +80,13 @@ plot(modelout)
 Modellen in R kan je specificeren met zogenaamde de formula objects. Hieronder zie je een aantal voorbeelden.
 
 ```{r, eval = FALSE}
-names(mtcars)
+names(jaap)
 
-f1 <- hp ~ wt + carb + vs
-m1 = lm(f1, data = mtcars)
+f1 <- prijs ~ Oppervlakte + kamers + PC
+m1 = lm(f1, data = jaap)
 m1
+summary(m1)
+
 
 ## interactie termen
 f2 <- hp ~ carb*wt*vs
