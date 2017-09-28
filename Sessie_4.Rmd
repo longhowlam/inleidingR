@@ -81,29 +81,27 @@ Modellen in R kan je specificeren met zogenaamde de formula objects. Hieronder z
 
 ```{r, eval = FALSE}
 names(jaap)
-
-f1 <- prijs ~ Oppervlakte + kamers + PC
+jaap = jaap %>% mutate(PC1Positie = stringr::str_sub(PC,1,1))
+f1 <- prijs ~ Oppervlakte + kamers + PC1Positie
 m1 = lm(f1, data = jaap)
 m1
 summary(m1)
 
 
 ## interactie termen
-f2 <- hp ~ carb*wt*vs
-m2 = lm(f2, data = mtcars)
+f2 <- prijs ~ Oppervlakte*kamers*PC1Positie
+m2 = lm(f2, data = jaap)
+summary(m2)
 
-## product termen
-f2a <- hp ~ I(carb*wt*vs)
-m2a = lm(f2a, data = mtcars)
-summary(m2a)
 
-## aantal termen weglaten
-f3 <- hp ~ carb*wt*vs - carb:wt:vs
-m3 = lm(f3, data = mtcars)
+##  termen weglaten
+f3 <- prijs ~ Oppervlakte*kamers*PC1Positie - Oppervlakte:kamers:PC1Positie
+m3 = lm(f3, data = jaap)
+summary(m3)
 
 ## een target en de rest van de variabelen als inputs
-f4 = hp ~ . + mpg:cyl
-m4 = lm(f4, data = mtcars)
+f4 = prijs ~ . -PC6 -PC
+m4 = lm(f4, data = jaap)
 summary(m4)
 ```
 
@@ -112,7 +110,7 @@ Als je verschillende model objecten hebt gemaakt kan je de functie `anova` gebru
 
 
 ```{r, eval =FALSE}
-anova(m1,m3,m2)
+anova(m1,m2, m3)
 ```
 
 
