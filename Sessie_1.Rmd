@@ -64,6 +64,9 @@ Naast de nb.html, kan je een R notebook ook "knit" ('breien') tot een html, pdf 
 
 De R Console is een plek waar je snel even een kort stukje code wilt runnen. Type daar een R expressie in en Enter om te runnen. Output van scripts verschijnt ook in de R Console.
 
+## Git version controle
+
+Git is een version control systeem. In RStudio kan je makkelijk git gebruiken. Je zult het wel eerst moeten installeren. Op windows kan je git installeren via [de git site](https://git-scm.com/download/win). We gaan hier in deze cursus verder niet op in.
 
 ## Een paar simpele expressie
 
