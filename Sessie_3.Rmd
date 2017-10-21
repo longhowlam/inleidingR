@@ -34,6 +34,7 @@ library(readr)
 library(RColorBrewer)
 library(colorRamps)
 library(leaflet)
+library(visNetwork)
 library(rgeos)
 library(raster)
 library(sp)
@@ -896,9 +897,6 @@ Focus nu alleen op het mooie stadje Hoorn.
 ```{r, eval=FALSE}
 Hoornnodes = readRDS("data/HoornNodes.RDs")
 HoornEdges = readRDS("data/HoornEdges.RDs")
-
-#### zet bezoekers van restaurant A naar restaurant A op 1
-HoornEdges$value [Hoorn$RestaurantNaam == Hoorn$RestaurantNaam1] = 1
 
 visNetwork(Hoornnodes, HoornEdges) %>% 
   visLegend() %>%
