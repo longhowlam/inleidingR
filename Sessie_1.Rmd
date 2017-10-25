@@ -3,6 +3,9 @@ title: 'Avond Sessie 01: Data types/structures'
 subtitle: "Inleiding R"
 author: "Longhow Lam"
 output:
+   pdf_document:
+     toc: yes
+     toc_depth: '2'
    prettydoc::html_pretty:
      highlight: github
      theme: cayman
