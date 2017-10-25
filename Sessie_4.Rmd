@@ -3,19 +3,22 @@ title: 'Avond Sessie 04: Machine learning'
 author: "Longhow Lam"
 subtitle: Inleiding R
 output:
-  html_notebook:
-    theme: sandstone
-    toc: true
+  prettydoc::html_pretty:
+    highlight: github
+    number_sections: yes
+    theme: cayman
+    toc: yes
     toc_depth: 2
-    toc_float: true
-    number_sections: true
-#output:
-#  prettydoc::html_pretty:
-#    highlight: github
-#    theme: cayman
-#    toc: true
-#    toc_depth: 2
-#    number_sections: true
+  html_notebook:
+    number_sections: yes
+    theme: sandstone
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
 ---
 
 
@@ -712,18 +715,22 @@ cluster_membership = h2o.predict(
 
 # Market basket analyse
 
-Met market basket analyse (ook wel association rules mining) genoemd kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje op een fictief grocery data setje
+Met market basket analyse (ook wel association rules mining genoemd) kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje op een fictief grocery data setje.
 
 ```{r, eval = FALSE}
 library(arules)
 library(datasets)
 
+## voorbeeld R object Groceries, dit is een tranaction object
 data(Groceries)
 summary(Groceries)
+class(Groceries)
 
+## De producten die een klant zou kunnen kopen
 Groceries@itemInfo
-### Klant 1 heeft gekocht:
-Groceries@data[,1]
+
+### Klant 10 heeft gekocht:
+Groceries@data[,10]
 ```
 
 Met de functie `apriori` uit het arules package kan je nu vaak voorkomende combinaties van producten identificeren.
@@ -731,14 +738,16 @@ Met de functie `apriori` uit het arules package kan je nu vaak voorkomende combi
 ```{r, eval = FALSE}
 rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
 rules = sort(rules, decreasing = TRUE, na.last = NA, by = "lift")
-inspect(head(rules,n = 15))
+inspect(head(rules, n = 15))
 ```
 
-De data `Groeceries` is al in een zogenaamde transactions object, vaak zul je deze data vanuit een transactionele data frame moeten converteren naar een transaction object.
+De fictieve voorbeelddata `Groeceries` in R is al in een zogenaamde transactions object, normaal gesproken zal je data niet meteen zo hebben in R. Vanuit transactionele data moet je dit converteren naar een transaction object. Dit kan je ook doen met het `arules` package.
 
 ```{r, eval = FALSE}
+## De meest simpele transactionele data set
 trxDF = readRDS("data/boodschappen.RDs")
 
+## Transormeer naar een transaction object
 Groceries2 = as(
   split(
     trxDF$item,
@@ -747,6 +756,10 @@ Groceries2 = as(
   "transactions"
 )
 Groceries2
+
+## Visuele Item informatie
+itemFrequencyPlot(Groceries2, topN = 35, cex.names = 0.75)
+
 rules2 <- apriori(Groceries2, parameter = list(supp = 0.001, conf = 0.8))
 ```
 
@@ -783,6 +796,12 @@ inspect(rules[rulesMatch[,1]])
 inspect(rules[rulesMatch[,1]]@rhs)
 ```
 
+Een ander manier om regels weer te geven is in een network graph, de verzameling regels vormen in feite een netwerk. A --> B, B --> C, D --> B bijvoorbeeld.
+
+```{r, eval=FALSE}
+library(arulesViz)
+plot(head(sort(rules2, by = "lift"), n=50), method = "graph", control=list(cex=.8))
+```
 
 
 
