@@ -3,15 +3,15 @@ title: "Avond Sessie 03: Data visualisatie"
 subtitle: "Inleiding R"
 author: "Longhow Lam"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
   prettydoc::html_pretty:
     highlight: github
     theme: cayman
     toc: true
     toc_depth: 2
     number_sections: true
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
   html_notebook:
     theme: sandstone
     toc: true
