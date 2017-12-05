@@ -2,7 +2,7 @@
 
 # Sessie 01
 install.packages(
-  c("readr", "readxl", "pryr", "RODBC")
+  c("readr", "readxl", "pryr", "RODBC", "skimr")
 )
 
 # sessie 02
@@ -16,8 +16,9 @@ install.packages(
 )
 
 devtools::install_github("jeromefroe/circlepackeR")
+devtools::install_github("mattflor/chorddiag")
 
 # sessie 04
 install.packages(
-  c("rpart", "glmnet", "ranger", "xgboost", "ROCR", "pROC", "titanic", "rattle", "mlr", "arules")  
+  c("rpart", "glmnet", "h2o", "ranger", "xgboost", "ROCR", "pROC", "titanic", "rattle", "mlr", "arules")  
 )
