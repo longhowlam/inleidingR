@@ -2,7 +2,7 @@
 
 # Sessie 01
 install.packages(
-  c("readr", "readxl", "pryr", "RODBC", "skimr")
+  c("readr", "readxl", "pryr", "RODBC", "skimr", "devtools")
 )
 
 # sessie 02
