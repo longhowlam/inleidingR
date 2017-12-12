@@ -20,5 +20,5 @@ devtools::install_github("mattflor/chorddiag")
 
 # sessie 04
 install.packages(
-  c("rpart", "glmnet", "h2o", "ranger", "xgboost", "ROCR", "pROC", "titanic", "rattle", "mlr", "arules")  
+  c("rpart", "glmnet", "h2o", "ranger", "xgboost", "ROCR", "pROC", "titanic", "rattle", "mlr", "arules", "rsample")  
 )
