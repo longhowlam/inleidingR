@@ -7,7 +7,7 @@ install.packages(
 
 # sessie 02
 install.packages(
-  c("tidyverse", "lubridate", "anytime","tidyr", "stringr", "forcats")
+  c("tidyverse", "anytime")
 )
 
 # sessie 03
