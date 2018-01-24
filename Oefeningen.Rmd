@@ -537,8 +537,105 @@ AllCars %>%
 
 ## Leaflets
 
+```{r}
+library(leaflet)
+library(dplyr)
+
+Restaurants <- read_csv("data/Restaurants.csv")
+
+Utrecht = Restaurants %>% filter(plaats == "Utrecht")
+
+m2 = leaflet(data = Utrecht) %>%
+  addTiles() %>%  
+  addMarkers(lng = ~LONGs, lat = ~LATs)
+m2  
 
 
+m2 = Restaurants %>% 
+  filter(
+    plaats == "Utrecht",
+    LATs > 50
+  ) %>%
+  leaflet() %>%
+  addTiles() %>%  
+  addMarkers(lng = ~LONGs, lat = ~LATs)
+m2  
+
+
+
+m2 = Restaurants %>% 
+  filter(
+    plaats == "Utrecht",
+    LATs > 50
+  ) %>%
+  leaflet() %>%
+  addTiles() %>%  
+  addMarkers(lng = ~LONGs, lat = ~LATs, popup = ~restNamen)
+m2  
+```
+
+
+
+## Leaflets with polygons
+
+```{r}
+library(maptools)
+library(colorRamps)
+
+ProvNL <- readShapeSpatial("data/TopGrenzen-prov-actueel.shp")
+proj4string(ProvNL) <- CRS("+init=epsg:28992")
+ProvNL = spTransform(ProvNL, CRS("+proj=longlat +datum=WGS84"))
+
+
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, weight = 1, fillOpacity = 0.15, smoothFactor = 0.15
+  )
+
+
+## import postcode om te matchen met restaurants
+postocdes_NL <- readRDS("data/postocdes_NL.RDs")
+Restaurants = Restaurants %>% left_join(postocdes_NL, by = c("PCs"= "Postcode_spatie")) 
+
+## nu kan je per provincie de gemiddelde prijs uitrekenen
+Prijs = Restaurants %>% group_by(province) %>% summarise(prijs = mean(prijs, na.rm = TRUE))
+
+## de provincie data  
+TMP = ProvNL@data
+TMP$province = as.character(TMP$Provincien)
+TMP = TMP %>% left_join(Prijs)
+ProvNL@data = TMP
+
+### definieer een 4 niveau schema
+colpal <- colorQuantile(
+  palette = green2red(3), n=4,
+  domain = ProvNL$prijs
+)
+
+### teken nu de leaflet weer
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, weight = 1, fillOpacity = 0.25, smoothFactor = 0.15, fillColor = colpal(ProvNL$prijs)
+  )
+
+
+### teken nu nog met andere opties
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, weight = 1, fillOpacity = 0.25, smoothFactor = 0.15, fillColor = colpal(ProvNL$prijs)
+  ,
+  highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE)
+  )
+
+```
 
 
 
