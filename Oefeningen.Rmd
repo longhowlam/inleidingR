@@ -484,6 +484,57 @@ titanic::titanic_train %>%
 
 ## Plotly
 
+With plotly you can create interactive graphs. Lets use the AllCarsGasPedaal data again.
+
+A.	Creating interactive scatter plots with 435K data points makes the plot very slow, first sample randomly 10% from the data and then plot a scatter with plotly KMStand against VraagPrijs. <br>
+B.	Now create the same plot but when you hover over the points it should display name of the car, in the variable ‘auto’. <br>
+C.	Create also a plot where the points are colored according to age. You need to calculate age first. <br>
+D.	There are some outlying ages and prices, remove them so that the plot becomes better. <br>
+E.	Create per Brand (Merk) a boxplot of the Price, because there are too many brands, focus on the top 25 brands (based on counts in the data set. Also remove outlying prices (price > 250K). <br>
+
+
+```{r}
+library(plotly)
+library(dplyr)
+
+AllCars %>%
+  sample_frac(size=0.1) %>%
+  plot_ly(x=~VraagPrijs, y = ~KMStand)
+
+AllCars %>%
+  sample_frac(size=0.1) %>%
+  plot_ly(x=~VraagPrijs, y = ~KMStand, text = ~auto)
+
+
+AllCars %>%
+  mutate(leeftijd = 2017 - bouwjaar) %>%
+  sample_frac(size=0.1) %>%
+  plot_ly(x=~VraagPrijs, y = ~KMStand, text = ~auto, color = ~leeftijd)
+
+
+AllCars %>%
+  mutate(leeftijd = 2017 - bouwjaar) %>%
+  filter(leeftijd < 15, VraagPrijs < 250000) %>%
+  sample_frac(size=0.1) %>%
+  plot_ly(x=~VraagPrijs, y = ~KMStand, text = ~auto, color = ~leeftijd)
+
+
+
+top25 = AllCars %>%
+  group_by(Merk) %>% 
+  summarise(n=n()) %>% 
+  arrange(desc(n)) %>% 
+  slice(1:25) %>% 
+  select(Merk)
+
+AllCars %>% 
+  filter(VraagPrijs < 250000) %>%
+  inner_join(top25) %>%
+  plot_ly( y = ~VraagPrijs, color = ~Merk,type = "box")
+```
+
+
+
 ## Leaflets
 
 
