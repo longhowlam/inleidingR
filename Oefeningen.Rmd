@@ -10,7 +10,7 @@ output:
     number_sections: true
 ---
 
-# Avond sessie 01
+# Session 01. Data types & structures
 
 ---
 
@@ -152,7 +152,7 @@ f3 <- read.csv("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/d
 
 <br>
 
-# Avond sessie 02
+# Session 02. Data preparation
 
 ---
 
@@ -357,7 +357,7 @@ df3 = sample_frac(df1, size=0.5)
 
 <br>
 
-# Avond sessie 03
+# Sessie 03. Data visualisation
 
 ---
 
@@ -373,90 +373,123 @@ AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 
 A.	Create a scatterplot of the VraagPrijs and KMStand.<br>
 B.	Remove outlying points (say KM > 500000 and Prijs > 100000) and create plot again using alpha = 0.05 <br>
-C.  Add a smoothed line trough the points to get an idea of the relation between KM and Price. <br>
+
 D.	Filter the set so that we only have the top eight brands (based on # observations). <br>
 E.	Create a new scatter plot, now the points should be colored  by brand, using the subset of the previous exercise. <br>
-F.  Create also a smoothing line per brand. <br>
+
 G.	Create facets by brand, each facet should have a histogram of the price, create also a grid of 2 rows and 4 columns. <br>
 H.	Create facets by brand, each facet should contain a scatter plot between price and KM stand.
 
 
 ```{r}
+AllCars = readRDS("data/AllCarsGasPedaal.Rds")
+
 AllCars %>% 
-  ggplot(aes(x=KM, y = Prijs)) +
+  ggplot(aes(x=KMStand, y = VraagPrijs)) +
   geom_point()
 
 AllCars %>% 
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
-  ggplot(aes(x=KM, y = Prijs)) +
+  dplyr::filter(VraagPrijs < 100000, KMStand < 500000) %>%
+  ggplot(aes(x = KMStand, y = VraagPrijs)) +
   geom_point(alpha = 0.05)
 
-AllCars %>%
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
-  ggplot(aes(x=KM, y = Prijs)) +
-  geom_point(alpha = 0.05) + 
-  geom_smooth()
 
-top8 = AllCars %>% group_by(Merk) %>% summarise(n=n()) %>% arrange(desc(n)) %>% slice(1:8) %>% select(Merk)
+
+top8 = AllCars %>%
+  group_by(Merk) %>% 
+  summarise(n=n()) %>% 
+  arrange(desc(n)) %>% 
+  slice(1:8) %>% 
+  select(Merk)
 
 AllCars %>% 
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  dplyr::filter(VraagPrijs < 100000, KMStand < 500000) %>%
   inner_join(top8) %>%
-  ggplot(aes(x=KM, y = Prijs)) +
+  ggplot(aes(x=KMStand, y = VraagPrijs)) +
   geom_point(aes(colour=Merk),alpha = 0.05) 
 
-AllCars %>% 
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
-  inner_join(top8) %>%
-  ggplot(aes(x=KM, y = Prijs)) +
-  geom_point(aes(colour=Merk),alpha = 0.05) + 
-  geom_smooth(aes(colour=Merk))
+
 
 AllCars %>% 
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  dplyr::filter(VraagPrijs < 100000, KMStand < 500000) %>%
   inner_join(top8) %>%
-  ggplot(aes(Prijs)) +
+  ggplot(aes(VraagPrijs)) +
   geom_histogram() + facet_grid(~Merk)
 
 AllCars %>% 
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  dplyr::filter(VraagPrijs < 100000, KMStand < 500000) %>%
   inner_join(top8) %>%
-  ggplot(aes(Prijs)) +
+  ggplot(aes(VraagPrijs)) +
   geom_histogram() + facet_wrap(~Merk, nrow=2)
 
 AllCars %>% 
-  dplyr::filter(Prijs < 100000, KM < 500000) %>%
+  dplyr::filter(VraagPrijs < 100000, KMStand < 500000) %>%
   inner_join(top8) %>%
-  ggplot(aes(x= KM, y = Prijs)) +
+  ggplot(aes(x= KMStand, y = VraagPrijs)) +
   geom_point() + facet_grid(~Merk)
 
 
 ```
 
+## Smoothing plots
 
-## Sunburst graphs
+Let’s use the AllCarsGasPedaal again for continuous X and Y.
+
+A.	Create a scatter plot of VraagPrijs and KMStand again but now add a smoothed line through the points to get an idea of the relation between KM and Price. <br>
+B.	Also create a smoothing line per brand, only the top 8 brands. <br>
+
+Let’s use the titanic_train data set in the titanic package for continuous X and binary Y.
+
+C.	Create a scatter plot of Age and Survived. Not much interesting to see right? <br>
+D.	Now add a smoothing line. Interesting relation. <br>
+E.	Create facets for the variable Sex. <br>
+F.	Create facets for the variables Sex and Pclass. <br>
+
 
 ```{r}
-library(dplyr)
-library(sunburstR)
+AllCars %>%
+  ggplot(aes(x = KMStand, y = VraagPrijs)) +
+  geom_point(alpha = 0.05) + 
+  geom_smooth()
 
-iensReviewers = readRDS("data/IensReviewers.RDs")
+AllCars %>% 
+  dplyr::filter(VraagPrijs < 100000, KMStand < 500000) %>%
+  inner_join(top8) %>%
+  ggplot(aes(x=KMStand, y = VraagPrijs)) +
+  geom_point(aes(colour=Merk),alpha = 0.05) + 
+  geom_smooth(aes(colour=Merk))
 
-Reviewerlevel = iensReviewers %>% 
-  group_by(reviewer) %>%
-  arrange(reviewer,datum) %>%
-  summarise(
-    sequence = paste(keuken,collapse="-")
-  ) 
 
-PathLevel = Reviewerlevel %>%
-  group_by(sequence) %>%
-  summarise(n=n()) %>%
-  filter(stringr::str_detect(sequence,"-"), n >10)
+titanic::titanic_train %>%
+  ggplot(aes(x=Age, y = Survived)) +
+  geom_point()
 
-sunburst(PathLevel)
+
+titanic::titanic_train %>%
+  ggplot(aes(x=Age, y = Survived)) +
+  geom_point() + geom_smooth()
+
+
+titanic::titanic_train %>%
+  ggplot(aes(x=Age, y = Survived)) +
+  geom_point() + geom_smooth() +
+  facet_grid(~Sex)
+
+titanic::titanic_train %>%
+  ggplot(aes(x=Age, y = Survived)) +
+  geom_point() + geom_smooth() +
+  facet_grid(Sex~Pclass)
 ```
 
 
+
+## leaflets
+
+
+
+
+
+
+# Session 4. Machine learning
 
 
