@@ -482,8 +482,9 @@ titanic::titanic_train %>%
 ```
 
 
+## Plotly
 
-## leaflets
+## Leaflets
 
 
 
