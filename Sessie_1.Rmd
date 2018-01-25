@@ -461,6 +461,14 @@ x4 = rep(x4,8)
 x5 = rep(1:10, each = 3)
 ```
 
+De functie `cut` om factor vectoren te maken uit double vectoren
+
+```{r}
+x <- rnorm(100)
+y <- cut(x, 4)
+```
+
+
 
 ### subscripting of vectors
 
