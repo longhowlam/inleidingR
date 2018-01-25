@@ -578,6 +578,22 @@ m2
 
 ## Leaflets with polygons
 
+Instead of putting markers or circles on a leaflet, polygons can also be placed on an interactive map. We use the provinces of the Netherlands. Data is already present in the shape file TopGrenzen-prov-actueel.shp. <br>
+
+A.	Import the TopGrenzen shape file as in the lecture. <br>
+B.	Plot the polygons of the Dutch provinces on a leaflet with the function addPolygons. <br>
+
+The polygons can have different colors, for each province we can calculate the average prijs for a menu in the restaurant, and color the polygon accordingly. First calculate the average prijs per province. <br>
+
+C.	To do that we need to tell in which province a restaurant is, import the data set postcodes_NL.RDs in the data directory. <br>
+D.	Join the restaurant data with this postcode data set on postocde so that we know for each restaurant in which province they are. <br>
+E.	Now group by province and calculate per province the average prijs (be aware of NA prices!!). <br>
+F.	Join the prov polygons data with the average prices. <br>
+G.	Define a four color scale for the price with the function. <br> 
+H.	Now create a leaflet and use addPolygons to draw per province the price. <br>
+I.	In addPolygons you can specify highlight options, experiment with that. <br>
+
+
 ```{r}
 library(maptools)
 library(colorRamps)
@@ -601,15 +617,17 @@ Restaurants = Restaurants %>% left_join(postocdes_NL, by = c("PCs"= "Postcode_sp
 ## nu kan je per provincie de gemiddelde prijs uitrekenen
 Prijs = Restaurants %>% group_by(province) %>% summarise(prijs = mean(prijs, na.rm = TRUE))
 
-## de provincie data  
+## de ProvNL shape data, haal de data set er uit en match corresponerende gemiddelde prijs per provincie toe
 TMP = ProvNL@data
 TMP$province = as.character(TMP$Provincien)
 TMP = TMP %>% left_join(Prijs)
+
+## Zet de gemodificeerde data weer terug
 ProvNL@data = TMP
 
-### definieer een 4 niveau schema
+### definieer een 4 niveau schema op basis van de prijs
 colpal <- colorQuantile(
-  palette = green2red(3), n=4,
+  palette = green2red(4), n=4,
   domain = ProvNL$prijs
 )
 
@@ -617,23 +635,61 @@ colpal <- colorQuantile(
 leaflet(ProvNL) %>%
   addTiles() %>%
   addPolygons(
-    stroke = TRUE, weight = 1, fillOpacity = 0.25, smoothFactor = 0.15, fillColor = colpal(ProvNL$prijs)
+    stroke = TRUE, weight = 1, 
+    fillOpacity = 0.25, smoothFactor = 0.15,
+    fillColor = colpal(ProvNL$prijs)
   )
 
 
-### teken nu nog met andere opties
+### teken nu nog een leaflet met highlight opties
 leaflet(ProvNL) %>%
   addTiles() %>%
   addPolygons(
-    stroke = TRUE, weight = 1, fillOpacity = 0.25, smoothFactor = 0.15, fillColor = colpal(ProvNL$prijs)
-  ,
-  highlight = highlightOptions(
+    stroke = TRUE, weight = 1,
+    fillOpacity = 0.25, smoothFactor = 0.15, 
+    fillColor = colpal(ProvNL$prijs) ,
+    highlight = highlightOptions(
       weight = 5,
       color = "#666",
       dashArray = "",
       fillOpacity = 0.7,
-      bringToFront = TRUE)
+      bringToFront = TRUE
+    )
   )
+
+
+### teken nu nog een leaflet met popup texts
+
+labels <- sprintf(
+  "<strong>%s</strong><br/>  gemiddelde prijs %g ",
+  ProvNL$province, ProvNL$prijs
+) %>% lapply(htmltools::HTML)
+
+leaflet(ProvNL) %>%
+  addTiles() %>%
+  addPolygons(
+    stroke = TRUE, weight = 1,
+    fillOpacity = 0.25, smoothFactor = 0.15, 
+    fillColor = colpal(ProvNL$prijs) ,
+    highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+    ),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")
+  ) %>%
+  addLegend(  pal = colpal, values = ProvNL$prijs, opacity = 0.7, title = NULL,
+    position = "bottomright" )
+
+
+
+
 
 ```
 
