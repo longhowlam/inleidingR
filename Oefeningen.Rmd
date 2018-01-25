@@ -697,4 +697,13 @@ leaflet(ProvNL) %>%
 
 # Session 4. Machine learning
 
+Cars data
+
+```{r}
+AllCars = readRDS("data/AllCarsGasPedaal.Rds")
+
+
+
+```
+
 
