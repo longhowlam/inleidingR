@@ -107,9 +107,19 @@ ls()
 
 786 / (87 +87)
 
+## wat wiskundige berekeningen
 pi / asin(1)
-
 exp(1) 
+log(10)
+
+##### integer delingen
+
+# dertien delen door 5
+13 / 5
+# 5 past twee keer in 13
+13 %/% 5
+# en dan blijft er een rest van 3 over
+13 %% 5
 ```
 
 

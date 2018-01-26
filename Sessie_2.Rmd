@@ -537,7 +537,7 @@ Herordenen van factor levels, factor levels kunnen een order bevatten, deze kan 
 ```{r, eval=FALSE}
 test = test %>% 
   mutate(
-    z2 = fct_reorder(type, gewicht, mean)
+    type2 = fct_reorder(type, gewicht, mean)
   )
 
 table(test$type)
@@ -545,6 +545,18 @@ table(test$z2)
 
 levels(test$type)
 levels(test$z2)
+
+### we komen uitvoerig terug op plots in de volgende sessie
+## hier een voorbeeld van het verschil in plaatjes
+
+library(ggplot2)
+
+test2 = test %>% group_by(type) %>% summarise( gewicht = mean(gewicht))
+ggplot(test2, aes(x=type)) + geom_bar(aes(weight=gewicht))
+
+test2 = test %>% group_by(type2) %>% summarise( gewicht = mean(gewicht))
+ggplot(test2, aes(x=type2)) + geom_bar(aes(weight=gewicht))
+
 ```
 
 <br>
@@ -554,7 +566,7 @@ levels(test$z2)
 
 ---
 
-Voor datums (en tijden) in R zijn de packages `anytime` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken.
+Voor datums (en tijden) in R zijn de packages `anytime` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken of een van de `ymd` functies.
 
 ```{r, eval=FALSE}
 library(lubridate)
@@ -566,7 +578,8 @@ testdata = tibble(DoB = y)
 
 testdata = testdata %>%
   mutate(
-    GeboorteDatum = anydate(DoB)
+    GeboorteDatum = anydate(DoB),
+    GeboorteDatum2 = ymd(DoB)
   )
 ```
 
@@ -622,5 +635,57 @@ MeetData = MeetData %>%
 ```
 
 
-Tijds periodes
+## durations en intervals
+
+Als je in R twee datums/times van elkaar aftrekt krijg je in R een duration 
+
+```{r}
+MeetData = MeetData %>% 
+  mutate(
+    duur = ymd_hms("2018-02-01 00:00:00") - ymd_hms(tmp)
+  )
+
+```
+
+Ja kan durations ook zelf maken en optellen bij een datum
+
+```{r}
+
+testduur = dweeks(3)
+testduur = dweeks(3.1)
+class(testduur)
+
+MeetData = MeetData %>% 
+  mutate(
+   t2 = Meettijdstip + dyears(2),
+   t3 = Meettijdstip + dseconds(1800),
+   t4 = Meettijdstip + dweeks(3)
+   
+  )
+
+```
+
+
+In R heb je ook zogenaamde interval objecten, dit is de tijdsperiode tussen een start en eind datum. Hiermee kan je de leeftijd in jaren ook precies uitrekenen.
+
+```{r}
+
+y = c("1973-09-12", "1973-01-09")
+
+testdata = tibble(DoB = y)
+
+testdata = testdata %>%
+  mutate(
+    GeboorteDatum = anydate(DoB),
+    interval1 = interval(GeboorteDatum, today()),
+    interval2 = GeboorteDatum %--% today(),
+    leeftijd = interval1 %/% years(1)
+  )
+
+testdata
+
+# NB %/% is de integer division in R
+13 / 6
+13 %/% 6
+```
 
