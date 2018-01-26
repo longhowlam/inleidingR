@@ -703,10 +703,47 @@ leaflet(ProvNL) %>%
 Cars data
 
 ```{r}
+library(dplyr)
+library(splines)
+library(forcats)
+
 AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 
+### simple linear regression
+model1 = lm(VraagPrijs ~ KMStand, data = AllCars)
+summary(model1)
 
+### buckets in KMStand
+AllCars = AllCars %>% mutate(
+  KMBuckets = cut(KMStand, 15)
+)
 
+model2 = lm(VraagPrijs ~ KMBuckets, data = AllCars)
+summary(model2)
+
+### spline model with Natural Splines
+model3 = lm(VraagPrijs ~ ns(KMStand,5), data = AllCars)
+summary(model3)
+
+### More variables in the model
+table(AllCars$Merk)
+
+AllCars = AllCars %>% 
+  mutate(
+    Merk2 = fct_lump(Merk,10)
+  )
+
+model4 = lm(
+  VraagPrijs ~
+    ns(KMStand,5) + 
+    Merk2 + 
+    ns(OuderdomMaanden,5) + 
+    Brandstof + 
+    Transmissie ,
+  data = AllCars
+)
+
+summary(model4)
 ```
 
 
