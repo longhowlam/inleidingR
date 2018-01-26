@@ -550,20 +550,23 @@ levels(test$z2)
 <br>
 
 
-# Dates in R
+# Dates and times in R
 
 ---
 
 Voor datums (en tijden) in R zijn de packages `anytime` en `lubridate` heel handig. Laten we er van uitgaan dat we characters hebben met datums en daar mee willen rekenen. Dan kunnen we de functie `anydate` uit het anytime package gebruiken.
 
 ```{r, eval=FALSE}
+library(lubridate)
+library(anytime)
+
 y = c("1973-09-12", "1980-05-23", "1981-12-09")
 
 testdata = tibble(DoB = y)
 
 testdata = testdata %>%
   mutate(
-    GeboorteDatum = anytime::anydate(DoB)
+    GeboorteDatum = anydate(DoB)
   )
 ```
 
@@ -576,7 +579,7 @@ testdata = tibble(DoB = y)
 
 testdata = testdata %>%
   mutate(
-    GeboorteDatum = anytime::anydate(DoB)
+    GeboorteDatum = anydate(DoB)
   )
 ```
 
@@ -600,3 +603,24 @@ tmp = read_csv("data/unixtimestamps.csv")
 tmp$datum = anydate(tmp$timestamp)
 tmp
 ```
+
+
+Tijdstippen kunnen in R ook worden weergegven met times
+
+
+```{r}
+tmp = paste("2018-01-23", c("12:01:33", "12:01:38", "12:01:58"))
+Waarde = c(2.4, 5.6, 7.8)
+
+MeetData = tibble(tmp = tmp, Waarde= Waarde)
+
+MeetData = MeetData %>% 
+  mutate(
+    Meettijdstip = ymd_hms(tmp)
+  )
+
+```
+
+
+Tijds periodes
+
