@@ -64,7 +64,7 @@ We beginnen met simpele lineaire regressie, bruikbaar voor voorspel modellen waa
 jaap = readRDS("data/Jaap.RDs")
 
 modelout  = lm( prijs ~ kamers              , data = jaap)
-modelout2 = lm( prijs ~kamers + Oppervlakte , data = jaap) 
+modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap) 
 
 modelout
 modelout2
@@ -117,6 +117,59 @@ Als je verschillende model objecten hebt gemaakt kan je de functie `anova` gebru
 
 ```{r, eval =FALSE}
 anova(m1,m2, m3)
+```
+
+### Buckets / linear constant  en splines 
+
+Als een input variable niet linear is mbt de target kan je deze niet lineariteit modelleren met buckets (linear constante stukken) of met splines.
+
+```{r, eval = FALSE}
+library(ggplot2)
+library(dplyr)
+library(splines)
+
+jaap %>% filter(prijs < 1000000, Oppervlakte < 1500) %>%ggplot(aes(x=Oppervlakte, y= prijs)) + geom_point()
+
+mybreaks = seq(0,1000, by = 25)
+jaap = jaap %>% mutate(OppervlakteBucket = cut(Oppervlakte, breaks = mybreaks))
+
+
+m1 = lm(prijs ~ Oppervlakte, data = jaap)
+m2 = lm(prijs ~ OppervlakteBucket, data = jaap)
+m3 = lm(prijs ~ ns(Oppervlakte,6), data = jaap)
+
+summary(m1)
+summary(m2)
+summary(m3)
+
+```
+
+###  predicties
+
+Met de functie predict kunnen we nieuwe huizen scoren
+
+
+```{r, eval=FALSE}
+NieuweHuizen = data.frame(
+  Oppervlakte = seq(20, 250, l = 100)
+  ) %>%
+  mutate(
+   OppervlakteBucket = cut(Oppervlakte, breaks = mybreaks)
+  )
+
+# Bucket predicties
+prijs2 = predict(m2, newdata = NieuweHuizen)
+NieuweHuizen$prijs2 = prijs2
+
+ggplot(NieuweHuizen, aes(x=Oppervlakte, y = prijs2)) + geom_line()
+
+# Spline predicties
+prijs3 = predict(m3, newdata = NieuweHuizen)
+NieuweHuizen$prijs3 = prijs3
+
+
+ggplot(NieuweHuizen, aes(x=Oppervlakte, y = prijs2)) + geom_point() + geom_point(aes(y=prijs3), col=2)
+
 ```
 
 

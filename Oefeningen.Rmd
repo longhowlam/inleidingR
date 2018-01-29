@@ -700,7 +700,7 @@ leaflet(ProvNL) %>%
 
 # Session 4. Machine learning
 
-Cars data
+## Predicting the price in the Cars data
 
 ```{r}
 library(dplyr)
@@ -713,7 +713,7 @@ AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 model1 = lm(VraagPrijs ~ KMStand, data = AllCars)
 summary(model1)
 
-### buckets in KMStand
+### buckets in KMStand, lets create 15 buckets in in the KMStand variable
 AllCars = AllCars %>% mutate(
   KMBuckets = cut(KMStand, 15)
 )
@@ -745,5 +745,38 @@ model4 = lm(
 
 summary(model4)
 ```
+
+## Using random forests to predit the price
+
+```{r}
+library(h2o)
+library(dplyr)
+
+h2o.init()
+
+## POSIXct type not supported in h2o, remove column
+AllCars$Bouwdatum = NULL
+carh2o = as.h2o(AllCars)
+h2o.ls()
+m1 = h2o.randomForest(
+  x = "KMStand",
+  y = "VraagPrijs", 
+  training_frame = carh2o,
+  validation_frame = carh2o
+)
+
+m1
+
+## predict on carh2o data set and retrieve to R
+newcars = predict(m1, newdata = carh2o) %>% as.data.frame()
+AllCars = cbind(AllCars, newcars)
+
+## calculating R2 your self with a prediction and target
+R2 = 1 - sum((AllCars$VraagPrijs  - AllCars$predict)^2) / sum( (AllCars$VraagPrijs - mean(AllCars$VraagPrijs))^2) 
+```
+
+
+
+
 
 
