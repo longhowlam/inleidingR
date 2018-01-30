@@ -185,16 +185,19 @@ D.	Create a date sequence vector x with the dates: 31-1-2016, 29-2-2016, 31-03-2
 
 ```{r}
 library(anytime)
-x = anydate(c("31-jan-2005", "22-Sep-2007"))
-y = anytime(c("31-jan-2005 3:03:20",  "22-Sep-2007 22:29:56"))
-
 library(lubridate)
 
-month(x) = month(x) +4
-day(x) = day(x) +2
-x
+x = anydate(c("31-jan-2005", "22-Sep-2007"))
+y = anytime(c("31-jan-2005 03:03:20",  "22-Sep-2007 22:29:56"))
+
+month(y) = month(y) +1
+
+y = anytime(c("31-jan-2005 03:03:20",  "22-Sep-2007 22:29:56"))
+z = y + dweeks(4)
+z
 
 x = anydate( rep("2016-01-01", 12))
+## The month of a Date object can be altered
 month(x) = 1:12
 month(x) = month(x) + 1
 x = x -1

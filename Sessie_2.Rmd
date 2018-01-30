@@ -650,7 +650,6 @@ MeetData = MeetData %>%
 Ja kan durations ook zelf maken en optellen bij een datum
 
 ```{r}
-
 testduur = dweeks(3)
 testduur = dweeks(3.1)
 class(testduur)
@@ -666,7 +665,7 @@ MeetData = MeetData %>%
 ```
 
 
-In R heb je ook zogenaamde interval objecten, dit is de tijdsperiode tussen een start en eind datum. Hiermee kan je de leeftijd in jaren ook precies uitrekenen.
+In R heb je ook zogenaamde `interval` objecten, dit is de tijdsperiode tussen een start en eind datum. Hiermee kan je de leeftijd in jaren ook precies uitrekenen.
 
 ```{r}
 
