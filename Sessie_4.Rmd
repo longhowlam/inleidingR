@@ -136,7 +136,7 @@ anova(m1,m2, m3)
 
 ### Buckets / linear constant  en splines 
 
-Als een input variable niet linear is mbt de target kan je deze niet lineariteit modelleren met buckets (linear constante stukken) of met splines.
+Als een input variable niet linear is m.b.t. de target kan je deze niet-lineariteit modelleren met buckets (linear constante stukken) of met splines.
 
 ```{r, eval = FALSE}
 library(ggplot2)

@@ -709,12 +709,19 @@ leaflet(ProvNL) %>%
 library(dplyr)
 library(splines)
 library(forcats)
+library(ggplot2)
 
 AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 
 ### simple linear regression
 model1 = lm(VraagPrijs ~ KMStand, data = AllCars)
 summary(model1)
+
+p = ggplot(AllCars, aes(KMStand, VraagPrijs)) + geom_point()
+p
+
+AllCars = AllCars %>% filter(VraagPrijs < 500000)
+
 
 ### buckets in KMStand, lets create 15 buckets in in the KMStand variable
 AllCars = AllCars %>% mutate(
