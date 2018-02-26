@@ -143,11 +143,11 @@ In the data directory there are some dummy text files: f1.csv, f2.txt and f3.txt
 Import these sets in the ‘correct’ way. The resulting datasets in R should all have 3 columns.
 
 ```{r}
-f1 <- read_csv("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/data/f1.csv",  skip = 3)
+f1 <- readr::read_csv("data/f1.csv",  skip = 3)
 
-f2 <- read_delim("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/data/f2.txt",   " ")
+f2 <- read_delim("data/f2.txt",   " ")
 
-f3 <- read.csv("C:/Users/llam/OneDrive - RTL Nederland B.V/Personal/inleidingR/data/f3.txt")
+f3 <- read.csv("data/f3.txt")
 ```
 
 <br>
