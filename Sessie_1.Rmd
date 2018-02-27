@@ -131,13 +131,31 @@ Help in R is <F1> op een functie.  F1 op de functie: cut
 
 ---
 
-Alle data in R is van een bepaalde type, we zullen de verschillende types hieronder behandelen. met de functie `typeof` kan je het type altijd opvragen van een object in R.
+Alle data in R is van een bepaalde type, we zullen de verschillende data types hieronder behandelen. met de functie `typeof` kan je het type altijd opvragen van een object in R.
 
-## integer
+## Numerieke data
 
-Integers in R zijn gehele getallen.
+### double
+
+De `double` datatype in R wordt vaak gebruikt om numerieke waarden ('alledaagse' getallen te representeren). Denk bijvoorbeeld aan kenmerken van mensen zoals lengte ( 1.85) of gewicht (78.8).  
 
 ```{r, eval=FALSE}
+x4 = 4
+x5 = 5.6 / 8
+
+x6 = pi/2
+
+is.double(x4)
+
+```
+
+
+### integer
+
+Het `integer` data type in R representeren ook numerieke waarden. Alleen in tegenstelling tot doubles representeren ze alleen gehele getallen. Bijvoorbeeld een tel variabelen, aantal kinderen (0, 1, 2,...).
+
+```{r, eval=FALSE}
+# let op, onderstaande zijn nog doubles in R.
 x = 1
 y = 2
 
@@ -150,6 +168,15 @@ is.integer(z)
 
 y = 34L
 is.integer(y)
+
+x7 = 4L
+is.double(x7)
+
+# in tegenstelling tot sommige andere talen kan je in R double en integers 
+# in berekeningen zonder vertalingen gebruiken
+
+x8 = x4 + x7
+typeof(x8)
 ```
 
 ## character
@@ -214,28 +241,6 @@ as.integer(inkomen)
 inkomen = ordered(inkomen, levels = c("laag", "medium", "hoog"))
 ```
  
-
-## double
-
-De doubles in R zijn vaak gebruikt om alledaagse (niet noodzakelijk gehele) getallen te representeren. Bijvoorbeeld lengte, 1.85 of gewicht 78.8 zijn niet gehele getallen
-
-```{r, eval=FALSE}
-x4 = 4
-x5 = 5.6 / 8
-
-x6 = pi/2
-
-is.double(x4)
-
-x7 = 4L
-is.double(x7)
-
-# in tegenstelling tot sommige andere talen kan je in R double en integers in berekeningen 
-# zonder vertalingen gebruiken
-
-x8 = x4 + x7
-typeof(x8)
-```
 
 
 ## logical
