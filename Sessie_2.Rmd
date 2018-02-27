@@ -308,8 +308,8 @@ Soms wil je twee tabellen op elkaar stappelen tot een nieuwe tabel, dat kan je d
 
 ```{r, eval=FALSE}
 ## bind_rows
-A = data.frame(x=1:5, y = rnorm(5))
-B = data.frame(x=11:15, y = rnorm(5))
+A = data.frame(x = 1:5,   y = rnorm(5))
+B = data.frame(x = 11:15, y = rnorm(5))
 C = bind_rows(A,B)
 
 ## kolommen die niet in een van de data frames zitten worden aangevuld
@@ -319,13 +319,13 @@ bind_rows(A,E)
 ```
 
 ```{r, eval=FALSE}
-A = data.frame(x=1:5, y = rnorm(5))
-B = data.frame(q=11:15, q = rnorm(5))
+A = data.frame(x = 1:5,   y = rnorm(5))
+B = data.frame(q = 11:15, q = rnorm(5))
 bind_cols(A,B)
 
 ## als een van de data frames meer rijen heeft, dan wordt er NIET aangevuld
-A = data.frame(x=1:5, y = rnorm(5))
-B = data.frame(q=11:17, q = rnorm(7))
+A = data.frame(x = 1:5,   y = rnorm(5))
+B = data.frame(q = 11:17, q = rnorm(7))
 bind_cols(A,B)
 ```
 
@@ -408,7 +408,7 @@ Character data in R kan je bewerken/manipuleren met het `stringr` package. Voord
 Dit is een soort 'mini' taaltje om character patronen te specificeren om er vervolgens bijvoorbeeld op te zoeken. Eerst wat dummy character data.
 
 ```{r, eval=FALSE}
-test = c("Mijn nummer is 06-12345678", "dit is .. een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK", "12345 Aabcde", "&yfy.")
+test = c("Mijn nummer is 06-12345678", "dit is .. een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK", "12345 Aabcde", "Hier staan geen digits", "&yfy.")
 test
 ```
 
