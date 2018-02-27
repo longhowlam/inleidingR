@@ -81,7 +81,7 @@ plot(modelout)
 
 Je ziet dat er wat outliers in de data zitten, die kunnen we nog eens er uit filteren
 
-```{r}
+```{r, eval = FALSE}
 jaap = jaap %>% filter( prijs < 2000000 )
 modelout  = lm( prijs ~ kamers              , data = jaap)
 modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap) 
@@ -250,6 +250,12 @@ tree.out = rpart(Survived ~ Sex + Age +Pclass, data = titanic_train, control = l
 fancyRpartPlot(tree.out)
 ```
 
+Met visNetwork kan je nog een mooiere interactieve decison tree maken.
+
+```{r, eval=FALSE}
+library(visNetwork)
+visTree(tree.out, height = "800px", nodesPopSize = TRUE, minNodeSize = 10, maxNodeSize = 30)
+```
 
 ## random forest met ranger
 
