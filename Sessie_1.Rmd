@@ -897,26 +897,25 @@ GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 
 ## Inlezen uit een data base
 
-Er zijn verschillende packages om data te lezen uit een data base, dit is afhankelijk van de data base. De library `RODBC` gebruik ik bijvoorbeeld om data uit onze SQL Server data base te lezen.
+Data uit externen databases, zoals MySQL, Oracle Apche HIVE of SQL Server kan je gebruiken in R door R te linken met de database. Je kan ODBC gebruiken om te connecten naar een database en in Linux kan je in een config file de specifieke connectie eigenschappen opgeven. Zie onderstaand fictief voorbeeldje om naar een MySQl database server te connecten.
 
-```{r, eval=FALSE}
-library(RODBC)
-# nodig dat MSSQLSERVER service gestart moet worden
+![](odbcini.PNG)
 
-# specificeer connectie
-cn <- odbcDriverConnect(connection="Driver={SQL Server Native Client 11.0};server=localhost;database=Testing;trusted_connection=yes;")
+Now that there is a connection named `my-connector` we can use that in R to connect. 
 
-sqlTables(cn, schema ="dbo")
-
-RandomPersons = sample_n(VA_RANDOM_PERSONS, 75000)
-
-# haal data uit SQLSERVER
-sqlFetch(cn,"cars")
-
-# schrijf weg
-sqlSave(cn, RandomPersons)
+```{r, eval = FALSE}
+library(odbc)
+library(DBI)
+library(dplyr)
+con_sql <- dbConnect(odbc::odbc(), "my-connector")
+cars = tbl(con_sql, "mtcars")
 ```
 
+In the RStudio GUI you can see (only for certain connectiions) the data tables in the data base server.
+
+![](connections.PNG)
+
+For more details on connecting R to data bases see [this website](https://db.rstudio.com/overview).
 
 
 # Nog iets over geheugen gebruik
