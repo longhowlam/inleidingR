@@ -304,7 +304,7 @@ full_join(df1, df2, by = c("col1" = "col1"))
 
 ## data frames stapelen of plakken
 
-Soms wil je twee tabellen op elkaar stappelen tot een nieuwe tabel, dat kan je doen met `bind_rows`. Als je twee tabellen naast elkaar wilt zetten tot een nieuwe tabel, gebruik dan `bind_rows`.
+Soms wil je twee tabellen op elkaar stappelen tot een nieuwe tabel, dat kan je doen met `bind_rows`. Als je twee tabellen naast elkaar wilt zetten tot een nieuwe tabel, gebruik dan `bind_cols`.
 
 ```{r, eval=FALSE}
 ## bind_rows
