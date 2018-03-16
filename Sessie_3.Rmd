@@ -965,7 +965,9 @@ circlepackeR::circlepackeR(hierarchical_list)
 
 The above code is not convenient to plot data that are in data frames. For example click data or web path logs. Let's take the following data example from the traamap package.
 
-```{r, eval = FALSE}
+```{r}
+library(dplyr)
+library(circlepackeR)
 library(data.tree)
 library(treemap)
 
