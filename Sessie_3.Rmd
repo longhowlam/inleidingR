@@ -644,7 +644,7 @@ Plot de restaurants in Zwolle op een kaartje. Data van Iens gescraped.
 
 ```{r, eval=FALSE}
 Restaurants <- readr::read_csv("data/Restaurants.csv")
-Zwolle = Restaurants %>% filter(plaats == "Zwolle")
+Zwolle = Restaurants %>% filter(plaats == "Zwolle",  LONGs < 7)
 
 ## tooltip teksten kunnen geplaatst worden
 ptekst = paste(Zwolle$restNamen, '<BR> aantal reviews: ', Zwolle$aantalreviews)
