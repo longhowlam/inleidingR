@@ -53,7 +53,7 @@ Scripts, zijn gewone tekst files (*.R) met R code. In RStudio kan je meerdere sc
 In een script type je R code en als je met de cursor op een regel staat kan je die regel code runnen door Ctrl+Enter in te drukken. Je kan ook meerdere regels selecteren en deze regels runnen door Crtl+Enter. Zie voor meer opties het Code menu en 'Run Region'.
 
 
-## R Notebooks
+## R Notebooks 
 
 R notebooks bevatten meer dan alleen R code, het is een 'compleet' document met R code, output en een beschrijvende verhaallijn. In een R project kun je ook meerdere van deze notebooks en scripts beheren. Notebooks maak je met Rmarkdown, een soort light weight markup language waarin je bijvoorbeeld headers, figuren en vet gedrukt kan specificeren. Deze R cursus werkt met R notebooks. Een notebook bevat **R code chunks** die je kan runnen.
 
