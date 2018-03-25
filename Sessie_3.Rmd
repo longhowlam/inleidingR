@@ -1027,7 +1027,7 @@ sunburst(
 Chord diagrams zijn een leuke manier om "A naar B" data weer te geven, relaties tussen entiteiten.
 
 ```{r, eval=FALSE}
-#devtools::install_github("mattflor/chorddiag")
+devtools::install_github("mattflor/chorddiag")
 library(chorddiag)
 
 # overgangsmatrix
@@ -1048,3 +1048,5 @@ m
 groupColors <- c("#000000", "#FFDD89", "#957244", "#F26223")
 chorddiag(m, groupColors = groupColors, groupnamePadding = 20)
 ```
+
+EINDE SESSIE
