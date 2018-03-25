@@ -406,7 +406,10 @@ Als je h2o opstart is er ook een eigen GUI, daar kan je naar toe localhost:54321
 library(h2o)
 
 # initialiseer h2o via R
-# in windows you cn also start h2o in de CMD: java -jar h2o.jar
+# start h2o ook met in de CMD met 
+# java -Xmx12g -jar C:/Users/longh/Documents/R/win-library/3.4/h2o/java/h2o.jar
+
+
 #h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
 h2o.init()
 
