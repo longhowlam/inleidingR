@@ -907,7 +907,14 @@ Now that there is a connection named `my-connector` we can use that in R to conn
 library(odbc)
 library(DBI)
 library(dplyr)
-con_sql <- dbConnect(odbc::odbc(), "my-connector")
+
+con <- dbConnect(odbc::odbc(), "my-connector")
+
+# or use an explicit connection string
+con <- dbConnect(
+  odbc::odbc(),
+  .connection_string = "Driver={MySQL ODBC 5.3 ANSI Driver};user=root; password=mysqlroot; database=r_test"
+)
 cars = tbl(con_sql, "mtcars")
 ```
 
