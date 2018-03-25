@@ -915,7 +915,7 @@ con <- dbConnect(
   odbc::odbc(),
   .connection_string = "Driver={MySQL ODBC 5.3 ANSI Driver};user=root; password=mysqlroot; database=r_test"
 )
-cars = tbl(con_sql, "mtcars")
+cars = tbl(con, "mtcars")
 ```
 
 In the RStudio GUI you can see (only for certain connectiions) the data tables in the data base server.
