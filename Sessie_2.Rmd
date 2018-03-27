@@ -252,7 +252,12 @@ out = filter(
   )
 ```
 
+De functie top_n, selecteer de top 4 rijen uit mtcars (op de variable hp).
 
+```{r eval = FALSE}
+mtcars %>%  top_n(4, hp)
+
+```
 
 ## joins
 
