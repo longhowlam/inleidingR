@@ -259,6 +259,34 @@ mtcars %>%  top_n(4, hp)
 
 ```
 
+### Window functions
+
+dplyr ondersteunt zogenaamde SQL 'window functions'. Bijvoorbeeld bepaal per cyl value the ranking van de variabele hp.
+
+```{r, eval = FALSE}
+ TMP = mtcars %>%
+  group_by(
+    cyl
+  ) %>%
+  mutate(
+    rank = rank(desc(hp), ties.method = "first")
+  ) %>%
+  select(cyl, hp, rank)
+```
+
+En nu kunnen we ook met de filter functie per cyl waarde de auto nemen met de hoogste hp waarde.
+
+```{r, eval = FALSE}
+TMP = mtcars %>%
+  group_by(
+    cyl
+  ) %>%
+  mutate(
+    rank = rank(desc(hp), ties.method = "first")
+  ) %>%
+  filter(rank ==1)
+```
+
 ## joins
 
 Met dplyr kun je makkelijk tabellen joinen. Er zijn verschillende joins die ondersteunt worden. We geven hier een aantal voorbeelden.
