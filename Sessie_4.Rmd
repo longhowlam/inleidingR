@@ -251,8 +251,6 @@ TTrain = training(myTitanSplit)
 TTest = testing(myTitanSplit)
 ```
 
-
-
 ## logistic regression
 
 Een logistic regression is een van de simpelste predictive modellen om mee te beginnen als je classificatie wilt doen. We gaan uit van een binaire Target (Y /N). We gebruiken de `TTrain` data set die we zojuist gemaakt hebben om een model te fitten.
@@ -275,8 +273,8 @@ text(tree.out, use.n = TRUE)
 fancyRpartPlot(tree.out)
 
 ### larger trees with complexity parameter
-tree.out = rpart(Survived ~ Sex + Age +Pclass, data = titanic_train, control = list(cp=0.005))
-fancyRpartPlot(tree.out)
+tree.outComplex = rpart(Survived ~ Sex + Age +Pclass, data = TTrain, control = list(cp=0.005))
+fancyRpartPlot(tree.outComplex)
 ```
 
 Met visNetwork kan je nog een mooiere interactieve decison tree maken.
@@ -298,7 +296,6 @@ TTrain = TTrain %>% filter(!is.na(Age))
 ranger.out = ranger( Survived ~ Sex + Age +Pclass, data = TTrain, importance = "impurity")
 
 ranger.out
-
 ```
 
 ## xgboost
@@ -312,7 +309,7 @@ Titan_Inputmatrix = sparse.model.matrix( Survived ~ Sex + Age + Pclass, data = T
 
 Titan_Inputmatrix
 
-xgboost.out = xgboost(Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
+xgboost.out = xgboost::xgboost(Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
 
 ## er zijn diverse opties mee te geven aan xgboost
 param = list(
@@ -320,7 +317,7 @@ param = list(
   eval_metric = 'auc'
 )
 
-xgboost.out = xgboost(params=param, Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
+xgboost.out = xgboost::xgboost(params=param, Titan_Inputmatrix, label = TTrain$Survived, nrounds = 10)
 ```
 
 
@@ -333,14 +330,14 @@ Met een test set kan je bepalen hoe goed een model is. Gebruik het model object 
 Voor binaire classificaties is het handig om response kansen uit te rekenen. Voor logistische regressie met `glm` gebeurt dit niet automatisch
 
 ```{r, eval = FALSE}
-pred_GLM = predict(out.glm, data = TTest, type='response')
+pred_GLM = predict.glm(out.glm, newdata = TTest, type='response')
 hist(pred_GLM)
 ```
 
 Voorspelling van de decision tree, en random forest ranger.
 
 ```{r, eval = FALSE}
-pred_tree = predict(tree.out, data = TTest)
+pred_tree = predict(tree.out, newdata = TTest)
 hist(pred_tree)
 
 TTest = TTest %>% filter(!is.na(Age))
@@ -372,19 +369,47 @@ xgb.importance( colnames(Titan_Inputmatrix), model =xgboost.out)
 
 ```
 
+### Lift percentages
+
+Als we geen model hebben kan je de overall survival kans uitrekenen:
+
+```{r, eval=FALSE}
+## if you know nothing :-)
+TTest %>%  summarise(target = mean(Survived))
+```
+
+Als we een goed model hebben zullen de survival kansen hoger liggen voor mensen met een hogere score. Latern we de GLM (lons logistische regressie model) in tien stukken (decielen) opdelen, en per deciel de survival kans uitrekenen.
+
+```{r, eval=FALSE}
+testpr = predict(out.glm, newdata = TTest, type='response')
+TTest$predictieGLM = testpr
+
+### deel de GLM predicties op in tien even grote stukken
+TTest = TTest %>% 
+  mutate(
+    percPredictie = cut(
+      predictieGLM, 
+      breaks = quantile(
+        predictieGLM, 
+        probs = (0:10)/10
+      )
+    )
+  )
+
+## if you have a score!!!
+TTest %>% group_by(percPredictie) %>%  summarise(target = mean(Survived))
+```
+
 
 ### roc curves and hit rates
 
 ```{r, eval = FALSE}
-testpr = predict(tree.out, TTest)
-TTest$predictie = testpr
-
-rocResultTEST = roc(Survived  ~ predictie, data = TTest , auc=TRUE, ci =TRUE)
+rocResultTEST = roc(Survived  ~ predictieGLM, data = TTest , auc=TRUE, ci =TRUE)
 plot(rocResultTEST)
 
 ## HITRATES 
 TTest %>% 
-  ggplot(aes(predictie, Survived))  +
+  ggplot(aes(predictieGLM, Survived))  +
   geom_smooth() +
   geom_abline(slope = 1,intercept = 0) +
   ggtitle("survived rate rate on test set") + scale_y_continuous(limits=c(0,1))
@@ -559,7 +584,6 @@ parameters_xgboost = list(
   nrounds  = 5,
   max.depth = 7
 )
-
 ```
 
 Maak nu een Lijst van modelen (ook wel learners genomed) die je wilt trainen op je data.
@@ -641,6 +665,7 @@ impObject = impute(
 
 ABT = impObject$data
 ```
+
 ## Het aanmaken van een task
 
 Maak nu een 'task' aan waarin je de data, de inputs en de target specificeert. Een classificatie taak voor categorische target of een regressie task voor een numerieke target.
@@ -834,61 +859,50 @@ cluster_membership = h2o.predict(
 
 # Market basket analyse
 
-Met market basket analyse (ook wel association rules mining genoemd) kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje op een fictief grocery data setje.
+Met market basket analyse (ook wel association rules mining genoemd) kan je uit "transacties van klanten" vaak voorkomende combinaties of juiste hele "sterke combinaties" van producten bepalen. Hieronder volgt een voorbeeldje op een fictief grocery (boodschappen transacties) data setje.
 
 ```{r, eval = FALSE}
 library(arules)
-library(datasets)
 
-## voorbeeld R object Groceries, dit is een tranaction object
-data(Groceries)
-summary(Groceries)
-class(Groceries)
-
-## De producten die een klant zou kunnen kopen
-Groceries@itemInfo
-
-### Klant 10 heeft gekocht:
-Groceries@data[,10]
-```
-
-Met de functie `apriori` uit het arules package kan je nu vaak voorkomende combinaties van producten identificeren.
-
-```{r, eval = FALSE}
-rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
-rules = sort(rules, decreasing = TRUE, na.last = NA, by = "lift")
-inspect(head(rules, n = 15))
-```
-
-De fictieve voorbeelddata `Groeceries` in R is al in een zogenaamde transactions object, normaal gesproken zal je data niet meteen zo hebben in R. Vanuit transactionele data moet je dit converteren naar een transaction object. Dit kan je ook doen met het `arules` package.
-
-```{r, eval = FALSE}
 ## De meest simpele transactionele data set
 trxDF = readRDS("data/boodschappen.RDs")
 
 ## Transormeer naar een transaction object
-Groceries2 = as(
+Groceries = as(
   split(
     trxDF$item,
     trxDF$id
     ),
   "transactions"
 )
-Groceries2
+
+Groceries
 
 ## Visuele Item informatie
-itemFrequencyPlot(Groceries2, topN = 35, cex.names = 0.75)
-
-rules2 <- apriori(Groceries2, parameter = list(supp = 0.001, conf = 0.8))
+itemFrequencyPlot(Groceries, topN = 35, cex.names = 0.75)
 ```
 
+Nu je de boodschappen als transaction object hebt kan je er market basket rules op los laten met behulp van het a-priori algoritme.
+
+```{r, eval= FALSE}
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
+rules
+
+## laat enkele regels zien
+inspect(rules[1:10])
+
+inspect( sort(rules, by = "support")[1:10])
+
+## converteer de rules set naar een data frame
+rulesDF = DATAFRAME(rules)
+```
 
 Nu je de regels hebt kan je filteren op regels. Welke regels bevatten bepaalde producten.
 
 ```{r, eval = FALSE}
-rules.subset2 <- subset(rules, lhs %in% c("cereals", "curd"))
-rules.subset2
-inspect(head(rules.subset2,n=15))
+rules.subset = subset(rules, lhs %in% c("cereals", "curd"))
+rules.subset
+inspect(head(rules.subset, n=15))
 ```
 
 Of als iemand een bepaalde reeks transacties heeft welke regels horen daar bij en welk product kan je dan aanraden.
@@ -919,7 +933,7 @@ Een ander manier om regels weer te geven is in een network graph, de verzameling
 
 ```{r, eval=FALSE}
 library(arulesViz)
-plot(head(sort(rules2, by = "lift"), n=50), method = "graph", control=list(cex=.8))
+plot(head(sort(rules, by = "lift"), n=50), method = "graph", control=list(cex=.8))
 ```
 
 ## interactive MBA graphs
@@ -970,8 +984,10 @@ nodes = data.frame(
 
 visNetwork(nodes, rulesDF) %>%
    visOptions(highlightNearest = TRUE,  nodesIdSelection = TRUE) %>%
-   visEdges(smooth = TRUE) 
+   visEdges(smooth = FALSE) 
 ```
 
+
+EINDE SESSIE
 
 
