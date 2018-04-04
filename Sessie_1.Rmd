@@ -149,7 +149,6 @@ is.double(x4)
 
 ```
 
-
 ### integer
 
 Het `integer` data type in R representeren ook numerieke waarden. Alleen in tegenstelling tot doubles representeren ze alleen gehele getallen. Bijvoorbeeld een tel variabelen, aantal kinderen (0, 1, 2,...).
@@ -241,7 +240,6 @@ as.integer(inkomen)
 inkomen = ordered(inkomen, levels = c("laag", "medium", "hoog"))
 ```
  
-
 
 ## logical
 
@@ -405,7 +403,6 @@ Ook via de 'Environment' window kan je objecten weghalen. In een keer alles via 
 
 <br>
 
-
 # Data structures
 
 ---
@@ -445,7 +442,6 @@ x3 = c( x0, rnorm(100))
 class(x4)
 ```
 
-
 Het genreren van wat random getallen is handig om snel wat data te hebben om te testen, in R zijn er diverse functies.
 
 ```{r, eval=FALSE}
@@ -460,7 +456,6 @@ runif(100,8,10)
 # trekken uit een vector
 x4 = sample( letters, rep = TRUE, size = 100)
 ```
-
 
 Berekeningen op vectoren gebeuren elements-gewijs
 
@@ -482,8 +477,6 @@ De functie `cut` om factor vectoren te maken uit double vectoren
 x <- rnorm(100)
 y <- cut(x, 4)
 ```
-
-
 
 ### subscripting of vectors
 
@@ -601,7 +594,6 @@ class(m)
 
 Een data frame kan je zien als een matrix, maar in tegenstelling tot een matrix, kunnen kolommen van een data frame van een andere type zijn. Voor data analyse met 'echte' data zal een data.frame de meest handige structuur zijn. je hebt bijvoorbeeld een factor kolom 'Geslacht', een double kolom met bijvoorbeeld 'geweicht' en je kan een character kolom hebben met 'achternaam'.
 
-
 ```{r, eval=FALSE}
 x1 = 1:100
 x2 = rnorm(100)
@@ -620,7 +612,6 @@ head(df1,10)
 ```
 
 *Let op!!* In de bovenstaande code is `x4` een character vector, maar in de data frame is column gender een factor data type geworden. Dit is standaard gedran van de functie `data.frame`. Gebruik het argument `stringAsFactors = FALSE` om bij het maken van een data frame de character variabelen niet automatisch te converteren naar factor variabelen.
-
 
 ```{r eval=FALSE}
 df1 = data.frame(
@@ -790,7 +781,6 @@ f1 = function(x, y){
 f1(8,6)
 ```
 
-
 Als je de functie eerder wilt verlaten met een waarde, gebruik dan `return` in de functie.
 
 ```{r, eval=FALSE}
@@ -826,8 +816,6 @@ f3( 1:1000)
 # natuurlijk doen we gewoon
 sum(1:1000)
 ```
-
-
 
 ###   The %>%  pipe (or chain) operator
 
