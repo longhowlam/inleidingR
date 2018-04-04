@@ -612,11 +612,24 @@ df1 = data.frame(
   kolomnaampj1 = x1,
   income = x2,
   age = x3,
-  type = x4
+  gender = x4
 )
 
 # laat eerste 10 rijen zien
 head(df1,10)
+```
+
+*Let op!!* In de bovenstaande code is `x4` een character vector, maar in de data frame is column gender een factor data type geworden. Dit is standaard gedran van de functie `data.frame`. Gebruik het argument `stringAsFactors = FALSE` om bij het maken van een data frame de character variabelen niet automatisch te converteren naar factor variabelen.
+
+
+```{r eval=FALSE}
+df1 = data.frame(
+  kolomnaampj1 = x1,
+  income = x2,
+  age = x3,
+  gender = x4,
+  stringsAsFactors = FALSE
+)
 ```
 
 De volgende functies kan je gebruiken om wat extra info van een data frame te laten zien.
@@ -629,24 +642,29 @@ names(df1)
 df2 = df1
 names(df2) = c("A", "B", "C", "D")
 
-# dimensie en classe
+# dimensie en class van een data frame
 dim(df1)
 class(df1)
-
-# De levels van kolom 'type' uit mydf
-levels(mydf$type)
-
-### pas op met characters die worden standaard in data.frame naar factors omgezet
-x4
-class(x4)
-class(df1$type)
-
-mydf = data.frame(kolomnaampj1 = x1, income = x2, age=x3, type = x4, stringsAsFactors = FALSE)
-mydf
-class(mydf$type)
-
-## Dit is ook in de Environment viewer te zien
 ```
+
+Om een eerste indruk te krijgen van wat er in een data.frame zit kan je `summary` of `skimr` gebruiken
+
+```{r, eval = FALSE}
+summary(mtcars)
+summary(iris)
+```
+
+Het package `skimr` moet je eerst installeren.
+
+```{r, eval = FALSE}
+devtools::install_github("hadley/colformat")
+devtools::install_github("ropenscilabs/skimr")
+
+library(skimr)
+skimr::skim(mtcars)
+skim(iris)
+```
+
 
 Je kan net als bij matrices subscripts gebruiken in data frame om bepaalde data uit een data.frame te halen
 
@@ -694,24 +712,6 @@ df1[,1]
 
 tb1[,1:2]
 tb1[,1]
-```
-
-Om een eerste indruk te krijgen van wat er in een data.frame zit kan je `summary` of `skimr` gebruiken
-
-```{r, eval = FALSE}
-summary(mtcars)
-summary(iris)
-```
-
-Het package `skimr` moet je eerst installeren.
-
-```{r, eval = FALSE}
-devtools::install_github("hadley/colformat")
-devtools::install_github("ropenscilabs/skimr")
-
-library(skimr)
-skimr::skim(mtcars)
-skim(iris)
 ```
 
 
