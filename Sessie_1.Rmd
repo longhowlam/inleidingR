@@ -25,7 +25,7 @@ output:
 <br>
 
 
-# Inleiding. 
+# Inleiding.
 
 ---
 
@@ -53,7 +53,7 @@ Scripts, zijn gewone tekst files (*.R) met R code. In RStudio kan je meerdere sc
 In een script type je R code en als je met de cursor op een regel staat kan je die regel code runnen door Ctrl+Enter in te drukken. Je kan ook meerdere regels selecteren en deze regels runnen door Crtl+Enter. Zie voor meer opties het Code menu en 'Run Region'.
 
 
-## R Notebooks 
+## R Notebooks
 
 R notebooks bevatten meer dan alleen R code, het is een 'compleet' document met R code, output en een beschrijvende verhaallijn. In een R project kun je ook meerdere van deze notebooks en scripts beheren. Notebooks maak je met Rmarkdown, een soort light weight markup language waarin je bijvoorbeeld headers, figuren en vet gedrukt kan specificeren. Deze R cursus werkt met R notebooks. Een notebook bevat **R code chunks** die je kan runnen.
 
@@ -907,55 +907,16 @@ Now that there is a connection named `my-connector` we can use that in R to conn
 library(odbc)
 library(DBI)
 library(dplyr)
-
-con <- dbConnect(odbc::odbc(), "my-connector")
+con_sql <- dbConnect(odbc::odbc(), "my-connector")
+cars = tbl(con_sql, "mtcars")
 ```
 
-Or you can use a connection string like the examples below, which also works on Windows machines. The first one is a connection to MySQL.
-
-```{r eval = FALSE} 
-con <- dbConnect(
-  odbc::odbc(),
-  .connection_string = "Driver={MySQL ODBC 5.3 ANSI Driver};user=root; password=mysqlroot; database=r_test"
-)
-cars = tbl(con, "mtcars") %>%  collect()
-```
-
-The follwoing example connects to SQL Server on Windows
-
-```{r eval = FALSE}
-# explicit password in script
-con = DBI::dbConnect(
-  odbc::odbc(),
-  Driver   = "SQL Server",
-  Server   = "DESKTOP-5JI7FPP",
-  Database = "rtest",
-  UID      = "sa",
-  PWD      = "sqlserverroot",
-  Port     = 1433
-)
-
-# using ask for password
-con = DBI::dbConnect(
-  odbc::odbc(),
-  Driver   = "SQL Server",
-  Server   = "DESKTOP-5JI7FPP",
-  Database = "rtest",
-  UID      = rstudioapi::askForPassword("Database user"),
-  PWD      = rstudioapi::askForPassword("Database password"),
-  Port     = 1433
-)
-
-cars = tbl(con, "mtcars") %>%  collect()
-
-dbDisconnect(con)
-```
-
-In the RStudio GUI you can see (only for certain connections) the data tables in the data base server.
+In the RStudio GUI you can see (only for certain connectiions) the data tables in the data base server.
 
 ![](connections.PNG)
 
-For more details on connecting R to a database see [this website](https://db.rstudio.com/overview).
+For more details on connecting R to data bases see [this website](https://db.rstudio.com/overview).
+
 
 # Nog iets over geheugen gebruik
 
