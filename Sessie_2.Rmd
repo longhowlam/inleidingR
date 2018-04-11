@@ -574,10 +574,10 @@ test = test %>%
   )
 
 table(test$type)
-table(test$z2)
+table(test$type2)
 
 levels(test$type)
-levels(test$z2)
+levels(test$type2)
 
 ### we komen uitvoerig terug op plots in de volgende sessie
 ## hier een voorbeeld van het verschil in plaatjes
