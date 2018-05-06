@@ -87,8 +87,8 @@ class(modelout)
 names(modelout)
 modelout$coefficients
 
-summary(modelout)
-plot(modelout)
+summary(modelout2)
+plot(modelout2)
 ```
 
 Iets mooiere diagnostische plots uit `lm` objecten krijg je met de library `ggfortify` die weet hoe je lm objecten moet interpreteren voor ggplot. Dan kan je met de functie `autoplot` uit ggplot mooiere diagnostische plots maken.
@@ -103,9 +103,12 @@ ggplot2::autoplot(modelout)
 Je ziet dat er wat outliers in de data zitten, die kunnen we nog eens er uit filteren
 
 ```{r, eval = FALSE}
-jaap = jaap %>% filter( prijs < 2000000 )
+jaap = jaap %>% filter( prijs < 1500000 )
 modelout  = lm( prijs ~ kamers              , data = jaap)
 modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap) 
+
+## een iets betere R2
+summary(modelout2)
 ```
 
 
