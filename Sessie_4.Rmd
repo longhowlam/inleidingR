@@ -462,7 +462,6 @@ library(h2o)
 # start h2o ook met in de CMD met 
 # java -Xmx12g -jar C:/Users/longh/Documents/R/win-library/3.4/h2o/java/h2o.jar
 
-
 #h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
 h2o.init(max_mem_size = "10g")
 
@@ -482,7 +481,6 @@ ttest.h2o = as.h2o(TTest)
 ### welke files zijn er in h2o
 h2o.ls()
 ```
-
 
 Er zijn diverse modellen die je kan trainen, we zullen hier een tweetal laten zien, neural netwerks en random forests
 
@@ -538,8 +536,6 @@ Geef resources terug door h2o af te sluiten als je het niet meer nodig hebt.
 h2o.shutdown(prompt = FALSE)
 ```
 
-
-
 <br>
 
 # The mlr package
@@ -549,7 +545,6 @@ h2o.shutdown(prompt = FALSE)
 Met het `mlr` package kan je makkelijk verschillende modellen trainen en testen op een meer uniforme manier. In R hebben alle machine learning technieken net weer verschillende aanroepen en de uitkomst is vaak een object met net steeds weer andere componenten. Dit zagen we bijvoorbeeld in de bovenstaande code voor ranger en xgboost.
 
 Met het `mlr` package kan je dit uniform stroomlijnen. Het maken van een predictive model (welk model dan ook)  bestaat altijd uit een aantal stappen. Bijvoorbeeld:
-
 
 * specificeren van de target,
 * specificeren van inputs,
@@ -567,8 +562,6 @@ We gebruiken de `titanic` data set als test in `mlr` en doorlopen een aantal sta
 * xgboost
 * decision tree,
 * logistic regression via glmnet
-
-
 
 ## specificeren van technieken en hun opties
 
