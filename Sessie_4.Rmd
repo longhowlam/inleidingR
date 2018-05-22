@@ -920,7 +920,10 @@ X = cbind(c(x,x1,-1, 3),c(y,y1, 1, -1))
 db <- dbscan(X, eps = .4, minPts = 4)
 db
 
+## local outlier factor score
 pairs(X, col = db$cluster + 1L)
+lof <- lof(X, k = 4)
+pairs(X, cex = lof)
 ```
 
 
