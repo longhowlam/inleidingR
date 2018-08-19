@@ -841,7 +841,7 @@ Meestal wordt dit gebruikt om code leesbaarder te maken en we komen hier in avon
 
 ---
 
-Als je met R werkt heb je natuurlijk data nodig, zoals we op bovenstaande manier data hebben gemaakt zal het in de praktijk niet gebeuren met echte data sets. Die leven in data bases of in files
+Als je met R werkt heb je natuurlijk data nodig, zoals we op bovenstaande manier data hebben gemaakt zal het in de praktijk niet gebeuren met echte data sets. Die leven in data bases of in files.
 
 ## Inlezen files
 
