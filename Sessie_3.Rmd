@@ -338,7 +338,7 @@ g2
 
 ### ggmap
 
-Er is recentelijk een makkelijkere manier met het package `ggmap`
+Er is recentelijk een makkelijkere manier met het package `ggmap`. Je kan hiermee kaartjes van google maps downloaden en als achtergrond kaart gebruiken voor plots.
 
 ```{r, eval=FALSE}
 library(ggmap)
