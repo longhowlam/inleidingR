@@ -296,7 +296,9 @@ ggplot(df, aes(x=x,y=y)) + geom_bin2d()
 ```
 
 
-## geom_map
+## Kaartjes maken 
+
+### geom_map
 
 Met geom_map kun je kaarten maken. Als je de kaart van Nederland wil maken zul je die eerst ergens vandaan moeten halen. Vanuit het `raster` package is er een handige functie `getData` om dit te doen.
 
@@ -334,6 +336,25 @@ g2 <- g1 + geom_point(
 g2
 ```
 
+### ggmap
+
+Er is recentelijk een makkelijkere manier met het package `ggmap`
+
+```{r, eval=FALSE}
+library(ggmap)
+## haal kaart van Nederland op, pak een center (long lat coordinaten)
+NLMap = ggmap(get_googlemap(center = c(4.8952,52.3702), scale=2, zoom=7), extent="normal")
+NLMap +
+  geom_point(
+    data = restaurants,
+    aes(x = LONGs, y = LATs),
+    size = 0.7, 
+    color = "red",
+    alpha = 0.06, 
+    na.rm = TRUE
+  )
+
+```
 
 
 ## facets in ggplot
