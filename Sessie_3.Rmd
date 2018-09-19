@@ -592,7 +592,7 @@ An excerpt of the data available at Gapminder.org. For each of 142 countries, th
 
 Eerst een statisch plaatje
 
-```{r}
+```{r, eval = FALSE}
 library(gapminder)
 head(gapminder)
 
@@ -625,7 +625,7 @@ animnatedplot
 
 Als je het plaatje wilt bewaren kan je de `anim_save` functie gebruiken. Het laatst geprinte animated plaatje wordt standaard gebruikt. Of maak een gif_image object met de functie `animate` van een specifiek gganim object en schrijf deze weg naar disk.
 
-```{r}
+```{r, eval = FALSE}
 anim_save("output.gif")
 
 pp = animate(animnatedplot)
@@ -1017,7 +1017,7 @@ visNetwork(Hoornnodes, HoornEdges) %>%
 ```
 
 
-# Zoomable circle packing plots en sunburst plots
+## Zoomable circle packing plots en sunburst plots
 
 Circle packings zijn een leuke manier om hierarchische data te visualiseren. Installeer eerst het package van Github.
 
