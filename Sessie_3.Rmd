@@ -541,12 +541,13 @@ Naast de statistische grafieken die we hierboven hebben gemaakt kan je in R ook 
 
 ## Het `gganimate` package
 
-Met gganimate kan je animaties in je ggplot maken, het package kan nu alleen via github geinstalleerd worden.
+Met de library gganimate kan je animaties maken die gebasseerd zijn op ggplots, het package kan nu alleen via github geinstalleerd worden.
 
 ```{r}
 #devtools::install_github('thomasp85/gganimate')
 library(gganimate)
 ```
+
 Eerst een statisch plaatje
 
 ```{r, eval = FALSE}
@@ -555,28 +556,34 @@ p = ggplot(mtcars, aes(factor(cyl), mpg)) +
 p
 ```
 
-Stel we animeren op gears we hebben drfie waarden van gears
+Stel we animeren op gears, we hebben drie waarden van gears:
 
 ```{r, eval = FALSE}
 for(i in 3:5){
-pp = ggplot(
-  mtcars %>% filter(gear == i), 
-  aes(factor(cyl), mpg)
-) + 
+  pp = ggplot(
+    mtcars %>% filter(gear == i), 
+    aes(factor(cyl), mpg)
+  ) + 
   geom_boxplot() 
-print(pp)
+  print(pp)
 }
 ```
 
-Nu eentje met echte animaties
+Nu maken we een animatie op basis van de verschillende waarden van gear.
 
 ```{r, eval = FALSE}
-p+
+ap = p +
  transition_states(
     gear,
     transition_length = 2,
     state_length = 1
-  ) 
+  )
+
+## ap is nu een gganim object
+class(ap)
+
+## laat de animatie zien, duurt eventjes, de animatie wordt gemaakt.
+ap
 ```
 
 Nog een voorbeeldje met gapminder data. De data van Gapminder.com :
@@ -591,14 +598,20 @@ head(gapminder)
 
 statplot = ggplot(
   gapminder, 
-  aes(gdpPercap, lifeExp, size = pop, colour = country)
-  ) +
-  geom_point(alpha = 0.7, show.legend = FALSE) +
-  scale_colour_manual(values = country_colors) +
-  scale_size(range = c(2, 12)) +
-  scale_x_log10() +
-  facet_wrap(~continent) +
-  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy')
+  aes(
+    gdpPercap, lifeExp, size = pop, colour = country
+  )
+) +
+geom_point(
+  alpha = 0.7, show.legend = FALSE
+) +
+scale_colour_manual(values = country_colors) +
+scale_size(range = c(2, 12)) +
+scale_x_log10() +
+facet_wrap(~continent) +
+labs(
+  title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy'
+)
 
 statplot
 
@@ -608,6 +621,15 @@ animnatedplot = statplot +
   ease_aes('linear')
 
 animnatedplot
+```
+
+Als je het plaatje wilt bewaren kan je de `anim_save` functie gebruiken. Het laatst geprinte animated plaatje wordt standaard gebruikt. Of maak een gif_image object met de functie `animate` van een specifiek gganim object en schrijf deze weg naar disk.
+
+```{r}
+anim_save("output.gif")
+
+pp = animate(animnatedplot)
+anim_save("output2.gif", pp)
 ```
 
 ## Het `plotly` package
