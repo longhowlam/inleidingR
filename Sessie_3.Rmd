@@ -27,7 +27,6 @@ output:
 
 ```{r, eval=FALSE, include=FALSE}
 library(stringr)
-library(dplyr)
 library(ggplot2)
 library(readr)
 library(plotly)
@@ -42,6 +41,7 @@ library(raster)
 library(sp)
 library(maptools)
 library(rgdal)
+library(dplyr)
 ```
 
 
@@ -74,7 +74,8 @@ y = runif(100)
 plot(x,y)
 
 plot(mtcars)
-plot(mtcars %>% select(mpg,cyl,hp))
+library(dplyr)
+plot(mtcars %>% dplyr::select(mpg,cyl,hp))
 ```
 
 Een histogram kan je snel maken met de functie `hist`, deze accepteert een vector van getallen.
@@ -101,28 +102,28 @@ Hieronder een eerste voorbeeldje van een ggplot op de `mtcars` data set.
 ```{r, eval=FALSE}
 ## een laag p
 p = ggplot(mtcars, aes(x=hp, y = mpg))
-
+p
 ## wat is p
 class(p)
 typeof(p)
 
 ## voeg een laag punten toe
-p = p + geom_point(alpha = 0.4)
+p = p + geom_point()
+
+p
 ```
 
 
 Laat de plot zien door hem te 'printen'.
 
 ```{r, eval=FALSE}
-p
-
 q = geom_point(aes(x = hp, y = cyl), col=2)
+
 r = p + q
 r
 
 ## Een titel is ook een laag
-p = p + 
-  ggtitle("AUTO PLOTS \n EEN VOORBEELDJE") 
+p = p + ggtitle("AUTO PLOTS \n EEN VOORBEELDJE") 
 p
 ```
 
@@ -183,11 +184,14 @@ p + geom_boxplot()
 Lijn grafieken zijn handig om tijdreeksen te visualiseren
 
 ```{r, eval=FALSE}
-df = data.frame(x=1:100, y=rnorm(100))
+df = data.frame(
+  x = 1:100, 
+  y = rnorm(100)
+)
 
 p = ggplot(
   df, 
-  aes(x=x,y=y)
+  aes(x = x, y = y)
   )
 
 p + geom_line()
@@ -237,7 +241,12 @@ restaurants %>%
   summarise(
     n=n()
   ) %>%
-  filter(!is.na(keuken)) %>%
+  filter(
+    !is.na(keuken)
+  ) %>%
+  arrange(
+    desc(n)
+  ) %>% 
   slice(1:10) %>%
   mutate(
     keuken = forcats::fct_reorder(keuken, n)
@@ -257,10 +266,12 @@ test = restaurants %>%
   group_by(
     keuken, plaats
   ) %>%
-  summarise(n=n()) %>%
+  summarise(
+    n=n()
+  ) %>%
   filter(
     !is.na(keuken)
-    ) 
+  ) 
    
 ##  in de aes kun je fill opgeven en met position kan je stacked of grouped opgeven 
 test %>%
@@ -290,9 +301,9 @@ df = data.frame(x=rnorm(100000), y=rnorm(100000))
 
 ggplot(df, aes(x=x,y=y)) + geom_point()
 
-ggplot(df, aes(x=x,y=y)) + geom_point(alpha=0.01 )
+ggplot(df, aes(x=x,y=y)) + geom_point(alpha=0.007 )
 
-ggplot(df, aes(x=x,y=y)) + geom_bin2d()
+ggplot(df, aes(x=x,y=y)) + geom_bin2d(bins = 100)
 ```
 
 
@@ -391,7 +402,7 @@ restaurants %>% filter(prijs < 100) %>%
   ggplot(
     aes(x=aantalreviews, y = prijs)
   ) + 
-  geom_point() + facet_wrap(~keuken, ncol = 5)
+  geom_point() + facet_wrap(~keuken, ncol = 5) + geom_smooth()
 ```
 
 ## grids
@@ -460,14 +471,23 @@ Het is vaak nodig om assen en titels aan te passen. We geven hieronder een paar 
 p = ggplot(mtcars, aes(x=hp, y=cyl)) + geom_point()
 p
 
+p + xlab("Dit is de HP") + ylab("pppp")
 
-p + scale_x_continuous("Dit is de HP")
 p + ggtitle(" HP versus Cylinder")
-p + scale_x_continuous("Dit is de HP", breaks = 50 + 20*1:10)
+
+p + labs(title = "mijn titel", x="mijn x", y = "pietje puk")
+```
+
+Naast de titels kan je ook de as breaks aanpassen.
+
+```{r, eval = FALSE}
+p + scale_x_continuous("Dit is de HP", breaks = 50 + 20*1:23)
 
 # log schale as
 df = data.frame(x = exp(3*rnorm(100)), y = rnorm(100))
-ggplot(df, aes(x,y)) + geom_point()
+
+
+ggplot(df, aes(x=log(x),y=y)) + geom_point()
 
 ggplot(df, aes(x,y)) + geom_point()+ scale_x_log10()
 ```
@@ -519,38 +539,78 @@ Er is een aardige 'cheatsheet' voor ggplot2. Deze bevat beknopt een overzicht va
 ---
 Naast de statistische grafieken die we hierboven hebben gemaakt kan je in R ook interactieve grafieken maken. We geven in deze sectie een aantal voorbeelden.
 
-## ggvis, vergelijkbaar met ggplot
+## Het `gganimate` package
 
-```{r, eval=FALSE}
-library(ggvis)
+Met gganimate kan je animaties in je ggplot maken, het package kan nu alleen via github geinstalleerd worden.
 
-ggvis(mtcars,~mpg)
-ggvis(mtcars,~mpg, ~wt)
+```{r}
+#devtools::install_github('thomasp85/gganimate')
+library(gganimate)
+```
+Eerst een statisch plaatje
 
-# ggvis werkt met %>% chain operator ipv + operator
-# handig voor gelaagde plots   (layers)
-
-mtcars %>% ggvis(~factor(cyl), ~mpg) 
-mtcars %>% ggvis(~factor(cyl), ~mpg) %>% layer_boxplots()
-
-
-mtcars %>%
-  ggvis(~mpg, ~wt) %>%
-  layer_points() %>%
-  layer_smooths()
-
-
-### met wat controls-sturing...
-
-mtcars %>%
-  ggvis(~wt, ~mpg) %>%
-  layer_smooths(span = input_slider(0.5, 1, value = 1)) %>%
-  layer_points(size := input_slider(100, 1000, value = 100))
-
+```{r, eval = FALSE}
+p = ggplot(mtcars, aes(factor(cyl), mpg)) + 
+  geom_boxplot() 
+p
 ```
 
+Stel we animeren op gears we hebben drfie waarden van gears
 
-## Het plotly package
+```{r, eval = FALSE}
+for(i in 3:5){
+pp = ggplot(
+  mtcars %>% filter(gear == i), 
+  aes(factor(cyl), mpg)
+) + 
+  geom_boxplot() 
+print(pp)
+}
+```
+
+Nu eentje met echte animaties
+
+```{r, eval = FALSE}
+p+
+ transition_states(
+    gear,
+    transition_length = 2,
+    state_length = 1
+  ) 
+```
+
+Nog een voorbeeldje met gapminder data. De data van Gapminder.com :
+
+An excerpt of the data available at Gapminder.org. For each of 142 countries, the package provides values for life expectancy, GDP per capita, and population, every five years, from 1952 to 2007.
+
+Eerst een statisch plaatje
+
+```{r}
+library(gapminder)
+head(gapminder)
+
+statplot = ggplot(
+  gapminder, 
+  aes(gdpPercap, lifeExp, size = pop, colour = country)
+  ) +
+  geom_point(alpha = 0.7, show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  facet_wrap(~continent) +
+  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy')
+
+statplot
+
+# animated plot over de jaren
+animnatedplot = statplot +
+  transition_time(year) +
+  ease_aes('linear')
+
+animnatedplot
+```
+
+## Het `plotly` package
 
 Plotly is een zeer mooie library voor het maken van interactieve visualisaties. Zie voor meer info [plotly](https://plot.ly/r/). We zullen een aantal voorbeelden hieronder laten zien.
 
@@ -986,7 +1046,7 @@ circlepackeR::circlepackeR(hierarchical_list)
 
 The above code is not convenient to plot data that are in data frames. For example click data or web path logs. Let's take the following data example from the traamap package.
 
-```{r}
+```{r, eval=FALSE}
 library(dplyr)
 library(circlepackeR)
 library(data.tree)
