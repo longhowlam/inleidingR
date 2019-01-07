@@ -55,6 +55,7 @@ In R kan je veel verschillende predictive modellen fitten. We behandelen alleen 
 Lineaire regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer uniforme manier meerdere modellen kan proberen op een data set.
 
 
+
 ## lineare regressie 
 
 We beginnen met simpele lineaire regressie, bruikbaar voor voorspel modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld huizen prijs data die ik gescraped heb van jaap.nl. We willen de prijs van een huis voorspellen basis van een aantal input variabelen/kenmerken.
@@ -184,14 +185,14 @@ library(splines)
 jaap %>%
   filter(prijs < 1000000, Oppervlakte < 1500) %>%
   ggplot(aes( x = Oppervlakte, y = prijs)) +
-  geom_point()
+  geom_point() + geom_smooth()
+
 
 mybreaks = seq(0,1000, by = 25)
 jaap = jaap %>% 
   mutate(
     OppervlakteBucket = cut(Oppervlakte, breaks = mybreaks)
-  )
-
+  ) 
 
 m1 = lm(prijs ~ Oppervlakte, data = jaap)
 m2 = lm(prijs ~ OppervlakteBucket, data = jaap)
@@ -780,7 +781,7 @@ rulesDF = DATAFRAME(rules)
 Nu je de regels hebt kan je filteren op regels. Welke regels bevatten bepaalde producten.
 
 ```{r, eval = FALSE}
-rules.subset = subset(rules, lhs %in% c("cereals", "curd"))
+rules.subset = subset(rules, rhs %in% c("whole milk"))
 rules.subset
 inspect(head(rules.subset, n=15))
 ```
@@ -869,7 +870,7 @@ visNetwork(nodes, rulesDF) %>%
 
 <br>
 
-# Tiijdreeks modellen met prophet
+# Tijdreeks modellen met prophet
 
 ---
 
@@ -903,7 +904,6 @@ BillyF = prophet(
   weekly.seasonality = TRUE ,
   yearly.seasonality = TRUE, 
   daily.seasonality = TRUE
-
 )
 
 ## dan aantal dagen vooruit maken waarop je gaat forecastem
