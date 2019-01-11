@@ -114,7 +114,7 @@ summary(modelout2)
 ```
 
 
-### formula objects
+### formula objects 
 
 Modellen in R kan je specificeren met zogenaamde de formula objects. Hieronder zie je een aantal voorbeelden.
 
