@@ -47,7 +47,72 @@ library(dplyr)
 library(ggplot2)
 ```
 
-# predictive modeling technieken
+
+# testing samples
+
+---
+
+## t tests
+
+The `t.test` function produces a variety of t-tests. Unlike most statistical packages, the default assumes unequal variance and applies the Welsh df modification.
+
+```{r, eval = FALSE}
+# independent 2-group t-test
+test = data.frame(
+  meeting = c(rnorm(100), rnorm(100,.1,1)),
+  groep = c(rep("M",100), rep("F", 100))
+)
+
+t.test(meeting ~ groep, data = test) # where y is numeric and x is a binary factor
+
+# independent 2-group t-test
+test2 = data.frame(
+  meeting1 = rnorm(250),
+  meeting2 = rnorm(250,.1,1)
+)
+t.test(test2$meeting1, test2$meeting2) # where y1 and y2 are numeric
+
+# paired t-test
+t.test(test2$meeting1, test2$meeting2, paired=TRUE) # where y1 & y2 are numeric
+
+# one sample t-test
+t.test(test2$meeting1, mu = 0.2) 
+```
+
+You should always check for normality when using a t test
+
+```{r, eval = FALSE}
+library(ggplot2)
+test = data.frame(
+  meeting = c(rnorm(100), rnorm(100,3,2)),
+  groep = c(rep("M",100), rep("F", 100))
+)
+
+p <- ggplot(test, aes(sample = meeting))
+p + stat_qq() + stat_qq_line() 
+p + stat_qq() + stat_qq_line()  + facet_grid(~groep)
+```
+
+## wilcoxon rank test
+
+The t test assumes that the data is normaly distributed. When this assumption is in doubt, the non-parametric Wilcoxon-Mann-Whitney (or rank sum ) test is sometimes suggested as an alternative to the t-test.
+
+```{r, eval = FALSE}
+mu = 0.3
+test = data.frame(
+  meeting = c(rlnorm(200), rlnorm(200, mu, 1)),
+  groep = c(rep("M",200), rep("F", 200))
+)
+wilcox.test(meeting ~ groep, data = test) 
+t.test(meeting ~ groep, data = test) 
+
+p <- ggplot(test, aes(sample = meeting))
+p + stat_qq() + stat_qq_line()  + facet_grid(~groep)
+```
+
+
+
+# Predictive modeling technieken
 
 ---
 
