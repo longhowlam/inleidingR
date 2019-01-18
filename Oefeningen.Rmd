@@ -540,9 +540,17 @@ AllCars %>%
 
 ## Leaflets
 
+Leaflet graphs are nice to visualize geographic data on maps. We’ll use the Restaurants.csv data set in the data directory. The longitude and latitude coordinates are in the columns LATs and LONGs
+A. Import the data and select the restaurants in Utrecht.
+B. Plot all the Utrecht restaurant on an interactive leaflet.
+C. Leave out the restaurant with ‘wrong’ coordinates
+D. Now create a leaflet where a popup text will appear with the name of the restaurant
+
+
 ```{r}
 library(leaflet)
 library(dplyr)
+library(readr)
 
 Restaurants <- read_csv("data/Restaurants.csv")
 
@@ -563,7 +571,6 @@ m2 = Restaurants %>%
   addTiles() %>%  
   addMarkers(lng = ~LONGs, lat = ~LATs)
 m2  
-
 
 
 m2 = Restaurants %>% 
