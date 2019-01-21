@@ -14,7 +14,7 @@ output:
 
 ---
 
-## Data types
+## 1. Data types
 A.	Create the object x1 with the numbers 1, 3.51, 0.7 and 5. <br>
 B.	Show the data class of x1. <br>
 C.	Transform x1 into an integer data type and store the result in x2. <br>
@@ -30,7 +30,7 @@ x3 = round(x1)
 is.integer(x3)
 ```
 
-## Logical data type.
+## 2. Logical data type.
 A.	Create the vector y1 with the numbers 1, 2, 3, 4, 5, 6, 7, 8, 9 and 10. <br>
 B.	Create a logical vector y2 from y1. An element of y2 should be TRUE if the corresponding element of y1 is larger than 5. <br>
 C.	How many elements are smaller than 5?
@@ -42,7 +42,7 @@ sum(y2)
 ```
 
 
-## Character data type and factor data type.
+## 3. Character data type and factor data type.
 A.	Create the character vector y1, with the characters “high”, “low”, “high”, “high”, “low”. <br>
 B.	Create the factor variable y2 from y1. Print the levels of y2. <br>
 C.	Transform y2 to a numeric vector y3, so that high becomes 2 and low becomes 1. <br>
@@ -57,7 +57,7 @@ as.integer(y2)
 
 ```
 
-## Creating sequences.
+## 4. Creating sequences.
 A.	Create a vector x, with elements (1,2,3,4,..,100). <br>
 B.	Create a vector y, with elements (0,5,10,...,500). <br>
 C.	Create a vector z1, with elements (1,1,1,2,2,2,...,50,50,50). <br>
@@ -72,7 +72,7 @@ z2 = rep(1:10, 1:10)
 z3 = rep(1:10, rep(1:2,5))
 ```
 
-## Creating factors from double data.
+## 5. Creating factors from double data.
 A.	Generate a vector x with 100 random normal numbers.  <br>
 B.	Use x to generate a factor vector y with three levels: “low”, “average” and “high”. If an element in x is:  <br>
 
@@ -91,7 +91,7 @@ y
 
 ```
 
-## Creating a data.frame
+## 6. Creating a data.frame
 A.	Create a data frame `df1` from the two vectors x and y from the previous exercise
 
 B.	Rename the columns x and y into index and income
@@ -111,7 +111,7 @@ df1$Gender = as.factor(
   
 ```
 
-## Creating a list 
+## 7. Creating a list 
 
 A.	Create a list L1 with 4 elements:
 
@@ -137,7 +137,7 @@ names(L1)
 lapply(L1, mean)
 ```
 
-## Importing some data
+## 8. Importing some data
 
 In the data directory there are some dummy text files: f1.csv, f2.txt and f3.txt
 Import these sets in the ‘correct’ way. The resulting datasets in R should all have 3 columns.
@@ -156,7 +156,7 @@ f3 <- read.csv("data/f3.txt")
 
 ---
 
-## String bewerkingen
+## 1. String bewerkingen
 Copy the following vector to R.
 X = c("abd 06-456", "blab la (06)-123.45678", "hoi 06-12123478", "mijn nr 0689452312")
 
@@ -174,7 +174,7 @@ str_detect(x,mob_pattern)
 str_extract(x, mob_pattern)
 ```
 
-## Dates and times.
+## 2. Dates and times.
 A.	Create a date object from the characters "31-jan-05"   "22-Sep-07".
 
 B.	Create a date object from the characters "31-jan-05 3:03:20"  "22-Sep-07 22:29:56".
@@ -205,7 +205,7 @@ x = x -1
 
 For the following two exercises we are going to use restaurant data in the file Restaurants.csv in the data folder. Use the read_csv function to import this data set.
 
-## Basic data manipulation 1
+## 3. Basic data manipulation 1
 A.	Create a subset of the restaurants whose name is “kota radja”, how many are there?
 
 B.	Give a top ten restaurants in Amsterdam based on price.
@@ -239,7 +239,7 @@ elcheapo %>% group_by(keuken) %>% summarise(n=n())
 
 ```
 
-## Basic data manipulation 2
+## 4. Basic data manipulation 2
 A.	In the data folder there is a Postcode_NL.RDs file, import that set. 
 
 B.	Use it to enrich the restaurant data set whith an extra column provincie.
@@ -279,7 +279,7 @@ restaurants = restaurants %>%
   )
 ```
 
-## Auto data van gaspedaal
+## 5. Auto data van gaspedaal
 In the data folder there is a file R data set AllCarsGasPedaal.Rds  import this data set using `readRDS`.
 
 A.	List the names of the columns of the data set.
@@ -306,7 +306,7 @@ TEST = gaspedaal %>% filter(Merk %in% c("Audi","Renault","BMW"))
 
 ```
 
-## Split data and stack data
+## 6. Split data and stack data
 Consider the following simple data set with 3 rows:
 
 Df = data.frame(
@@ -338,7 +338,7 @@ tmp = tidyr::separate(Df, V1, into = paste0("V",1:10)) %>%
   filter(!is.na(item))
 ```
 
-## sampling van data 
+## 7. sampling van data 
 Kijk naar sample_n of sample_frac uit dplyr.
 
 A. Create a df1 data frame with 100 columns and 1000 rows. Filled with random numbers between 0 and 1.
@@ -372,7 +372,7 @@ library(dplyr)
 AllCars = readRDS("data/AllCarsGasPedaal.Rds")
 ```
 
-## plotting using ggplot2
+## 1. plotting using ggplot2
 
 A.	Create a scatterplot of the VraagPrijs and KMStand.<br>
 B.	Remove outlying points (say KM > 500000 and Prijs > 100000) and create plot again using alpha = 0.05 <br>
@@ -434,7 +434,7 @@ AllCars %>%
 
 ```
 
-## Smoothing plots
+## 2. Smoothing plots
 
 Let’s use the AllCarsGasPedaal again for continuous X and Y.
 
@@ -485,7 +485,7 @@ titanic::titanic_train %>%
 ```
 
 
-## Plotly
+## 3. Plotly
 
 With plotly you can create interactive graphs. Lets use the AllCarsGasPedaal data again.
 
@@ -538,7 +538,7 @@ AllCars %>%
 
 
 
-## Leaflets
+## 4. Leaflets
 
 Leaflet graphs are nice to visualize geographic data on maps. We’ll use the Restaurants.csv data set in the data directory. The longitude and latitude coordinates are in the columns LATs and LONGs
 A. Import the data and select the restaurants in Utrecht.
@@ -586,7 +586,7 @@ m2
 
 
 
-## Leaflets with polygons
+## 5. Leaflets with polygons
 
 Instead of putting markers or circles on a leaflet, polygons can also be placed on an interactive map. We use the provinces of the Netherlands. Data is already present in the shape file TopGrenzen-prov-actueel.shp. <br>
 
@@ -710,7 +710,7 @@ leaflet(ProvNL) %>%
 
 # Session 4. Machine learning
 
-## Predicting the price in the Cars data
+## 1. Predicting the price in the Cars data
 
 ```{r}
 library(dplyr)
@@ -763,7 +763,7 @@ model4 = lm(
 summary(model4)
 ```
 
-## Using random forests to predit the price
+## 2. Using random forests to predit the price
 
 ```{r}
 library(h2o)
