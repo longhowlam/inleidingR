@@ -192,6 +192,7 @@ nchar(x2)
 
 x3 = paste(x1, x2)
 x3 = paste(x1, x2, sep="")
+x3 = paste0(x1, x2)
 ```
 
 
@@ -832,7 +833,7 @@ tan(cos(sin(0.33)))
   tan
 ```
 
-Meestal wordt dit gebruikt om code leesbaarder te maken en we komen hier in avond sessie 2 verder op terug.
+Meestal wordt dit gebruikt om code leesbaarder te maken en we komen hier in de tweede sessie verder op terug.
 
 <br>
 
@@ -885,7 +886,7 @@ GasPedaal = readRDS("data/AllCarsGasPedaal.Rds")
 
 ## Inlezen uit een data base
 
-Data uit externen databases, zoals MySQL, Oracle Apche HIVE of SQL Server kan je gebruiken in R door R te linken met de database. Je kan ODBC gebruiken om te connecten naar een database en in Linux kan je in een config file de specifieke connectie eigenschappen opgeven. Zie onderstaand fictief voorbeeldje om naar een MySQl database server te connecten.
+Data uit externen databases, zoals MySQL, Oracle, Apche HIVE of SQL Server kan je gebruiken in R door R te linken met de database. Je kan ODBC gebruiken om te connecten naar een database en in Linux kan je in een config file de specifieke connectie eigenschappen opgeven. Zie onderstaand fictief voorbeeldje om naar een MySQl database server te connecten.
 
 ![](odbcini.PNG)
 
