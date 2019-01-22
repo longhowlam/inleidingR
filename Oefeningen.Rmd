@@ -1,16 +1,20 @@
 ---
 title: "R oefeningen Inleiding R cursus"
 author: "Longhow Lam"
-output: 
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
   html_notebook:
+    number_sections: yes
     theme: sandstone
-    toc: true
+    toc: yes
     toc_depth: 2
-    toc_float: true
-    number_sections: true
+    toc_float: yes
 ---
 
-# Session 01. Data types & structures
+# Session 01. Data types & structures.
 
 ---
 
