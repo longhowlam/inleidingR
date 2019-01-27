@@ -230,7 +230,7 @@ levels(x3)
 
 Soms is een order in de levels aan wezig, in R kan je dat ook expliciey aangeven met ordered factors. Stel dat je een inkomen object hebt met vier observaties: Laag, hoog, medium en medium.
 
-```{r}
+```{r, eval = FALSE}
 inkomen = as.factor(
   c("laag", "hoog", "medium", "medium")
 )

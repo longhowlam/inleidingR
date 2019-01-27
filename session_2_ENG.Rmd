@@ -1,0 +1,865 @@
+---
+title:'Avond Sessie 02: Data preparatie'
+author: "Longhow Lam"
+subtitle: "Intro R"
+author: "Longhow Lam"
+output:
+   prettydoc::html_pretty:
+     highlight: github
+     theme: cayman
+     toc: true
+     toc_depth: 2
+     number_sections: true
+   pdf_document:
+     toc: yes
+     toc_depth: '2'
+   html_notebook:
+     theme: sandstone
+     toc: true
+     toc_depth: 2
+     toc_float: true
+     number_sections: true
+---
+
+
+
+---
+
+<br>
+
+
+# The tidyverse
+
+
+---
+
+
+Het `tidyverse` package is a combination of R packages with ‘the same’ ideas about how to edit/ manipulate data. Install tidyverse and attach the library so that you load these libraries at the same time:
+
+
+* dplyr
+* tibble
+* ggplot2
+* purr
+* forcats
+* readr
+* readxl
+* stringr
+* tidyr
+
+
+```{r, eval=FALSE, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(anytime)
+```
+
+
+# De dplyr library
+
+---
+
+This package/ library is extremely useful to edit data in R. The syntax is elegant and the dplyr code can sometimes be used for data that is not in R. For example, data in Spark can be edited with the dplyr code. There are a lot of ‘key’ words but the most important are `select`,  `filter`, `mutate`, `arrange`, `summarize`, `slice` en `rename`.
+
+
+The great thing is that these keywords can be used after each other using the `%>%` chain operator. We are using the data from teh datasets library as an example. `mtcars` is a small dataset with car information and `iris` is the familiar dataset with three kinds of flowers. 
+
+
+## select columns with select
+
+
+
+```{r, eval=FALSE}
+## select some columns 
+my.cars = select(mtcars, hp, mpg, drat)
+
+## using the chain operator, this is not only easy, but you can also paste multiple operations after each other. 
+
+my.cars = mtcars %>%
+
+select(
+   hp,
+   mpg,
+   drat
+ )
+
+## select some columns 
+test1 = iris %>%
+
+
+ select(
+
+
+   starts_with("Petal")
+
+
+ )
+
+
+
+
+
+
+## select certain columns
+
+
+test2 = mtcars %>%
+
+
+ select(
+
+
+   contains("pg"),
+
+
+   starts_with("c")
+
+
+ )
+
+
+
+
+
+
+my.cars = mtcars %>% .[2:6]
+
+
+```
+
+
+## make or edit a column with mutate
+
+
+We already saw that you can make or edit a column in a data frame with `$`
+
+```{r, eval=FALSE}
+my.cars$kolom2  = rnorm(32)
+my.cars$kolom3  = my.cars$kolom2 + 9
+```
+
+
+But you can do this much more elegantly with `mutate` 
+
+```{r, eval=FALSE}
+mycars = mtcars %>%
+select(
+  disp,
+  mpg
+) %>%
+ mutate(
+   displ_l = disp / 61.0237,
+   tmp = mpg *1000
+)
+```
+
+
+You can make new columns that are dependent on columns that you just made in mutate
+
+
+```{r, eval=FALSE}
+mycars = mtcars %>%
+ mutate(
+   displ_l = disp / 61.0237,
+   tmp = mpg *1000,
+   tmp2 = tmp + 1
+)
+```
+
+You can also use self-made functions. 
+
+```{r, eval=FALSE}
+normalize <- function(x){
+   return((x- mean(x))/(max(x)-min(x)))
+}
+
+mycars = mtcars %>%
+
+mutate(
+   cyln = normalize(cyl)
+)
+```
+
+
+Two functions that are extremely useful functies: `mutate_at` en `mutate_if`
+
+```{r, eval=FALSE}
+ABT = data.frame(
+  matrix(round(100*runif(100)), ncol=10)
+)
+
+## first make a column that is the sum of the 10 columns 
+ABT = ABT %>% mutate(sum = rowSums(.[1:10]))
+
+## only change column 4 to 8, they are divided by sum 
+ABT2 = ABT %>%
+  mutate_at(
+   4:8, funs(. / sum)
+)
+
+## only divide by sum if the column sum is bigger than 500
+
+LARGE = function(x) {sum(x) > 500}
+
+ABT3 = ABT %>%
+  mutate_if(
+LARGE, funs(. / sum)
+
+
+ )
+
+ABT
+ABT2
+ABT3
+```
+
+
+## distinct rows
+
+Sometimes you want to deduplicate data, which you can do in R with the function `distinct`
+
+```{r, eval=FALSE}
+distinct( select(mtcars, carb, gear))
+distinct( select(mtcars, 10,11))
+
+### pipe / chain operation
+myset = mtcars %>%
+ select(10,11) %>%
+ distinct
+```
+
+
+## filtering data sets 
+
+You can use `filter` and `slice` to take rows out of your data frame. 
+
+```{r, eval=FALSE, include=FALSE}
+filter(
+ mtcars,
+ cyl == 8 & gear > 3
+)
+## calculate multiple filter expressions EN 
+filter(
+ mtcars,
+ cyl == 8,
+ gear > 3
+)
+## if you want of, you need to use | 
+filter(
+ mtcars,
+ cyl == 8 | gear > 3
+)
+```
+
+With `slice` you can select data based on row  numbers. For example, the first 8 records, or record 8 until the last record. 
+
+```{r, eval=FALSE}
+slice(mtcars, 1:8)
+
+slice(mtcars, 8:n())
+```
+
+## aggregate data sets 
+
+Aggregate with the function `group_by` and `summarise`, these often go together. 
+
+```{r, eval=FALSE}
+## separate call of group_by and summarise... so that you can see what group_by yields
+by_cyl = group_by(mtcars, cyl)
+class(by_cyl)
+summarise(by_cyl, Naampje1 = mean(disp), Naampje2 = mean(hp))
+
+## but you often do both in one run 
+
+out = mtcars %>%
+ group_by(
+   cyl
+) %>%
+ summarise(
+   mdisp = mean(disp),
+   mhp = mean(hp)
+)
+
+out = filter(
+ mtcars, mpg > 11
+) %>%
+group_by(
+  cyl,
+  carb
+) %>%
+summarise(
+  N = n(),
+ MeanDisp = mean(disp),
+ SD_HP = sd(hp)
+)
+```
+
+The function top_n, select the top 4 rows from mtcars (on the variable hp).
+
+```{r eval = FALSE}
+mtcars %>%  top_n(4, hp)
+```
+
+
+### Window functions
+
+dplyr supports SQL 'window functions'. For example, decide per cyl value the ranking of the variable hp. 
+
+```{r, eval = FALSE}
+TMP = mtcars %>%
+  group_by(
+    cyl
+ ) %>%
+ mutate(
+   rank = rank(desc(hp), ties.method = "first")
+) %>%
+ select(cyl, hp, rank)
+```
+
+Now we can use the filter function per cyl worth to take out the car with the highest hp worth.
+
+```{r, eval = FALSE}
+
+
+TMP = mtcars %>%
+
+
+ group_by(
+
+
+   cyl
+
+
+ ) %>%
+
+
+ mutate(
+
+
+   rank = rank(desc(hp), ties.method = "first")
+
+
+ ) %>%
+
+
+ filter(rank ==1)
+
+
+```
+
+
+## joins
+
+With dplyr you can easily join tables. Multiple joins are supported. Below are a couple of examples. 
+
+
+```{r, eval=FALSE}
+
+
+### make two data frames 
+
+
+df1 = data.frame(
+
+
+ col1 = c(1,2,3,4,5), tt = rnorm(5)
+
+
+)
+
+df2 = data.frame(
+
+
+ col1 = c(3,4,5,6,7), xx = rnorm(5), zz = runif(5)
+
+
+)
+
+## select rows that are in df1 and df2 
+
+df3 = inner_join(
+  df1,
+  df2,
+  by = c("col1" = "col1")
+)
+
+## all rows that are in df1, no match means NA
+
+df4 = left_join(
+ df1,
+ df2,
+ by = c("col1" = "col1")
+)
+
+## all rows that are in df2
+df5 = df1 %>% right_join(
+ df2,
+
+
+ by = c("col1" = "col1")
+
+
+)
+
+
+
+
+
+
+## only the df1 rows that are not in df2
+
+
+df6 = df1 %>% anti_join(
+
+
+ df2,
+
+
+ by = c("col1" = "col1")
+
+
+)
+
+
+
+
+
+
+## all rows of df1 and df2
+
+
+full_join(df1, df2, by = c("col1" = "col1"))
+
+
+```
+
+
+<br>
+
+
+## stack data frames or paste
+
+
+Sometimes you want to stack two tables to make a new table, you can do this with `bind_rows`. If you want to put two tables next to each other to a new table, use`bind_cols`.
+
+
+```{r, eval=FALSE}
+
+
+## bind_rows
+
+
+A = data.frame(x = 1:5,   y = rnorm(5))
+
+
+B = data.frame(x = 11:15, y = rnorm(5))
+
+
+C = bind_rows(A,B)
+
+
+
+
+
+
+## columns that are not in one of the data frames can be supplemented 
+
+
+E = data.frame(x=21:25, y = rnorm(5), z = rnorm(5))
+
+
+
+
+
+
+bind_rows(A,E)
+
+
+```
+
+
+
+
+```{r, eval=FALSE}
+
+
+A = data.frame(x = 1:5,   y = rnorm(5))
+
+
+B = data.frame(q = 11:15, q = rnorm(5))
+
+
+bind_cols(A,B)
+
+
+
+
+
+
+## if one of the data frames has more rows, then they will NOT be supplemented 
+
+
+A = data.frame(x = 1:5,   y = rnorm(5))
+
+
+B = data.frame(q = 11:17, q = rnorm(7))
+
+
+bind_cols(A,B)
+
+
+```
+
+<br>
+
+# tidy data and wide data
+
+---
+
+Tidy data is when data is in the following form:
+
+* Each variable is in a column. 
+* Each observation is in a row. 
+* Each value is a cell.
+
+Imagine we have the following data set 
+
+```{r, eval=FALSE}
+library(tidyr)
+stocks <- data.frame(
+ time = as.Date('2009-01-01') + 0:9,
+ X = rnorm(10, 0, 1),
+ Y = rnorm(10, 0, 2),
+ Z = rnorm(10, 0, 4)
+)
+stocks
+```
+
+Sometimes it is easy to have the data values in one column and to have a separate column which represents the variable. 
+
+```{r, eval=FALSE}
+stocksm <- stocks %>% gather(stock, price, -time)
+stocksm
+```
+
+And spread is the opposite process
+
+```{r, eval=FALSE}
+stock2 = stocksm %>% spread(stock, price)
+stock2
+## if there is not an even amount of observations?
+test = data.frame(
+ T = c(1,2,3,1,2),
+ V = c("A","A","A","B","B"),
+ price = c(4,5,6,7,8)
+)
+
+test2 = test %>% spread(V,price)
+test2
+```
+
+An easy function tidyr is `separate`, you can use this to separate a column. Alphanumeric characters cannot be used as separator.
+
+```{r, eval=FALSE}
+df = tibble(x = c("A.B", "C.P", "P.Q"))
+df %>% separate(x, c("Kol1", "Kol2"))
+
+# There can be too few or too many columns. 
+df = tibble(x = c("A.B", "C.P", "P.Q", "pp", "P.2.4"))
+df %>% separate(x, c("Kol1", "Kol2"))
+
+df = tibble(x = c("A.B", "C.P", "P.Q", "pp", "P.2.4"))
+df %>% separate(x, c("Kol1", "Kol2", "Kol3"))
+```
+
+<br>
+
+# Editing Character data with stringr
+
+---
+
+You can edit/ manipulate chraacter data in R with the `stringr` package. Before we delve further into this, it is useful to know what regular expressions are. 
+
+## Regular expressions
+
+This is a kind of ‘mini’ language to specify and then search character patterns. First some dummy character data.
+
+```{r, eval=FALSE}
+test = c("Mijn nummer is 06-12345678", "dit is .. een 1628EP postcode test", "foutje?:  0234XD", "dit is er nog een 1628 EP", "en nog een foute 126EP", "nog een 1234    XX", "1234eZ en nog 4567PK", "12345 Aabcde", "Hier staan geen digits", "&yfy.")
+test
+
+
+```
+
+A couple of examples of regular expressions. 
+
+```{r, eval=FALSE}
+library(stringr)
+
+## a digit, and exactly one digit 
+patroon = "\\d"
+str_extract(test, patroon)
+## 1 or more digits 
+patroon = "\\d+"
+str_extract(test, patroon)
+## exactly two letters
+patroon ="[[:alpha:]]{2}"
+
+str_extract(test, patroon)
+
+## A postcode
+patroon = "\\d{4}\\s?[[:alpha:]]{2}"
+str_extract(test, patroon)
+
+# But a postcode does not start with a 0 
+
+patroon = "[1-9]\\d{3}\\s?[[:alpha:]]{2}"
+str_extract(test, patroon)
+
+## special punctuation characters !"#$%&’()*+,-./:;<=>?@[]^_`{|}~
+patroon = "[[:punct:]]"
+str_extract(test, patroon)
+```
+
+Some people are used to search for the  wildcard notation in strings, this wildcard notation can be translated to regular expressions using `glob2rx`. A couple examples below. 
+
+```{r, eval=FALSE}
+
+
+patroon = glob2rx("*23*")
+
+
+str_extract(test, patroon)
+
+
+```
+
+
+For a cheatsheet about regular expressions see [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf)
+
+## Functions from the package stringr
+
+In the package stringr there are multiple functions to work with characters, of which we will show a couple
+
+```{r, eval=FALSE}
+testset = titanic::titanic_train %>% select(Name)
+## make an extra column which searches names in titanic
+testset = testset %>%
+ mutate(
+   naamlengte = str_length(Name),
+   Ownes = str_detect(Name, 'Owen'),
+   Plek = str_locate(testset$Name, "Mr") %>% .[,1],
+   Name2 = str_replace(Name, "Mr", "")
+)
+
+str_locate(testset$Name, "Mr")
+```
+
+<br>
+
+# forcats
+
+---
+
+You can edit factor variables in R with functions from the `forcats` package. We look at a couple of examples on randomly generated data. 
+
+```{r, eval=FALSE}
+library(forcats)
+x = rnorm(1000)
+y = sample(LETTERS[1:10], replace = TRUE, size = 1000, prob = (1:10)^2)
+test = tibble(gewicht = x, type = y)
+table(test$type)
+```
+
+Merging levels: On amounts (rarely occurring levels) or manually. 
+
+```{r, eval=FALSE}
+test = test %>%
+  mutate(
+   z = fct_lump(type, n=5)
+)
+
+table(test$z)
+
+test = test %>%
+ mutate(
+   z2 = fct_other(type, keep = c("C","B")),
+   z3 = fct_other(type, drop = c("A","B"))
+)
+
+table(test$z2)
+table(test$z3)
+```
+
+Renaming factor levels
+
+```{r, eval=FALSE}
+test = test %>%
+ mutate(
+   z2 = fct_recode(
+     type,
+     ZZ = "A",
+     ZZ = "B",
+     YY = "C",
+     YY = "D"
+),
+   z3 = fct_collapse(
+     type,
+     missing = c("B", "C"),
+     other = "D",
+     rep = c("E", "F"),
+     ind = c("G","H"),
+     dem = c("I","J")
+  )
+)
+
+table(test$z2)
+table(test$z3)
+```
+
+Reordering factor levels, factor levels can contain an order which you can make or change which can be necessary for plotting.
+
+```{r, eval=FALSE}
+test = test %>%
+ mutate(
+   type2 = fct_reorder(type, gewicht, mean)
+)
+table(test$type)
+table(test$type2)
+
+levels(test$type)
+levels(test$type2)
+
+### We will come back to plots in the following session
+## Here is an example of the difference in images
+
+library(ggplot2)
+test2 = test %>% group_by(type) %>% summarise( gewicht = mean(gewicht))
+ggplot(test2, aes(x=type)) + geom_bar(aes(weight=gewicht))
+
+test2 = test %>% group_by(type2) %>% summarise( gewicht = mean(gewicht))
+ggplot(test2, aes(x=type2)) + geom_bar(aes(weight=gewicht))
+```
+
+
+<br>
+
+
+# Dates and times in R
+
+---
+
+For dates (and times) in R, the packages `anytime` en `lubridate` are extremely useful. Let’s assume that we have characters with dates and want to calculate with these. Then we can use the function `anydate` from the anytime package or one of the `ymd` functions.
+
+```{r, eval=FALSE}
+library(lubridate)
+library(anytime)
+
+y = c("1973-09-12", "1980-05-23", "1981-12-09")
+
+testdata = tibble(DoB = y)
+
+testdata = testdata %>%
+ mutate(
+   GeboorteDatum = anydate(DoB),
+   GeboorteDatum2 = ymd(DoB)
+)
+```
+
+The function `anydate` passed diverse character notation to a date kolom, which usually works :-)
+
+```{r, eval=FALSE}
+y = c("1973/09/12", "05/23/1980", "23/05/1980","1981-12-09")
+testdata = tibble(DoB = y)
+testdata = testdata %>%
+ mutate(
+   GeboorteDatum = anydate(DoB)
+ )
+```
+
+Now that we have a date as a date column in a data frame or table, we can calculate with it. 
+
+```{r, eval=FALSE}
+testdata = testdata %>%
+ mutate(
+   leeftijd = today() - GeboorteDatum,
+  leeftijd2 = as.numeric(today() - GeboorteDatum)/365,
+   dag = wday(GeboorteDatum, label=TRUE)
+ )
+```
+
+*UNIX time stamps*....  What?
+
+A Unix time stamp is the amount of seconds since 1-1-1970. Should you ever come across this, anytime can help out. 
+
+
+```{r, eval=FALSE}
+tmp = read_csv("data/unixtimestamps.csv")
+tmp$datum = anydate(tmp$timestamp)
+tmp
+```
+
+Time periods can be diplayed in R with times. 
+
+```{r, eval = FALSE}
+tmp = paste("2018-01-23", c("12:01:33", "12:01:38", "12:01:58"))
+wWaarde = c(2.4, 5.6, 7.8)
+
+MeetData = tibble(tmp = tmp, Waarde= Waarde)
+MeetData = MeetData %>%
+ mutate(
+   Meettijdstip = ymd_hms(tmp)
+)
+```
+
+
+## durations and intervals
+
+If you subtract two dates/ times from each other in R, you will get a duration. 
+
+```{r, eval = FALSE}
+MeetData = MeetData %>%
+ mutate(
+   duur = ymd_hms("2018-02-01 00:00:00") - ymd_hms(tmp)
+ )
+```
+
+You can also make durations yourself and add it to a date.
+
+```{r, eval = FALSE}
+testduur = dweeks(3)
+testduur = dweeks(3.1)
+class(testduur)
+
+MeetData = MeetData %>%
+ mutate(
+  t2 = Meettijdstip + dyears(2),
+  t3 = Meettijdstip + dseconds(1800),
+  t4 = Meettijdstip + dweeks(3)
+)
+```
+
+In R you also have certain  `interval` objects, that is the time period between a start and end date. You can also use this to calculate the age in years exactly. 
+
+
+```{r, eval = FALSE}
+y = c("1973-09-12", "1973-01-09")
+testdata = tibble(DoB = y)
+testdata = testdata %>%
+ mutate(
+   GeboorteDatum = anydate(DoB),
+   interval1 = interval(GeboorteDatum, today()),
+   interval2 = GeboorteDatum %--% today(),
+   leeftijd = interval1 %/% years(1)
+ )
+
+testdata
+
+# NB %/% is de integer division in R
+13 / 6
+13 %/% 6
+```
+
+
+EINDE SESSIE
+
