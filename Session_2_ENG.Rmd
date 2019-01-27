@@ -1,8 +1,7 @@
 ---
-title:'Avond Sessie 02: Data preparatie'
+title: 'Session 02: Data preparation'
 author: "Longhow Lam"
 subtitle: "Intro R"
-author: "Longhow Lam"
 output:
    prettydoc::html_pretty:
      highlight: github

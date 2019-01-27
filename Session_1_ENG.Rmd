@@ -1,5 +1,5 @@
 ---
-title: 'Evening Session 01: Data types/structures'
+title: 'Session 01: Data types/structures'
 subtitle: "Intro R"
 author: "Longhow Lam"
 output:
