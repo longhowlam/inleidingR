@@ -1,0 +1,1153 @@
+---
+title: 'Evening Session 04: Machine learning'
+author: "Longhow Lam"
+subtitle: "Inleiding R"
+output:
+  prettydoc::html_pretty:
+    highlight: github
+    theme: cayman
+    toc: true
+    toc_depth: 2
+    number_sections: true
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+  html_notebook:
+    theme: sandstone
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+---
+ 
+ 
+---
+ 
+<br>
+ 
+ 
+```{r, eval=FALSE, include=FALSE}
+library(rpart)
+library(glmnet)
+library(ranger)
+library(ROCR)
+library(pROC)
+library(titanic)
+library(rattle)
+library(xgboost)
+library(mlr)
+library(h2o)
+library(dplyr)
+library(ggplot2)
+```
+ 
+
+
+# testing samples
+
+---
+
+## t tests
+
+The `t.test` function produces a variety of t-tests. Unlike most statistical packages, the default assumes unequal variance and applies the Welsh df modification.
+
+```{r, eval = FALSE}
+
+
+# independent 2-group t-test
+
+
+test = data.frame(
+
+
+  meeting = c(rnorm(100), rnorm(100,.1,1)),
+
+
+  groep = c(rep("M",100), rep("F", 100))
+
+
+)
+
+t.test(meeting ~ groep, data = test) # where y is numeric and x is a binary factor
+
+# independent 2-group t-test
+test2 = data.frame(
+  meeting1 = rnorm(250),
+  meeting2 = rnorm(250,.1,1)
+)
+
+t.test(test2$meeting1, test2$meeting2) # where y1 and y2 are numeric
+# paired t-test
+t.test(test2$meeting1, test2$meeting2, paired=TRUE) # where y1 & y2 are numeric
+
+# one sample t-test
+t.test(test2$meeting1, mu = 0.2)
+```
+
+
+You should always check for normality when using a t test
+
+```{r, eval = FALSE}
+library(ggplot2)
+test = data.frame(
+  meeting = c(rnorm(100), rnorm(100,3,2)),
+  groep = c(rep("M",100), rep("F", 100))
+)
+
+p <- ggplot(test, aes(sample = meeting))
+p + stat_qq() + stat_qq_line()
+p + stat_qq() + stat_qq_line()  + facet_grid(~groep)
+```
+
+## wilcoxon rank test
+
+The t test assumes that the data is normaly distributed. When this assumption is in doubt, the non-parametric Wilcoxon-Mann-Whitney (or rank sum ) test is sometimes suggested as an alternative to the t-test.
+
+```{r, eval = FALSE}
+mu = 0.3
+test = data.frame(
+  meeting = c(rlnorm(200), rlnorm(200, mu, 1)),
+  groep = c(rep("M",200), rep("F", 200))
+)
+wilcox.test(meeting ~ groep, data = test)
+t.test(meeting ~ groep, data = test)
+
+p <- ggplot(test, aes(sample = meeting))
+p + stat_qq() + stat_qq_line()  + facet_grid(~groep)
+```
+
+# Predictive modeling techniques
+ 
+---
+ 
+In R you can fit many different predictive models. We will only look at a couple in this session.
+Linear regression with the function
+`lm`, logistical regression with the function `glm`, decision trees with the function `rpart` and ensembles of trees with `ranger` and  `xgboost`. We will look at these functions separately but we will see later in this session how we can use the package `mlr` to try models on a dataset in a more uniform way.
+ 
+## linear regression
+ 
+We will start with simple linear regression, useful for prediction models where the Target variable is continiously numeric. We take our example the price of houses, scraped from jaap.nl. We want to predict the price of a house on the basis of a number of input variables/ characteristics.
+ 
+```{r, eval = FALSE}
+jaap = readRDS("data/Jaap.RDs")
+library(ggplot2)
+ggplot(jaap, aes(prijs, kamers)) + geom_point()
+ggplot(jaap, aes(prijs, Oppervlakte)) + geom_point()
+# some obvious outliers
+jaap = jaap %>% filter( prijs < 1e7 )
+```
+ 
+Two simple models.
+ 
+```{r, eval = FALSE}
+modelout  = lm( prijs ~ kamers           	, data = jaap)
+modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap)
+modelout
+modelout2
+```
+ 
+Modelling functions in R return objects with everything in it. The function `lm` delivers an object dependent on the class lm.
+ 
+```{r, eval = FALSE}
+class(modelout)
+names(modelout)
+modelout$coefficients
+summary(modelout2)
+plot(modelout2)
+```
+ 
+Nicer diagnostic plots from ‘lm’ objects can be made using the library `ggfortify` that knows how to interpret elm objects for ggplot. Then, you can do use the function `autoplot` from ggplot to make more beautiful diagnostic plots.
+ 
+```{r, eval = FALSE}
+library(ggfortify)
+library(ggplot2)
+ggplot2::autoplot(modelout)
+```
+ 
+You will see some outliers in the data, which we can filter out.
+ 
+```{r, eval = FALSE}
+jaap = jaap %>% filter( prijs < 1500000 )
+modelout  = lm( prijs ~ kamers           	, data = jaap)
+modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap)
+## een iets betere R2
+summary(modelout2)
+```
+ 
+ 
+### formula objects
+ 
+Models in R can be specified using formula objects. See a couple examples below.
+ 
+```{r, eval = FALSE}
+## We will also add the first number of the postcode as a sort of location variable.
+jaap = jaap %>% mutate(PC1Positie = stringr::str_sub(PC,1,1))
+## bekijk alleen huizen met een postcode
+jaap = jaap %>% filter(!is.na(PC1Positie))
+f0 = prijs ~ Oppervlakte + kamers
+m0 = lm(f0, data = jaap)
+summary(m0)
+f1 = prijs ~ Oppervlakte + kamers + PC1Positie
+m1 = lm(f1, data = jaap)
+summary(m1)
+## interactive terms
+f2 = prijs ~ Oppervlakte + kamers + PC1Positie + Oppervlakte*PC1Positie
+m2 = lm(f2, data = jaap)
+summary(m2)
+## interactive terms
+f3 = prijs ~ Oppervlakte + kamers + PC1Positie + Oppervlakte*PC1Positie +  Oppervlakte*kamers
+m3 = lm(f3, data = jaap)
+summary(m3)
+##  interactiveterms
+f4 = prijs ~ Oppervlakte*kamers*PC1Positie
+m4 = lm(f4, data = jaap)
+summary(m4)
+```
+ 
+ 
+If you make different model objects with the function `anova` and compare them. For this we will use F statistics.
+ 
+ 
+```{r, eval =FALSE}
+anova(m0, m1, m2, m3, m4)
+```
+ 
+See a couple examples below of formula objects
+ 
+```{r, eval=FALSE}
+##  leave terms out
+f5 = prijs ~ Oppervlakte*kamers*PC1Positie - Oppervlakte:kamers:PC1Positie
+m5 = lm(f5, data = jaap)
+summary(m5)
+## a target and the other variables as inputs.
+f6 = prijs ~ . -PC6 -PC
+m6 = lm(f6, data = jaap)
+summary(m6)
+```
+ 
+ 
+### Buckets / linear constant  and splines
+ 
+If an input variable is not linear with regards to the target, you can put these in non-linear models with buckets (linear constant parts) or spines.
+ 
+```{r, eval = FALSE}
+library(ggplot2)
+library(dplyr)
+library(splines)
+## there can be a form of non linearity in a scatterplot
+jaap %>%
+  filter(prijs < 1000000, Oppervlakte < 1500) %>%
+  ggplot(aes( x = Oppervlakte, y = prijs)) +
+  geom_point() + geom_smooth()
+mybreaks = seq(0,1000, by = 25)
+jaap = jaap %>%
+  mutate(
+    OppervlakteBucket = cut(Oppervlakte, breaks = mybreaks)
+  )
+m1 = lm(prijs ~ Oppervlakte, data = jaap)
+m2 = lm(prijs ~ OppervlakteBucket, data = jaap)
+m3 = lm(prijs ~ ns(Oppervlakte,6), data = jaap)
+summary(m1)
+summary(m2)
+summary(m3)
+```
+ 
+###  predictions
+ 
+With the function `predict` we can score new houses, meaning that we can predict the price of other houses that aren’t in the dataset.  
+ 
+ 
+```{r, eval=FALSE}
+NieuweHuizen = data.frame(
+  Oppervlakte = seq(20, 250, l = 100)
+  ) %>%
+  mutate(
+   OppervlakteBucket = cut(Oppervlakte, breaks = mybreaks)
+  )
+# Bucket predictions
+prijs2 = predict(m2, newdata = NieuweHuizen)
+NieuweHuizen$prijs2 = prijs2
+ggplot(NieuweHuizen, aes(x=Oppervlakte, y = prijs2)) + geom_line()
+# Spline predicties
+prijs3 = predict(m3, newdata = NieuweHuizen)
+NieuweHuizen$prijs3 = prijs3
+ggplot(NieuweHuizen, aes(x=Oppervlakte, y = prijs2)) + geom_point() + geom_point(aes(y=prijs3), col=2)
+```
+ 
+ 
+## Splitting in train and test
+ 
+Conventionally, data sets are randomly split in a train and a test set. We can train a predictive model on a train set. The model that we trained can be tested on the test set.
+ 
+Here we will use a copy of the titanic set because we want to edit the data slightly.
+ 
+```{r, eval = FALSE}
+perc = 0.80
+## make a categorical column of survived
+myTitan = titanic::titanic_train
+myTitan = myTitan %>% mutate(
+  Survived = ifelse(Survived < 1, "N", "Y") %>% as.factor
+)
+## take out missing values, we are not going to exhaust ourselves with missing values :-)
+myTitan = myTitan %>%
+  filter(
+	!is.na(Age)
+  )
+N = dim(myTitan)[1]
+train = sample(1:N, size = floor(perc*N))
+TTrain = myTitan[train,]
+TTest = myTitan[-train,]
+```
+ 
+So now we have a train and test set and can see a relationship of survived that is different in the train and test set because we have relatively small data sets.
+ 
+```{r, eval=FALSE}
+table(TTrain$Survived)
+table(TTest$Survived)
+```
+ 
+The above code was the old way to make a train and test set in R, there are many packages now that do this for you. One of these is  `rsample` that is much broader and can also be used for cross validation splits.  
+ 
+```{r, eval = FALSE}
+library(rsample)
+myTitanSplit = initial_split(myTitan, prop = 0.8)
+TTrain = training(myTitanSplit)
+TTest = testing(myTitanSplit)
+```
+ 
+## logistic regression
+ 
+A logistic regression is one of the simplest predictive models to start with if you want to do a classification. We assume a binary Target (Y /N). We will use the `TTrain` data set that we have just used to fit a model.
+ 
+```{r, eval = FALSE}
+out.glm = glm(Survived ~ Sex + Age + Pclass,  data = TTrain , family = binomial)
+summary(out.glm)
+```
+ 
+## decision tree
+ 
+A decision tree generates rules that can be used to classify on the basis of an algorithm. It is a simple algorithm that looks at each variable to split the data set in two (can be more, but two is conventional).
+ 
+```{r, eval = FALSE}
+tree.out = rpart(Survived ~ Sex + Age +Pclass, data = TTrain)
+plot(tree.out)
+text(tree.out, use.n = TRUE)
+fancyRpartPlot(tree.out)
+### larger trees with complexity parameter
+tree.outComplex = rpart(Survived ~ Sex + Age +Pclass, data = TTrain, control = list(cp=0.005))
+fancyRpartPlot(tree.outComplex)
+```
+ 
+With visNetwork you can make a nicer interactive decision tree.
+ 
+```{r, eval=FALSE}
+library(visNetwork)
+visTree(tree.out, height = "800px", nodesPopSize = TRUE, minNodeSize = 10, maxNodeSize = 30)
+```
+ 
+## random forest with ranger
+ 
+A random forest is a so-called ensemble model. It is the combination of (many) different decision trees. In R you can fit different random forests packages. The package `ranger` is one of these.
+ 
+```{r, eval = FALSE}
+ranger.out = ranger( Survived ~ Sex + Age + Pclass, data = TTrain , probability = TRUE)
+ranger.out
+```
+ 
+## xgboost
+ 
+Extreme gradient boosting is often used in Kaggle competitions. Like with random forests, an xgboost model is also an ensemble of decision trees, but they are not independent of one another. First a tree is fit, then another on the basis of the first one, etc.
+ 
+Using the library `xgboost` you can fit extreme gradient boosting modellen in R. The call is different from what we have seen until now. The `xgboost` function should give a matrix with input variables.
+ 
+```{r, eval = FALSE}
+Titan_Inputmatrix = sparse.model.matrix( Survived ~ Sex + Age + Pclass, data = TTrain)
+## what does a matrix input look like? First 15 rows.
+Titan_Inputmatrix[1:15,]
+## you can now call the xgboost with input matrix and label.
+xgboost.out = xgboost(Titan_Inputmatrix, label = TTrain$Survived, nrounds = 25)
+```
+ 
+The above call will fit a regression tree, which is not what we want in a binary classifications, label needs to be numeric 0 / 1.
+ 
+```{r, eval=FALSE}
+param = list(
+  objective = 'binary:logistic',
+  eval_metric = 'auc'
+)
+xgboost.out2 = xgboost(
+  params=param,
+  Titan_Inputmatrix,
+  label = as.integer(TTrain$Survived) -1 , nrounds = 25)
+```
+ 
+ 
+## prediction and validation
+ 
+With a test set, you can decide how good a model is. Use the model object of modelfit to score a test sets and compare it to the true outcomes.
+ 
+### predictions
+ 
+For binary classifications, it is useful to calculate a response chance. For logistical regression with `glm` this will not happen automatically.
+ 
+```{r, eval = FALSE}
+pred_GLM = predict.glm(out.glm, newdata = TTest, type='response')
+hist(pred_GLM)
+```
+ 
+Prediction of the decision tree, and random forest ranger.
+ 
+```{r, eval = FALSE}
+## CAUTION! Predictions of tree are in a matrix
+pred_tree = predict(tree.out, newdata = TTest)
+pred_tree[1:10,]
+hist(pred_tree[,2])
+## CAUTION this is argument data instead of newdata and you get a list back.  
+pred_ranger = predict(ranger.out, data = TTest)
+pred_ranger$predictions[1:10,]
+hist(pred_ranger$predictions[,2])
+```
+ 
+For an xgboost you will also need to change the test set into a matrix.
+ 
+```{r, eval = FALSE}
+Titan_Testmatrix = sparse.model.matrix( Survived ~ Sex + Age +Pclass, data = TTest)
+pred_xgboost = predict(xgboost.out2, newdata = Titan_Testmatrix)
+## hier zitten de predicties een vector
+hist(pred_xgboost)
+```
+ 
+### Variable importance in trees
+ 
+If you have trained a tree or ensemble of trees you can get an idea of which variables in the model are important in the training process. Let’s assume that the tree models we trained above show the variable importance.
+ 
+```{r, eval = FALSE}
+# singular decision tree
+tree.out$variable.importance
+# ranger random forest
+ranger.out$variable.importance
+# xgboost
+xgb.importance( colnames(Titan_Inputmatrix), model =xgboost.out2)
+```
+ 
+### Lift percentages
+ 
+If you don’t have a model you can calculate an overall survival chance on the test set:
+ 
+```{r, eval=FALSE}
+## if you know nothing :-)
+TTest = TTest %>% mutate(target = ifelse(Survived == "Y",1,0))
+TTest %>%  summarise(target = mean(target))
+```
+ 
+If we use a good model the survival chance will be higher for people with a higher score. Lets separate the GLM (logistical regression model) predictions in ten parts (decils) and then calculate their survival chance per decil.  
+ 
+```{r, eval=FALSE}
+testpr = predict(out.glm, newdata = TTest, type='response')
+TTest$predictieGLM = testpr
+### deel de GLM predicties op in tien even grote stukken
+TTest = TTest %>%
+  mutate(
+	percPredictie = cut(
+  	predictieGLM,
+  	breaks = quantile(
+        predictieGLM,
+   	 probs = (0:10)/10
+  	)
+	)
+  )
+## if you have a score!!!
+TTest %>%
+  group_by(percPredictie) %>%
+  summarise(
+	N = n(),
+	target = mean(target)
+  )
+```
+ 
+### roc curves and hit rates
+ 
+```{r, eval = FALSE}
+rocResultTEST = roc(Survived  ~ predictieGLM, data = TTest , auc=TRUE, ci =TRUE)
+plot(rocResultTEST)
+## HITRATES
+TTest %>%
+  ggplot(aes(predictieGLM, target))  +
+  geom_smooth() +
+  geom_abline(slope = 1,intercept = 0) +
+  ggtitle("survived rate rate on test set") + scale_y_continuous(limits=c(0,1))
+````
+ 
+ 
+<br>
+ 
+# The h2o package
+ 
+---
+ 
+H20 is a scalable machine learning platform that you can operate from R. It contains a lot of machine learning algorithms and for bigger sets that is difficult for normal R h20 can be used. H20 has written its own ‘execution engine’ in java. When you start up h20 from R it will start a separate process which requires you too upload data from R to let algorithms look at it.
+ 
+If you start h20 there is also its own GUI, which you can go localhost:54321 (standard 54321 port).
+ 
+ 
+```{r, eval = FALSE}
+library(h2o)
+# initialise h2o via R
+# also start h2o in the CMD with
+# java -Xmx12g -jar C:/Users/longh/Documents/R/win-library/3.4/h2o/java/h2o.jar
+
+#h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
+h2o.init(max_mem_size = "10g")
+
+### upload an R dataset to h20: titanic train and test example
+TTrain = TTrain %>% mutate_if(is.character, as.factor)
+TTest = TTest %>% mutate_if(is.character, as.factor)
+TTrain$Survived = as.factor(TTrain$Survived)
+TTest$Survived = as.factor(TTest$Survived)
+ttrain.h2o = as.h2o(TTrain)
+ttest.h2o = as.h2o(TTest)
+
+### You can also look at text files directly in h2o with
+#h2o.importFile(path="C:\een file.txt", sep=",")
+### which files are there in h2o
+h2o.ls()
+```
+ 
+There are multiple models that you can train, we will show two here, neural networks and random forests.
+ 
+```{r, eval = FALSE}
+## model on titanic
+NNmodel = h2o.deeplearning(
+  x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h2o,
+  hidden = 5,
+  epochs = 250,
+  variable_importances = TRUE
+)
+show(NNmodel)
+h2o.varimp(NNmodel)
+```
+ 
+```{r, eval = FALSE}
+GBMmodel = h2o.gbm(
+  x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h2o
+  )
+GBMmodel
+RFmodel = h2o.randomForest(
+  x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h2o
+  )
+RFmodel
+```
+ 
+ 
+Grid search in h2o. You can fine-tune models easily, in a grid you can try different values of J hyperparameters.
+ 
+```{r, eval = FALSE}
+RFmodelGrid = h2o.grid(
+  "randomForest",
+  x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h2o,
+  hyper_params = list(
+	ntrees =c(50,100),
+	mtries = c(1,2,3)
+  )
+)
+#overview of the grid, sorted on logloss
+RFmodelGrid
+```
+ 
+## h2o automl
+ 
+The `automl` functionality in h2o makes it even easier if you are looking for the best predictive model. This function trains and cross validates random forests, extremely randomized forests, GBM's, Neural Nets and stacked ensembles.
+ 
+```{r, eval=FALSE}
+## Give it 30 seconds maximum
+out = h2o.automl(
+	x = c(3,5:6),
+  y = "Survived",
+  training_frame  = ttrain.h2o,
+  validation_frame = ttest.h2o,
+  max_runtime_secs = 30
+)
+## out is now a so-called H2OAutoML object with all results
+out
+## something with more overview is the leader board  
+out@leaderboard
+WINNER = out@leader
+WINNER
+```
+ 
+Will I survive the titanic?
+ 
+```{r, eval =  FALSE}
+ik = data.frame(
+  Pclass = 3,
+  Sex = "male",
+  Age = 44
+  ) %>%
+  as.h2o     	
+predict(WINNER, ik)
+```
+ 
+Give resources back by closing h20 when you no longer need it.
+ 
+```{r, eval = FALSE}
+h2o.shutdown(prompt = FALSE)
+```
+ 
+<br>
+ 
+ 
+# Unsupervised learning
+ 
+---
+ 
+The above code was focused on predictive modelling, also called supervised learning: predict a target variable with input variable. In this section we will show two techniques where there is no target variable, also called unsupervised learning.
+ 
+## k-means Clustering
+ 
+This is one of the most well-known clustering methods. You need to call a number of clusters in advance, the *k*, the algorithm will then link each observation to one of the k clusters.
+ 
+```{r, eval = FALSE}
+mycars = mtcars %>% select (mpg, wt)
+cars.cluster = kmeans(mycars, 5)
+cars.cluster
+# information about the fit kmeans algorithm is found in the  ouput object
+mycars$cluster = cars.cluster$cluster
+mycars
+plot(mycars$mpg, mycars$wt, col = cars.cluster$cluster )
+points(cars.cluster$centers, col = 1:5, pch = 8, cex = 2)
+```
+ 
+The `h2o` package also allows you to use k-means clustering, this is not only faster but it also allows you to create factor variables. If needed, start h20.
+ 
+```{r, eval = FALSE}
+library(h2o)
+#h2o.init(nthreads=-1, port=54323, startH2O = FALSE)
+h2o.init()
+```
+ 
+Bring data to h20, we are now using the sample data set mtcars but we are making a 1 factor column.
+ 
+```{r, eval = FALSE}
+# am is the transmission, 0 is automat and 1 is manual
+mycars = mtcars %>% mutate(am = as.factor(am))
+cars.h2o = as.h2o(mycars)
+```
+ 
+Let the algorithm decide how many clusters there are in the data
+ 
+```{r, eval = FALSE}
+cars_clustering = h2o.kmeans(cars.h2o,  k = 10, estimate_k = TRUE)
+cars_clustering
+```
+ 
+After training you have a h20 cluster object with diverse information
+ 
+```{r, eval = FALSE}
+cars_clustering@model
+h2o.cluster_sizes(cars_clustering)
+h2o.centers(cars_clustering)
+## with h2o.predict you can score data: decide which cluster belongs to which observation and ge this back to R
+cluster_membership = h2o.predict(
+  cars_clustering,
+  newdata = cars.h2o
+  ) %>%
+  as.data.frame()
+```
+ 
+## DBSCAN
+ 
+Density-based Spatial Clustering of Applications with Noise (DBSCAN), which does not make assumptions about spherical clusters like k-means, nor does it partition the dataset into hierarchies that require a manual cut-off point. As its name implies, density-based clustering assigns cluster labels based on dense regions of points.
+ 
+```{r, eval = FALSE}
+library(dbscan)
+## which data, half moons, how many clusters are there?
+x = runif(100,0,pi)
+y = sin(x) + rnorm(100,0,0.1)
+x1 = runif(100,-pi/2,pi/2)
+y1 = sin(x1-pi/2) + rnorm(100,0,0.1)
+plot(c(x,x1),c(y,y1))
+```
+ 
+k-means doesn’t work that well here....
+ 
+```{r, eval = FALSE}
+df  = data.frame(x = c(x,x1), y = c(y,y1))
+df.cluster = kmeans(df, 2)
+df.cluster
+plot(df$x, df$y, col = df.cluster$cluster )
+points(df.cluster$centers, col = 1:5, pch = 8, cex = 2)
+```
+ 
+The data should be in a matrix to run dbscan.
+ 
+```{r, eval = FALSE}
+X = cbind(c(x,x1),c(y,y1))
+db <- dbscan(X, eps = .4, minPts = 4)
+db
+pairs(X, col = db$cluster + 1L)
+### NOISE POINTS....
+X = cbind(c(x,x1,-1, 3),c(y,y1, 1, -1))
+db <- dbscan(X, eps = .4, minPts = 4)
+db
+```
+ 
+You could use cluster analysis to detect outliers. You need to calculate a distance to other points.  
+ 
+```{r, eval = FALSE}
+## local outlier factor score
+lof = lof(X, k = 4)
+pairs(X, cex = lof)
+```
+ 
+ 
+## Hierarchical clustering
+ 
+An alternative to k-means and DBSCAN is hierarchical clustering. You can begin with 1 cluster which contains all observations. Iteratively, you will split each cluster into sub clusters until each observation is 1 separate cluster (division). Or you begin with a situation in which each observation is a cluster and you iteratively combine clusters until all observations form 1 cluster (agglomerative).
+ 
+```{r eval = FALSE}
+## Agglomerative clusrting with hclust
+# Before you can put it in a hclust you need a distance matrix
+hc1 = dist(
+  mtcars, method = "euclidean"
+  ) %>%
+  hclust(
+	method = "complete"
+  )
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+```
+ 
+Besides an ugly static old school picture, you can also get an interactive tree with visNetwork.
+ 
+```{r eval = FALSE}
+library(visNetwork)
+visHclust(iris, cutree = 3, colorEdges = "red")
+```
+ 
+For a short overview see [blog](https://www.r-bloggers.com/how-to-perform-hierarchical-clustering-using-r/)
+ 
+ 
+# Market basket analysis
+ 
+Using market basket analyse (also called association rules mining), you can see common combinations or very strong combinations of products from “customer transactions”. Below you will find an example for a dummy grocery data set.
+ 
+```{r, eval = FALSE}
+library(arules)
+## The most simple transactional data set
+trxDF = readRDS("data/boodschappen.RDs")
+## Transform to a transaction object
+Groceries = as(
+  split(
+	trxDF$item,
+	trxDF$id
+	),
+  "transactions"
+)
+Groceries
+## visual Item information
+itemFrequencyPlot(Groceries, topN = 35, cex.names = 0.75)
+```
+ 
+Now that you have the groceries as a transaction object, you use market basket rules with help from the a-priori algorithm.
+ 
+```{r, eval= FALSE}
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8))
+rules
+## show some rules
+inspect(rules[1:10])
+inspect( sort(rules, by = "support")[1:10])
+## convert the rules to a data frame
+rulesDF = DATAFRAME(rules)
+```
+ 
+Now that you have the rules you can filter on rules, which rules contain certain products.
+ 
+```{r, eval = FALSE}
+rules.subset = subset(rules, rhs %in% c("whole milk"))
+rules.subset
+inspect(head(rules.subset, n=15))
+```
+ 
+Or if someone has a certain series of transactions, you can see which rules belong to that or which product you can recommend.
+ 
+```{r, eval = FALSE}
+PersoonA = data.frame(
+  id = rep(1,3),
+  item2 = c("butter","curd","domestic eggs")
+)
+trxs_trans = as(
+  split(
+	PersoonA$item2,
+	PersoonA$id
+	),
+  "transactions"
+)
+inspect(trxs_trans)
+rulesMatch <- is.subset(rules@lhs,trxs_trans)
+## there are multiple rules, you could use that one with the highest lift
+inspect(rules[rulesMatch[,1]])
+inspect(rules[rulesMatch[,1]]@rhs)
+```
+ 
+Another way to show the rules is in a network graph, the combination rules form a network. A --> B, B --> C, D --> B bijvoorbeeld.
+ 
+```{r, eval=FALSE}
+library(arulesViz)
+plot(head(sort(rules, by = "lift"), n=50), method = "graph", control=list(cex=.8))
+```
+ 
+## interactive MBA graphs
+ 
+You can visualise rules in interactive plotly plots or interactive visNetwork plots. First, an interactive scatter plot of the rules can be made. Each rule is plotted as a point, where the x axis represents the support and the y axis represent the confidence of the rule.
+ 
+```{r, eval=FALSE}
+rules <- apriori(Groceries, parameter = list(supp = 0.001, conf = 0.8) )
+rulesDF = rules %>% DATAFRAME()
+library(plotly)
+plotly_arules(rules, max = 2000)
+plotly_arules(rules, method = "two-key plot")
+```
+ 
+Secondly, an interactive visNetwork can be created. We need to extract the nodes and edges from the rules object.
+ 
+```{r, eval=FALSE}
+library(visNetwork)
+rules <- apriori(
+  Groceries,
+  parameter = list(
+	supp = 0.0001,
+	conf = 0.1,
+	minlen = 2,
+	maxlen=2
+	)
+  )
+rulesDF = head(
+  sort(rules, by = "lift"),
+  n=250
+  ) %>%
+  DATAFRAME() %>%
+  mutate(
+	from = as.character(LHS),
+	to = as.character(RHS),
+	value = lift
+  )
+nodes = data.frame(
+  id = base::unique(c(rulesDF$from, rulesDF$to)),
+  stringsAsFactors = FALSE
+) %>% mutate(
+  title = id
+)
+visNetwork(nodes, rulesDF) %>%
+   visOptions(highlightNearest = TRUE,  nodesIdSelection = TRUE) %>%
+   visEdges(smooth = FALSE)
+```
+ 
+<br>
+ 
+# Time series models using prophet
+ 
+---
+ 
+Prophet is a facebook package voor time series data, that they also use internally. Instead of making traditional models with ARIMA, they fit so-called additive regression models. See here [paper](https://peerj.com/preprints/3190.pdf).
+ 
+Below an example of the scraped Billy sales from the Ikea website
+ 
+```{r eval=FALSE}
+library(prophet)
+## daily ikea billy sale data  
+DailyBilly = readRDS("data/DailyBilly.RDs")
+ggplot(DailyBilly, aes(x=ds, y = y)) + geom_line()
+## billy forecast, fit the model first
+BillyF = prophet(DailyBilly)
+## then add a couple days ahead to forecast
+future = make_future_dataframe(BillyF, periods = 90)
+forecast = predict(BillyF, future)
+plot(BillyF, forecast)
+```
+ 
+The above does not really work… we add seasonality
+ 
+```{r eval = FALSE}
+## billy forcast, fit the model first
+BillyF = prophet(
+  DailyBilly,
+  weekly.seasonality = TRUE ,
+  yearly.seasonality = TRUE,
+  daily.seasonality = TRUE
+)
+## then the amount of days ahead for which we want to forecast  
+future = make_future_dataframe(BillyF, periods = 90)
+forecast = predict(BillyF, future)
+plot(BillyF, forecast)
+prophet_plot_components(BillyF, forecast)
+```
+ 
+ 
+<br>
+ 
+# The mlr package
+ 
+---
+ 
+The ‘mlr’ package allows you to train and different models in a more uniform way. In R, all machine learning techniques have slightly different calls and the outcome is often an object with slightly different components. We saw that in the above code for ranger and xgboost.
+ 
+The `mlr` package allows you to streamline this. Making a predictive model (no matter which one) always contains a number of steps. For example:  
+ 
+* specifying a target
+* specifying inputs,
+* specifying variables you don’t want to use
+* splitting data,
+* the model / algorithm
+ 
+These can be described and executed in mlr.  
+ 
+We will use the titanic data set as a test in mlr and go through the steps to benchmark a number of models. The models we want to benchmark are:
+ 
+* neural network,
+* gradient boosting,
+* random forest
+* xgboost
+* decision tree,
+* logistic regression via glmnet
+ 
+## specifying techniques and their options
+ 
+In mlr, you can show a number of general parameters.  
+ 
+```{r, eval = FALSE}
+## we also want to show parameters that do not have a description  
+configureMlr(on.par.without.desc = "warn")
+## we will look at max 30 variables
+n.importance = 30
+## prediction type, we want to calculate chances
+ptype = "prob"
+## amount crossvalidation splits
+N_CV_iter = 10
+```
+ 
+Next to general parameters, you can set specific parameters for each modle. This is not necessary, otherwise default values will be chosen.
+ 
+ 
+```{r, eval = FALSE}
+parameters_rf = list(
+  num.trees  = 500
+)
+parameters_rpart = list(
+  cp=0.0001
+)
+parameters_glmnet = list(
+  alpha  = 1
+)
+parameters_NN = list(
+  hidden = c(15,15)
+)
+parameters_xgboost = list(
+  nrounds  = 5,
+  max.depth = 7
+)
+```
+ 
+Now make a list of models 9also called learners) that you want to train on your data.
+ 
+```{r, eval = FALSE}
+RF_Learner = makeLearner(
+  "classif.ranger",
+  predict.type = ptype,
+  par.vals = parameters_rf
+)
+xgboost_Learner = makeLearner(
+  "classif.xgboost",
+  predict.type = ptype,
+  par.vals = parameters_xgboost
+)
+rpart_Learner = makeLearner(
+  "classif.rpart",
+  predict.type = ptype,
+  par.vals = parameters_rpart
+)
+binomial_Learner = makeLearner(
+  "classif.binomial",
+  predict.type = ptype
+)
+glmnet_Learner = makeLearner(
+  "classif.cvglmnet",
+  predict.type = ptype,
+  par.vals = parameters_glmnet
+)
+h2ogbm_Learner = makeLearner(
+  "classif.h2o.gbm",
+  predict.type = "prob"
+)
+h2oNN_Learner = makeLearner(
+  "classif.h2o.deeplearning",
+  predict.type = ptype,
+  par.vals = parameters_NN
+)
+## list of learners
+learners = list(
+  rpart_Learner,
+  RF_Learner,
+  binomial_Learner,
+  glmnet_Learner,
+  h2ogbm_Learner,
+  h2oNN_Learner
+)
+```
+ 
+Als je categorische variabelen in je voorspel model wilt gebruiken eist het mlr package dat ze `factor` zijn. En in het geval van een classificatie probleem moet de target variabele ook een factor variabele zijn.
+ 
+```{r, eval = FALSE}
+ABT = titanic_train
+ABT$Target = as.factor(ifelse(ABT$Survived < 1, "N", "Y"))
+ABT = ABT %>% mutate_if(is.character, as.factor)
+```
+ 
+## Imputeren van missende waarden
+ 
+Als er missende waarden zijn kan je mlr deze laten imputeren door een bepaalde waarde.
+ 
+```{r, eval = FALSE}
+impObject = impute(
+  ABT,
+  classes = list(
+	integer = imputeMean(),
+	numeric = imputeMean(),
+	factor = imputeMode()
+	),
+  dummy.classes = "integer"
+)
+ABT = impObject$data
+```
+ 
+## Creating a task
+ 
+Create a 'task' in which you specify the data, inputs and targets.  A classification task for categorical target, or a regression task for a numerical target.
+ 
+What do you want to model: Chance of level "Y", then you should use positive = "Y". For a binary target with Y and N levels, "N"is used (alphabetically)
+ 
+```{r, eval = FALSE}
+classify.task = makeClassifTask(id = "Titanic", data = ABT, target = "Target", positive = "Y")
+## Overview of the task and column information
+print(classify.task)
+getTaskDescription(classify.task)
+summarizeColumns(classify.task)
+```
+ 
+## Excluding variables
+ 
+Sometimes there are variables that you do not want to include in your model. You can exclude these.
+ 
+```{r, eval = FALSE}
+vars.to.drop = c("Name", "Survived", "Ticket")
+classify.task = dropFeatures(classify.task, vars.to.drop )
+## Take out (almost) constant variables
+## You can also take out almost constant variables: put perc a little
+classify.task = removeConstantFeatures(classify.task, perc = 0.01)
+classify.task
+```
+ 
+Combining rare levels of factors. It is commonplace to remove or merge rare levels.
+ 
+```{r, eval = FALSE}
+classify.task = mergeSmallFactorLevels (classify.task, min.perc = 0.02,  new.level = ".merged")
+summarizeColumns(classify.task)
+```
+ 
+Which features have an effect on the target?  
+ 
+```{r, eval = FALSE}
+## Feature selection
+fv = generateFilterValuesData(classify.task,  method = c("information.gain", "chi.squared"))
+## display and plot importance
+importance = fv$data %>% arrange(desc(information.gain))
+head(importance, n = n.importance)
+plotFilterValues(fv, n.show = 2*n.importance)
+```
+ 
+Leave out variables that do nothing  
+ 
+```{r, eval = FALSE}
+vars.to.drop = c("PassengerId", "Parch", "SibSp")
+classify.task = dropFeatures(classify.task, vars.to.drop )
+```
+ 
+## Sample scheme
+ 
+ 
+Using mlr, you can split data, not only in train/ test but also in cross validation. This is called a sample scheme.
+ 
+```{r, eval = FALSE}
+SampleStrageyHO = makeResampleDesc("Holdout", split=0.75)
+SampleStrageyCV = makeResampleDesc("CV", iters = N_CV_iter)
+```
+ 
+## executing machine learning benchmark
+ 
+Now that you have specified multiple steps, you can execute a benchmark for the different learners.  
+ 
+```{r, eval = FALSE}
+br1 = mlr::benchmark(learners, classify.task, SampleStrageyHO, measures = list(mlr::mmce, mlr::auc, mlr::f1))
+```
+ 
+ 
+## Comparing machine learning models
+ 
+After training models with mlr you will have a so-called benchmark object which you can print and plot to get more info.
+ 
+```{r, eval = FALSE}
+data.frame(br1) %>% arrange(desc(auc))
+plotBMRSummary(br1, measure = mlr::auc)
+```
+ 
+ 
+### ROC curves
+ 
+In the benchmark object, you will find more data. With the below code, you  can take all parts of the data per model out to put them in a ROC graphic.  
+ 
+```{r, eval = FALSE}
+NModels = length(br1$results$Titanic)
+for(i in 1:NModels)
+{
+  tmp2  = br1$results$Titanic[[i]]$pred$data
+  rocResultTEST = roc(truth  ~ prob.Y, data = tmp2 )
+  if(i==1)
+  {
+    plot(rocResultTEST, col=i)
+  }else{
+    plot(rocResultTEST, col=i, add=TRUE)
+  }
+}
+legend( 0.6,0.6, names(br1$results$Titanic), col=1:NModels,lwd=2)
+title("Titanic model")
+```
+ 
+### using the model to score
+ 
+If you have done a benchmark, all the trained models will be in the benchmark object.  You can use it to score a data set. You have to ‘take out’ the model first.
+
+```{r, eval = FALSE}
+## take model out
+titanmodel = br1$results$Titanic$classif.ranger$models[[1]]
+## these are the features in the model
+FT = titanmodel$features
+## Make a score set of the aBT with only the features  
+ScoreSet = ABT[, FT]
+outpredict = predict(titanmodel, newdata = ScoreSet)
+outpredict
+```
+
+---- END OF SESSION ------------
+
+
