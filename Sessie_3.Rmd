@@ -799,7 +799,6 @@ m2 = m2 %>%
   ) %>% 
   addLegend(pal = factpal, values = ~keuken, opacity = 1)
 m2  
-
 ```
 
 ### polygonen op een leaflet
