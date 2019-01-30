@@ -328,6 +328,8 @@ g2
  
 There is a new easier way with the package `ggmap`. This allows you to download maps from google maps to use as background for plots.
  
+It is not possibe to use google maps without registering and use an API key, we can use openstreetmaps or stamen maps. Zie osm_test.R script als voorbeeld.
+
 ```{r, eval=FALSE}
 library(ggmap)
 ## Get map of The Netherlands, get a center (long lat coordinates)
