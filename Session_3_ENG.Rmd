@@ -713,8 +713,27 @@ m2 = m2 %>%
   )
 m2
 ```
- 
- 
+
+You can aslo use a categorical variable for the coloring of the circle markers.
+
+```{r, eval=FALSE}
+factpal <- colorFactor(topo.colors(15), Zwolle$keuken)
+
+m2 = leaflet(data = Zwolle)
+m2 = m2 %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addCircleMarkers(
+    lng = ~LONGs, lat = ~LATs, popup = ptekst, 
+    color = ~factpal(keuken),
+    fillColor = ~factpal(keuken),
+    opacity = 0.9,
+    fillOpacity = 0.5,
+    radius = 3
+  ) %>% 
+  addLegend(pal = factpal, values = ~keuken, opacity = 1)
+m2  
+```
+
 ### polygons on a leaflet
  
 You can also put shapes/polygons on a leaflet map. Below is an example of provinces, first you need the data of the polygons. This is in the so-called shape files of the provinces, which you can download from http://www.imergis.nl/asp/47.asp. On this site you will see provinciegrenzen_exact, download this one and unwrap it. In my data directory this is already done.

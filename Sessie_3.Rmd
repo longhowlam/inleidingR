@@ -781,6 +781,26 @@ m2 = m2 %>%
 m2
 ```
 
+Je kan ook een categorische variabele gebruiken voor kleuren
+
+```{r, eval=FALSE}
+factpal <- colorFactor(topo.colors(15), Zwolle$keuken)
+
+m2 = leaflet(data = Zwolle)
+m2 = m2 %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addCircleMarkers(
+    lng = ~LONGs, lat = ~LATs, popup = ptekst, 
+    color = ~factpal(keuken),
+    fillColor = ~factpal(keuken),
+    opacity = 0.9,
+    fillOpacity = 0.5,
+    radius = 3
+  ) %>% 
+  addLegend(pal = factpal, values = ~keuken, opacity = 1)
+m2  
+
+```
 
 ### polygonen op een leaflet
 

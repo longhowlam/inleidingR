@@ -1,7 +1,5 @@
 library(leaflet)
 
-
-
 greenLeafIcon <- makeIcon(
   iconUrl = "http://leafletjs.com/examples/custom-icons/leaf-green.png",
   iconWidth = 38, iconHeight = 95,
@@ -13,11 +11,6 @@ greenLeafIcon <- makeIcon(
 
 leaflet(data = quakes[1:4,]) %>% addTiles() %>%
   addMarkers(~long, ~lat, icon = greenLeafIcon)
-
-
-
-
-
 
 # Make a list of icons. We'll index into it based on name.
 oceanIcons <- iconList(
@@ -40,3 +33,4 @@ df <- sp::SpatialPointsDataFrame(
 leaflet(df) %>% addTiles() %>%
   # Select from oceanIcons based on df$type
   addMarkers(icon = ~oceanIcons[type])
+
