@@ -123,9 +123,37 @@ typewinkels = out2 %>% group_by(shop) %>%  summarise(n=n())
 
 cheesewinkels = out2 %>% filter(shop == "cheese")
 
-# Plaats PoI's op een kaart
+# Plaats cheese shops op een leaflet kaart
+cheeseIcons <- iconList(
+  cheese = makeIcon("cheese.png",  20, 20)
+)
 
-# Kaartje met PoI's
+leaflet(cheesewinkels) %>%
+  addTiles() %>%
+  addMarkers(icon = ~cheeseIcons, popup = ~name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Gewoon ggmap kaarte
 ggmap(amsterdam_map) +
   geom_sf(data = cheesewinkels,
           inherit.aes =FALSE,
@@ -135,13 +163,3 @@ ggmap(amsterdam_map) +
           size = 2,
           shape=21)+
   labs(title = "cheese shops in Amsterdam")
-
-## Kan ook op leaflets
-leaflet(cheesewinkels) %>%
-  addTiles() %>%
-    addMarkers()
-
-leaflet(cheesewinkels) %>%
-  addTiles() %>%
-  addMarkers(icon = ~cheeseIcons)
-
