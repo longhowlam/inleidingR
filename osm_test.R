@@ -108,7 +108,7 @@ ggmap(amsterdam_map) +
 
 
 
-## Cheese shops 
+#### Cheese shops ############################
 
 out =  getbb("Amsterdam")%>%
   opq() %>%
@@ -133,27 +133,7 @@ leaflet(cheesewinkels) %>%
   addMarkers(icon = ~cheeseIcons, popup = ~name)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Gewoon ggmap kaarte
+## Gewoon ggmap kaartje
 ggmap(amsterdam_map) +
   geom_sf(data = cheesewinkels,
           inherit.aes =FALSE,
