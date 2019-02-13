@@ -5,25 +5,35 @@ library(osmdata)
 library(sf)
 library(ggmap)
 library(leaflet)
+
 # need latest dev version because of jpeg issues
 #devtools::install_github("dkahle/ggmap") 
 
 ######  restaurant data ####################################################
 
-restaurants <- readr::read_csv("data/Restaurants.csv")
-
-## restaurants in amsterdam
-amsterdam = restaurants %>% 
+restaurants <- readr::read_csv("data/Restaurants.csv") %>% 
   filter(
-    plaats == "Amsterdam",
     !is.na(aantalreviews),
+    aantalreviews <100,
     !is.na(LONGs),
     !is.na(LATs)
   )
 
-## transform data to a sf object (Simple Features object: open standard in data format for GIS 
-projcrs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-amsterdam <- st_as_sf(
+
+##### restaurants in amsterdam
+amsterdam = restaurants %>% 
+  filter(
+    plaats == "Amsterdam",
+    keuken %in% c("Frans" ,  "Hollands" ,   "Italiaans",  "Internationaal")
+  )
+
+##### transform data to a sf object (Simple Features object: open standard in data format for GIS)
+
+# projectie, data em long lat coordinaten
+
+projcrs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+amsterdam = st_as_sf(
   x = amsterdam,                         
   coords = c("LONGs", "LATs"),
   crs = projcrs
@@ -39,17 +49,16 @@ ggmap(amsterdam_map) +
   geom_sf(
     data = amsterdam,
     inherit.aes =FALSE,
-    aes(colour = aantalreviews, fill = aantalreviews),
-    alpha = .65,
-    size = 1,
-    shape = 21
-  )+
-  labs(title = "restaurants in Amsterdam", x="",y="")
-
+    aes(colour = aantalreviews, shape = keuken),
+    size = 1.5
+  ) +
+  labs(title = "restaurants in Amsterdam", x="",y="") + 
+  scale_color_gradient(low="blue", high="red")
 
 ######## Heel nederland ###################################################
 # duurt erg lang
 
+# kaartje kan je met een boundingbox van coordinaten ophalen ipv een naam.
 mad_map <- get_map(
   c(left = 3.3, bottom = 50.5, right = 7.3, top = 53.6902),
   maptype = "toner-background", 
@@ -63,18 +72,20 @@ df <- st_as_sf(
 )
 
 ggmap(mad_map) +
-  geom_sf(data = df,
-          inherit.aes =FALSE,
-          aes(colour = aantalreviews),
-          fill="#004529",
-          alpha = .65,
-          size = 2,
-          shape = 21)+
-  labs(title = "restaurants in Amsterdam", x="",y="")
+  geom_sf(
+    data = df,
+    inherit.aes =FALSE,
+    aes(colour = aantalreviews),
+    alpha = .65,
+    size = 1.2,
+  ) +
+  labs(title = "restaurants in Amsterdam", x="",y="") +
+  scale_color_gradient(low="blue", high="red")
+
 
 ########### POI ####################################################
 
-# Er is meer. Je kan PoI opvragen met osm
+# Er is meer. Je kan Points of Interest (PoI) data opvragen met osm
 
 ## aanwezige features
 available_features()

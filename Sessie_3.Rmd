@@ -407,7 +407,9 @@ restaurants %>% filter(prijs < 100) %>%
   geom_point() + facet_wrap(~keuken, ncol = 5) + geom_smooth()
 ```
 
-## grids
+
+## grids... SLAAN WE OVER NU
+
 Met grids kun je verschillende ggplots in een plaatje krijgen. We hebben een helper functie (`multiplot`) nodig:
 
 ```{r, eval=FALSE}
@@ -461,6 +463,7 @@ for (i in 1:5) {
 layout <- matrix(c(1, 1, 2, 3, 4, 5), nrow = 2, byrow = TRUE)
 multiplot(plotlist = plots, layout = layout)
 ```
+
 
 
 
