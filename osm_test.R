@@ -45,7 +45,7 @@ amsterdam_map <- get_map(
   source = "stamen"
 )
 
-ggmap(amsterdam_map) +
+p = ggmap(amsterdam_map) +
   geom_sf(
     data = amsterdam,
     inherit.aes =FALSE,
@@ -54,6 +54,7 @@ ggmap(amsterdam_map) +
   ) +
   labs(title = "restaurants in Amsterdam", x="",y="") + 
   scale_color_gradient(low="blue", high="red")
+p
 
 ######## Heel nederland ###################################################
 # duurt erg lang
