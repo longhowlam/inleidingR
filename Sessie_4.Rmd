@@ -120,7 +120,6 @@ In R kan je veel verschillende predictive modellen fitten. We behandelen alleen 
 Lineaire regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer uniforme manier meerdere modellen kan proberen op een data set.
 
 
-
 ## lineare regressie 
 
 We beginnen met simpele lineaire regressie, bruikbaar voor voorspel modellen waar de Target variable continu (numeric) is. We nemen als voorbeeld huizen prijs data die ik gescraped heb van jaap.nl. We willen de prijs van een huis voorspellen basis van een aantal input variabelen/kenmerken.
@@ -129,11 +128,11 @@ We beginnen met simpele lineaire regressie, bruikbaar voor voorspel modellen waa
 jaap = readRDS("data/Jaap.RDs")
 
 library(ggplot2)
-ggplot(jaap, aes(prijs, kamers)) + geom_point()
-ggplot(jaap, aes(prijs, Oppervlakte)) + geom_point()
+ggplot(jaap, aes(kamers, prijs)) + geom_point()
+ggplot(jaap, aes(Oppervlakte, prijs)) + geom_point()
 
 # some obvious outliers
-jaap = jaap %>% filter( prijs < 1e7 )
+jaap = jaap %>% filter( prijs < 5e6, kamers < 40, Oppervlakte < 1000)
 ```
 
 Een tweetal simpele modellen.
@@ -178,6 +177,14 @@ modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap)
 summary(modelout2)
 ```
 
+We nemen ook Type mee maar er zitten daar ook wat data fouten
+
+```{r}
+sort(table(jaap$Type), decreasing = TRUE)
+TypeOK = names(sort(table(jaap$Type), decreasing = TRUE))[1:12]
+
+jaap = jaap %>% filter(Type %in% TypeOK)
+```
 
 ### formula objects 
 
@@ -190,28 +197,32 @@ jaap = jaap %>% mutate(PC1Positie = stringr::str_sub(PC,1,1))
 ## bekijk alleen huizen met een postcode
 jaap = jaap %>% filter(!is.na(PC1Positie))
 
-f0 = prijs ~ Oppervlakte + kamers 
-m0 = lm(f0, data = jaap)
-summary(m0)
-
-f1 = prijs ~ Oppervlakte + kamers + PC1Positie
+f1 = prijs ~ Oppervlakte + kamers 
 m1 = lm(f1, data = jaap)
 summary(m1)
 
-## interactie termen
-f2 = prijs ~ Oppervlakte + kamers + PC1Positie + Oppervlakte*PC1Positie
+f2 = prijs ~ Oppervlakte + kamers + PC1Positie
 m2 = lm(f2, data = jaap)
 summary(m2)
 
-## interactie termen
-f3 = prijs ~ Oppervlakte + kamers + PC1Positie + Oppervlakte*PC1Positie +  Oppervlakte*kamers
+f3 = prijs ~ Oppervlakte + kamers + PC1Positie + Type
 m3 = lm(f3, data = jaap)
 summary(m3)
 
-##  interactietermen
-f4 = prijs ~ Oppervlakte*kamers*PC1Positie 
+## interactie termen
+f4 = prijs ~ Oppervlakte + kamers + PC1Positie +  Type + Oppervlakte:PC1Positie
 m4 = lm(f4, data = jaap)
 summary(m4)
+
+## interactie termen
+f5 = prijs ~ Oppervlakte + kamers + PC1Positie + Type + Oppervlakte:PC1Positie +  Type:PC1Positie
+m5 = lm(f5, data = jaap)
+summary(m5)
+
+##  interactietermen
+f6 = prijs ~ Oppervlakte*kamers*PC1Positie*Type 
+m6 = lm(f6, data = jaap)
+summary(m6)
 ```
 
 
@@ -219,21 +230,21 @@ Als je verschillende model objecten hebt gemaakt kan je de functie `anova` gebru
 
 
 ```{r, eval =FALSE}
-anova(m0, m1, m2, m3, m4)
+anova(m1, m2, m3, m4, m5, m6)
 ```
 
 Nog een paar voorbeelden van formule objecten.
 
 ```{r, eval=FALSE}
 ##  termen weglaten
-f5 = prijs ~ Oppervlakte*kamers*PC1Positie - Oppervlakte:kamers:PC1Positie
-m5 = lm(f5, data = jaap)
-summary(m5)
-
-## een target en de rest van de variabelen als inputs
-f6 = prijs ~ . -PC6 -PC
+f6 = prijs ~ Oppervlakte*kamers*PC1Positie - Oppervlakte:kamers:PC1Positie
 m6 = lm(f6, data = jaap)
 summary(m6)
+
+## een target en de rest van de variabelen als inputs
+f7 = prijs ~ . -PC6 -PC
+m7 = lm(f7, data = jaap)
+summary(m7)
 ```
 
 
