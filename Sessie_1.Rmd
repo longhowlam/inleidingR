@@ -69,6 +69,13 @@ Naast de nb.html, kan je een R notebook ook "knit" ('breien') tot een html, pdf 
 
 Git is een version control systeem. In RStudio kan je makkelijk git gebruiken. Je zult het wel eerst moeten installeren. Op windows kan je git installeren via [de git site](https://git-scm.com/download/win). We gaan hier in deze cursus verder niet op in.
 
+
+
+## Keyboard Shortcuts
+
+Er zijn ontzettend veel keyboard shortcuts in RStudio, zie bijvoorbeeld <Shift><Alt>K en ook een [handig blogje](https://appsilon.com/r-studio-shortcuts-and-tips/) geschreven door Krzysztof Sprycha.
+
+
 ## Een paar simpele expressie
 
 Hieronder een paar simpele expressies in R om te beginnen
