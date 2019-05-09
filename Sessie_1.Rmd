@@ -406,7 +406,7 @@ Data in R kan in verschillende vormen verschijnen, de zogenaamde data structuren
 Vectoren worden gebruikt om een 'rijtje' elementen op te slaan. Je kan een vector van doubles hebben, characters etc... Alle elementen kunnen alleen van hetzelfde type zijn!
 
 ```{r, eval=FALSE}
-## een getal is ook al een vectpr, van lengte 1
+## een enkele getal is ook al een vector, van lengte 1
 x0 = 1
 
 x1 = c( 1, 2, 3, 4, 5)
@@ -441,7 +441,7 @@ Het genreren van wat random getallen is handig om snel wat data te hebben om te 
 rnorm(100)
 rnorm(100, 9, 2)
 
-#uniform verdeelde getallen
+# uniform verdeelde getallen
 runif(100)
 runif(100,8,10)
 
@@ -547,7 +547,7 @@ m2[5,]
 m2[ ,5]
 ```
 
-Met matrices kun je rekenen. Een paar typische matrix bewerkingen.
+Met matrices kun je rekenen. Een paar typische wiskundige matrix bewerkingen.
 
 ```{r, eval =FALSE}
 # determinant van een matrix
