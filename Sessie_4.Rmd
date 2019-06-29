@@ -59,24 +59,24 @@ The `t.test` function produces a variety of t-tests. Unlike most statistical pac
 ```{r, eval = FALSE}
 # independent 2-group t-test
 test = data.frame(
-  meeting = c(rnorm(100), rnorm(100,.1,1)),
-  groep = c(rep("M",100), rep("F", 100))
+  meting = c(rnorm(100), rnorm(110,.91,1)),
+  groep = c(rep("M",100), rep("F", 110))
 )
 
-t.test(meeting ~ groep, data = test) # where y is numeric and x is a binary factor
+t.test(meting ~ groep, data = test) # where y is numeric and x is a binary factor
 
 # independent 2-group t-test
 test2 = data.frame(
-  meeting1 = rnorm(250),
-  meeting2 = rnorm(250,.1,1)
+  meting1 = rnorm(250),
+  meting2 = rnorm(250,.1,1)
 )
-t.test(test2$meeting1, test2$meeting2) # where y1 and y2 are numeric
+t.test(test2$meting1, test2$meting2) # where y1 and y2 are numeric
 
 # paired t-test
-t.test(test2$meeting1, test2$meeting2, paired=TRUE) # where y1 & y2 are numeric
+t.test(test2$meting1, test2$meting2, paired=TRUE) # where y1 & y2 are numeric
 
 # one sample t-test
-t.test(test2$meeting1, mu = 0.2) 
+t.test(test2$meting1, mu = 0.2) 
 ```
 
 You should always check for normality when using a t test
