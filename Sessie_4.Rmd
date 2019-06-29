@@ -432,7 +432,7 @@ XGboost modellen zijn populair, niet-lineaire verbanden en interacties kunnen ma
 
 Het is eenvoudig om in XGboost, monotonic constraints aan te zetten voor sommige variabelen. Het algoritme zorgt er dan voor dat je voorspellingen altijd monotoon stijgend of dalend zijn. Meer over XGboost monotonic contraints: https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html
 
-Laten we onze huizen voorbeeld er weer bij pakken
+Laten we onze huizen voorbeeld er weer bij pakken. We fitten eerst. In de volgende sectie laten we de predicties zien.
 
 ```{r, eval = FALSE}
 jaap = jaap %>% filter(Oppervlakte > 10, Oppervlakte < 250, prijs > 30000)
@@ -457,6 +457,8 @@ xgboost.huis2 = xgboost(
 
 
 ## predictie en validatie
+
+We zagen al in de vorige sectie over lineaire regressie dat je de functie `predict` kunt gebruiken om voor spellingen uit te rekenen. Met logistische regressie decision trees, forests en xgboost modellen kan je ook de `predict` functie gebruiken. 
 
 Met een test set kan je bepalen hoe goed een model is. Gebruik het model object van een modelfit om een test set te scoren en de scores met de ware uitkomsten te vergelijken.
 
@@ -492,8 +494,6 @@ pred_xgboost = predict(xgboost.out2, newdata = Titan_Testmatrix)
 ## hier zitten de predicties een vector
 hist(pred_xgboost)
 ```
-
-
 
 En ons huis voorbeeld met monotonic constraint, maak een nieuwe data frame met huis oppervlaktes en voorspel prijs met beide modellen, zonder en met monotonic constraint.
 
