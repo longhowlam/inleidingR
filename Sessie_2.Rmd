@@ -614,6 +614,8 @@ testdata = testdata %>%
     GeboorteDatum = anydate(DoB),
     GeboorteDatum2 = ymd(DoB)
   )
+
+testdata
 ```
 
 De functie `anydate` parsed diverse character notatie naar een date kolom, de gaat meestal goed :-)
@@ -627,6 +629,8 @@ testdata = testdata %>%
   mutate(
     GeboorteDatum = anydate(DoB)
   )
+
+testdata
 ```
 
 Nu we een datum echt als date column in een data frame of tibble hebben kunnen we er mee rekenen.

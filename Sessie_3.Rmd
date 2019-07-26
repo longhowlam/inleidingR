@@ -36,11 +36,9 @@ library(RColorBrewer)
 library(colorRamps)
 library(leaflet)
 library(visNetwork)
-library(rgeos)
-library(raster)
-library(sp)
-library(maptools)
-library(rgdal)
+library(sf)
+
+
 library(dplyr)
 ```
 
@@ -822,9 +820,6 @@ ProvNL =  sf::st_read("data/TopGrenzen-prov-actueel.shp") %>%
 
 class(ProvNL)
 summary(ProvNL)
-
-#### transformeer naar long /lat
-ProvNL = spTransform(ProvNL, CRS("+proj=longlat +datum=WGS84"))
 
 #### Het object ProvNL is een zgn sf / data.frame object
 ProvNL$Provincien
