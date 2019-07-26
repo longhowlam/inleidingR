@@ -152,6 +152,7 @@ x5 = 5.6 / 8
 x6 = pi/2
 
 is.double(x4)
+typeof(x4)
 
 ```
 
@@ -640,9 +641,6 @@ summary(iris)
 Het package `skimr` moet je eerst installeren.
 
 ```{r, eval = FALSE}
-devtools::install_github("hadley/colformat")
-devtools::install_github("ropenscilabs/skimr")
-
 library(skimr)
 skimr::skim(mtcars)
 skim(iris)
@@ -666,7 +664,7 @@ df1
 
 ## tibbles
 
-In R zijn tibbles een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor.
+In R zijn tibbles (New zeelands uitspraak table) een soort moderne versie van data.frames, afkomstig van Hadley Wickham en er zijn een aantal voordelen om tibbles te gebruiken. Ze hebben een iets betere print methode en transformeren nooit character naar factor.
 
 Zie ook zijn boek en de website [tibbles.](http://tibble.tidyverse.org/)
 
