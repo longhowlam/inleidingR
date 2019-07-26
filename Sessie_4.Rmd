@@ -35,6 +35,8 @@ library(rpart)
 library(glmnet)
 library(ranger)
 
+library(yardstick)
+library(rsample)
 library(ROCR)
 library(pROC)
 library(titanic)
@@ -197,6 +199,15 @@ jaap = jaap %>% mutate(PC1Positie = stringr::str_sub(PC,1,1))
 ## bekijk alleen huizen met een postcode
 jaap = jaap %>% filter(!is.na(PC1Positie))
 
+
+## We splitsen in een train en test set
+jsplit = initial_split(jaap, prop = 0.8)
+jaap = training(jsplit)
+jaap_test = testing(jsplit)
+```
+
+
+```{r, eval = FALSE}
 f1 = prijs ~ Oppervlakte + kamers 
 m1 = lm(f1, data = jaap)
 summary(m1)
@@ -246,6 +257,30 @@ f7 = prijs ~ . -PC6 -PC
 m7 = lm(f7, data = jaap)
 summary(m7)
 ```
+
+
+
+### Wat voor fout maakt het model?
+
+Neem een model bijvoorbeeld `m5` die we hierboven hebben gemaakt. Vorspel op de test set en kijk naar de fouten:
+* rmse residual mean squared error
+* mae mean absolute error
+* rsq R squared
+* mape mean absolute percentage error
+
+see this [help yardstick](https://tidymodels.github.io/yardstick/reference/rsq.html)
+
+
+```{r}
+jaap_test$predicted = predict(m5, jaap_test)
+
+metrics(jaap_test, prijs, predicted)
+
+mape(jaap_test, prijs, predicted)
+```
+
+
+
 
 
 ### Buckets / linear constant  en splines 
@@ -390,7 +425,11 @@ visTree(tree.out, height = "800px", nodesPopSize = TRUE, minNodeSize = 10, maxNo
 Een random forest is een zogenaamde ensemble model. Het is de combinatie van (veel) verschillende decision trees. In R kan je met verschillende packages random forests fitten. Het package `ranger` is hier een van.
 
 ```{r, eval = FALSE}
-ranger.out = ranger( Survived ~ Sex + Age + Pclass, data = TTrain , probability = TRUE)
+ranger.out = ranger( 
+  Survived ~ Sex + Age + Pclass,
+  data = TTrain ,
+  probability = TRUE,
+  importance = 'impurity')
 ranger.out
 ```
 
@@ -572,6 +611,14 @@ TTest %>%
 
 ```
 
+
+### metrics from `yardstick`
+
+```{r, eval = FALSE}
+roc_auc(TTest, Survived, predictieGLM)
+```
+
+
 ### roc curves and hit rates
 
 ```{r, eval = FALSE}
@@ -659,6 +706,7 @@ RFmodel = h2o.randomForest(
   validation_frame = ttest.h2o
   )
 RFmodel
+h2o.varimp_plot(RFmodel)
 ```
 
 
