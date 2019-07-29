@@ -1058,7 +1058,9 @@ Prophet is een facebook package voor tijdreeks data, die zij zelf ook intern geb
 Hier een voorbeeld op gescrapte Billy verkopen van de Ikea website
 
 ```{r eval=FALSE}
+## not installed on R 3.6 --> revert to R 3.4.1
 library(prophet)
+
 
 ## dagelijke ikea billy verkoop data
 DailyBilly = readRDS("data/DailyBilly.RDs")
