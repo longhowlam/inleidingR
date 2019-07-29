@@ -179,7 +179,7 @@ summary(modelout2)
 
 We nemen ook Type mee maar er zitten daar ook wat data fouten
 
-```{r}
+```{r, eval=FALSE}
 sort(table(jaap$Type), decreasing = TRUE)
 TypeOK = names(sort(table(jaap$Type), decreasing = TRUE))[1:12]
 
