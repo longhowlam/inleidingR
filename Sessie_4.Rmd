@@ -118,8 +118,7 @@ p + stat_qq() + stat_qq_line()  + facet_grid(~groep)
 
 ---
 
-In R kan je veel verschillende predictive modellen fitten. We behandelen alleen een paar in deze sessie. 
-Lineaire regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. Ik zal deze functies apart behandelen maar we zullen later in de sessie zien met het package `mlr` hoe je op een meer uniforme manier meerdere modellen kan proberen op een data set.
+In R kan je veel verschillende predictive modellen fitten. We kunnen alleen maar een paar methoden behandelen in deze sessie. Lineaire regressie met de functie `lm`, logistische regressie met de functie `glm`, decision trees met de functie `rpart` en ensemble van trees met `ranger` en  `xgboost`. En dan heb je nog een aantal methoden die in het `h2o` package zitten.
 
 
 ## lineare regressie 
@@ -179,12 +178,14 @@ modelout2 = lm( prijs ~ kamers + Oppervlakte , data = jaap)
 summary(modelout2)
 ```
 
-We nemen ook Type mee maar er zitten daar ook wat data fouten
+We nemen ook het Type huis mee maar er zitten daar ook wat data fouten, dus we nemen alleen de 12 grootste huis types.
 
 ```{r, eval=FALSE}
+### overzicht van type met de functie table, gesorteerd op grootte
 sort(table(jaap$Type), decreasing = TRUE)
+### Neem alleen de eerste 12
 TypeOK = names(sort(table(jaap$Type), decreasing = TRUE))[1:12]
-
+### filter jaap op alleen die 12 types
 jaap = jaap %>% filter(Type %in% TypeOK)
 ```
 
@@ -199,40 +200,43 @@ jaap = jaap %>% mutate(PC1Positie = stringr::str_sub(PC,1,1))
 ## bekijk alleen huizen met een postcode
 jaap = jaap %>% filter(!is.na(PC1Positie))
 
-
-## We splitsen in een train en test set
+## We splitsen de set nu eerst in een train en test set
 jsplit = initial_split(jaap, prop = 0.8)
-jaap = training(jsplit)
+
+jaap_train = training(jsplit)
 jaap_test = testing(jsplit)
 ```
 
 
 ```{r, eval = FALSE}
+## simple model
 f1 = prijs ~ Oppervlakte + kamers 
-m1 = lm(f1, data = jaap)
+m1 = lm(f1, data = jaap_train)
 summary(m1)
 
+## nu ook locatie term erbij
 f2 = prijs ~ Oppervlakte + kamers + PC1Positie
-m2 = lm(f2, data = jaap)
+m2 = lm(f2, data = jaap_train)
 summary(m2)
 
+## nu ook huis type erbij
 f3 = prijs ~ Oppervlakte + kamers + PC1Positie + Type
-m3 = lm(f3, data = jaap)
+m3 = lm(f3, data = jaap_train)
 summary(m3)
 
 ## interactie termen
 f4 = prijs ~ Oppervlakte + kamers + PC1Positie +  Type + Oppervlakte:PC1Positie
-m4 = lm(f4, data = jaap)
+m4 = lm(f4, data = jaap_train)
 summary(m4)
 
-## interactie termen
+## nog meer interactie termen
 f5 = prijs ~ Oppervlakte + kamers + PC1Positie + Type + Oppervlakte:PC1Positie +  Type:PC1Positie
-m5 = lm(f5, data = jaap)
+m5 = lm(f5, data = jaap_train)
 summary(m5)
 
-##  interactietermen
+##  alle mogelijke termen en interactietermen
 f6 = prijs ~ Oppervlakte*kamers*PC1Positie*Type 
-m6 = lm(f6, data = jaap)
+m6 = lm(f6, data = jaap_train)
 summary(m6)
 ```
 
@@ -503,10 +507,10 @@ Met een test set kan je bepalen hoe goed een model is. Gebruik het model object 
 
 ### predicties
 
-Voor binaire classificaties is het handig om response kansen uit te rekenen. Voor logistische regressie met `glm` gebeurt dit niet automatisch
+Voor binaire classificaties is het handig om response kansen uit te rekenen. Voor logistische regressie met `glm` gebeurt dit niet automatisch. Je moet type is response meegeven.
 
 ```{r, eval = FALSE}
-pred_GLM = predict.glm(out.glm, newdata = TTest, type='response')
+pred_GLM = predict(out.glm, newdata = TTest, type='response')
 hist(pred_GLM)
 ```
 
