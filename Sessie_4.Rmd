@@ -275,7 +275,7 @@ Neem een model bijvoorbeeld `m5` die we hierboven hebben gemaakt. Vorspel op de 
 see this [help yardstick](https://tidymodels.github.io/yardstick/reference/rsq.html)
 
 
-```{r}
+```{r, eval = FALSE}
 jaap_test$predicted = predict(m5, jaap_test)
 
 metrics(jaap_test, prijs, predicted)
@@ -1062,7 +1062,6 @@ Prophet is een facebook package voor tijdreeks data, die zij zelf ook intern geb
 Hier een voorbeeld op gescrapte Billy verkopen van de Ikea website
 
 ```{r eval=FALSE}
-## not installed on R 3.6 --> revert to R 3.4.1
 library(prophet)
 
 
