@@ -283,7 +283,20 @@ metrics(jaap_test, prijs, predicted)
 mape(jaap_test, prijs, predicted)
 ```
 
+Kijk ook altijd naar eenhistogram van de residuen en de observed prijs tegen de predicted prijs
 
+```{r , eval = FALSE}
+
+jaap_test$residuals = jaap_test$prijs - jaap_test$predicted
+ggplot(jaap_test, aes(residuals)) + geom_histogram(col = "black")
+
+ggplot(jaap_test, aes(prijs, predicted)) + 
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, col = 2, size = 2) + 
+  geom_smooth(col=2, size = 2)
+
+
+```
 
 
 
