@@ -842,7 +842,7 @@ Er zijn een aantal packages die handig zijn om files in te lezen.
 * `haven` package voor files van SAS, SPSS, Stata
 * `readxl` voor Excel files
 
-R heeft ook standaard functies voor het importeren van text files, maar ik gebruik vaak de functies uit het package `readr`. Voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.
+R heeft ook standaard functies voor het importeren van text files, maar ik gebruik vaak de functies uit het package `readr`. Voor grote files is het veel sneller. En je ziet dan ook een progress bar. In RStudio, kan je de import functies ook aanroepen via de ** Import Dataset ** GUI die het inlezen van data begeleidt.   .
 
 
 ```{r, eval=FALSE}
